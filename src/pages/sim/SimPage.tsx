@@ -5,7 +5,7 @@ import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
-import type { DesignPlacement, DesignLogoSettings, TemplateStatus } from "@/domain/types";
+import type { DesignPlacement, DesignLogoSettings } from "@/domain/types";
 import { saveDesign, listDesigns, saveTemplate } from "@/storage/local";
 import { AssetType, saveAsset } from "@/storage/idb";
 
@@ -19,29 +19,6 @@ type SimPhase =
   | "ISSUED"
   | "ERROR";
 
-const simPhaseLabels: Record<SimPhase, string> = {
-  EMPTY: "未アップロード",
-  UPLOADED: "画像読み込み済み",
-  EDITING: "トリミング中",
-  PLACEMENT: "配置調整中",
-  READY_TO_ISSUE: "発行準備完了",
-  ISSUING: "発行中",
-  ISSUED: "発行済み",
-  ERROR: "エラー"
-};
-
-const statusLabels: Record<TemplateStatus, string> = {
-  draft: "下書き",
-  tested: "テスト済み",
-  published: "公開中"
-};
-
-const transparentOptions: Array<{ value: DesignLogoSettings["transparentLevel"]; label: string }> = [
-  { value: "weak", label: "弱め" },
-  { value: "medium", label: "普通" },
-  { value: "strong", label: "強め" }
-];
-
 const basePlacement = (() => {
   const area = sampleTemplate.engravingArea;
   const width = area.w * 0.9;
@@ -53,19 +30,6 @@ const basePlacement = (() => {
     h: height
   };
 })();
-
-const MIN_PLACEMENT_SIZE = 10;
-
-function clampPlacement(next: DesignPlacement): DesignPlacement {
-  const area = sampleTemplate.engravingArea;
-  const width = Math.min(Math.max(next.w, MIN_PLACEMENT_SIZE), area.w);
-  const height = Math.min(Math.max(next.h, MIN_PLACEMENT_SIZE), area.h);
-  const maxX = area.x + area.w - width;
-  const maxY = area.y + area.h - height;
-  const x = Math.min(Math.max(next.x, area.x), maxX);
-  const y = Math.min(Math.max(next.y, area.y), maxY);
-  return { x, y, w: width, h: height };
-}
 
 function downloadBlob(blob: Blob, fileName: string) {
   const id = URL.createObjectURL(blob);
@@ -163,6 +127,7 @@ export function SimPage() {
   const [transparentLevel, setTransparentLevel] = useState<DesignLogoSettings["transparentLevel"]>("medium");
   const [monochrome, setMonochrome] = useState(false);
   const [isIssuing, setIsIssuing] = useState(false);
+  const [issuedDesignId, setIssuedDesignId] = useState<string | null>(null);
 
   useEffect(() => {
     saveTemplate(sampleTemplate);
@@ -204,28 +169,6 @@ export function SimPage() {
       });
     },
     []
-  );
-
-  const phaseEntries = useMemo(
-    () =>
-      ([
-        "EMPTY",
-        "UPLOADED",
-        "EDITING",
-        "PLACEMENT",
-        "READY_TO_ISSUE",
-        "ISSUING",
-        "ISSUED",
-        "ERROR"
-      ] as SimPhase[]),
-    []
-  );
-
-  const updatePlacement = useCallback(
-    (next: Partial<DesignPlacement>) => {
-      setPlacement((prev) => clampPlacement({ ...prev, ...next }));
-    },
-    [setPlacement]
   );
 
   const handleFileAccepted = useCallback(
@@ -307,6 +250,7 @@ export function SimPage() {
       downloadBlob(confirmPdf, `${designId}-confirm.pdf`);
       setToast("PDF確認用をダウンロードしました");
       setPhase("ISSUED");
+      setIssuedDesignId(designId);
     } catch (error) {
       console.error(error);
       setToast("発行中にエラーが発生しました");
@@ -318,10 +262,10 @@ export function SimPage() {
 
   const cropInputs = useMemo(
     () => [
-      { label: "X (左)", key: "x" as const, min: 0, max: 0.9 },
-      { label: "Y (上)", key: "y" as const, min: 0, max: 0.9 },
-      { label: "幅", key: "w" as const, min: 0.2, max: 1 },
-      { label: "高さ", key: "h" as const, min: 0.2, max: 1 }
+      { label: "横の位置", key: "x" as const, min: 0, max: 0.9 },
+      { label: "縦の位置", key: "y" as const, min: 0, max: 0.9 },
+      { label: "横の大きさ", key: "w" as const, min: 0.2, max: 1 },
+      { label: "縦の大きさ", key: "h" as const, min: 0.2, max: 1 }
     ],
     []
   );
@@ -334,35 +278,37 @@ export function SimPage() {
         </div>
       )}
       <header className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">シミュレーター</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            お客様画面
+          </span>
+          <p className="text-xs text-slate-400">管理ID: {sampleTemplate.templateKey}</p>
+        </div>
+        <h1 className="mt-2 text-2xl font-semibold text-slate-900">デザインシミュレーター</h1>
         <p className="text-sm text-slate-500">
-          テンプレートキー: {sampleTemplate.templateKey}（{statusLabels[sampleTemplate.status]}）
+          ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。
         </p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
         <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div>
-            <p className="text-sm font-semibold text-slate-600">ステータス</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {phaseEntries.map((entry) => (
-                <span
-                  key={entry}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    entry === phase ? "bg-slate-900 text-white" : "border border-slate-200 text-slate-500"
-                  }`}
-                >
-                  {simPhaseLabels[entry]}
-                </span>
-              ))}
-            </div>
+            <p className="text-sm font-semibold text-slate-600">操作の3ステップ</p>
+            <ol className="mt-2 space-y-1 text-sm text-slate-600">
+              <li>1. ロゴをアップロード</li>
+              <li>2. 切り取りを調整</li>
+              <li>3. デザインIDを発行</li>
+            </ol>
           </div>
 
           <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">トリミング（正規化座標）</p>
-            <div className="space-y-4 text-sm text-slate-500">
+            <p className="text-sm font-semibold text-slate-600">切り取り調整</p>
+            <div
+              className={`space-y-4 text-sm text-slate-500 ${!imageBitmap ? "opacity-50" : ""}`}
+              aria-disabled={!imageBitmap}
+            >
               {cropInputs.map((field) => (
                 <div key={field.key} className="space-y-1">
                   <div className="flex items-center justify-between font-medium text-slate-600">
@@ -375,6 +321,7 @@ export function SimPage() {
                     max={field.max}
                     step={0.01}
                     value={crop[field.key]}
+                    disabled={!imageBitmap}
                     onChange={(event) => {
                       const value = Number(event.target.value);
                       handleCropChange(field.key, value);
@@ -383,158 +330,67 @@ export function SimPage() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-slate-400">
-              値は 0〜1 の正規化座標です。幅と高さは 0.2 以上で固定し、画像を切り抜きます。
-            </p>
+            <p className="text-xs text-slate-400">ロゴをアップロードすると調整できます。</p>
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">背景透過 / モノクロ</p>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              {transparentOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={`rounded-full border px-2 py-1 transition ${
-                    transparentLevel === option.value
-                      ? "border-slate-900 bg-slate-900 text-white"
-                      : "border-slate-200 bg-white text-slate-500"
-                  }`}
-                  onClick={() => setTransparentLevel(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-            <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-              <input
-                type="checkbox"
-                checked={monochrome}
-                onChange={(event) => setMonochrome(event.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
-              />
-              モノクロにする
-            </label>
+            <p className="text-sm font-semibold text-slate-600">配置</p>
+            <p className="text-xs text-slate-500">位置は自動で中央に合わせています。</p>
           </div>
 
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">配置（刻印枠内を維持）</p>
-            <div className="grid grid-cols-2 gap-3 text-xs text-slate-500">
-              <label className="space-y-1">
-                <span className="text-slate-600">X</span>
-                <input
-                  type="number"
-                  value={placement.x}
-                  step={1}
-                  min={sampleTemplate.engravingArea.x}
-                  max={sampleTemplate.engravingArea.x + sampleTemplate.engravingArea.w - MIN_PLACEMENT_SIZE}
-                  className="w-full rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs"
-                  onChange={(event) => updatePlacement({ x: Number(event.target.value) })}
-                />
-              </label>
-              <label className="space-y-1">
-                <span className="text-slate-600">Y</span>
-                <input
-                  type="number"
-                  value={placement.y}
-                  step={1}
-                  min={sampleTemplate.engravingArea.y}
-                  max={sampleTemplate.engravingArea.y + sampleTemplate.engravingArea.h - MIN_PLACEMENT_SIZE}
-                  className="w-full rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs"
-                  onChange={(event) => updatePlacement({ y: Number(event.target.value) })}
-                />
-              </label>
-              <label className="space-y-1">
-                <span className="text-slate-600">幅 (px)</span>
-                <input
-                  type="number"
-                  value={placement.w}
-                  step={1}
-                  min={MIN_PLACEMENT_SIZE}
-                  max={sampleTemplate.engravingArea.w}
-                  className="w-full rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs"
-                  onChange={(event) => updatePlacement({ w: Number(event.target.value) })}
-                />
-              </label>
-              <label className="space-y-1">
-                <span className="text-slate-600">高さ (px)</span>
-                <input
-                  type="number"
-                  value={placement.h}
-                  step={1}
-                  min={MIN_PLACEMENT_SIZE}
-                  max={sampleTemplate.engravingArea.h}
-                  className="w-full rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs"
-                  onChange={(event) => updatePlacement({ h: Number(event.target.value) })}
-                />
-              </label>
-            </div>
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-900 px-4 py-4 text-center text-white">
+            <p className="text-sm font-semibold">デザインID発行（PDF保存）</p>
             <button
               type="button"
-              className="text-xs font-semibold text-slate-500 underline underline-offset-2"
-              onClick={() => setPlacement(basePlacement)}
+              className="w-full rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow"
+              disabled={!imageBitmap || isIssuing}
+              onClick={handleIssue}
             >
-              枠の中央に戻す
+              {isIssuing ? "発行中..." : "デザインIDを発行する"}
             </button>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-900 px-4 py-3 text-center text-white">
-            <p className="text-xs">最終ステップ</p>
-            <p className="text-lg font-semibold">発行（PDF確認 + 刻印用）</p>
-            <p className="text-xs text-slate-200">デザインID・IndexedDB保存・PDF自動ダウンロード</p>
+            <div className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-left">
+              <p className="text-xs text-slate-300">デザインID</p>
+              {issuedDesignId ? (
+                <div className="mt-1 flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={issuedDesignId}
+                    className="w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
+                  />
+                  <button
+                    type="button"
+                    className="rounded-full border border-slate-500 px-2 py-1 text-xs text-slate-200"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(issuedDesignId);
+                        setToast("デザインIDをコピーしました");
+                      } catch (error) {
+                        console.error(error);
+                        setToast("コピーできませんでした");
+                      }
+                    }}
+                  >
+                    コピー
+                  </button>
+                </div>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400">発行後に表示されます</p>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">プレビュー</h2>
-              <p className="text-xs text-slate-500">背景 + 刻印枠 + 透過/モノクロ反映ロゴ</p>
+              <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
+              <p className="text-xs text-slate-500">背景とロゴの見え方を確認できます。</p>
             </div>
             <span className="text-xs font-semibold text-slate-500">倍率: 1.0x</span>
           </div>
           <div className="mt-4 h-[420px]">
             <StagePreview template={sampleTemplate} crop={crop} placement={placement} bitmap={imageBitmap} />
-          </div>
-
-          <div className="mt-4 grid gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-            <div>
-              <p className="text-xs text-slate-500">デザインID</p>
-              <p className="font-semibold text-slate-900">発行後に自動生成</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">PDF</p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="flex-1 rounded-full border border-slate-200 py-2 text-xs font-semibold text-slate-700"
-                  disabled
-                >
-                  確認用をダウンロード
-                </button>
-                <button
-                  type="button"
-                  className="flex-1 rounded-full border border-slate-200 py-2 text-xs font-semibold text-slate-700"
-                  disabled
-                >
-                  刻印用を保存
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <button
-              type="button"
-              className="w-full rounded-2xl bg-amber-500 px-4 py-3 text-sm font-semibold uppercase tracking-wider text-white shadow"
-              disabled={!imageBitmap || isIssuing}
-              onClick={handleIssue}
-            >
-              {isIssuing ? "発行中..." : "発行する（PDF生成＋IndexedDB保存）"}
-            </button>
-            <p className="mt-2 text-left text-xs text-slate-400">
-              発行後は localStorage / IndexedDB にデザインとPDFが保存され、/admin/designs で再ダウンロードできます。
-            </p>
           </div>
         </div>
       </div>
