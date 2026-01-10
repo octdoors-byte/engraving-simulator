@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 
 const columns = [
   { label: "テンプレート名", key: "name" },
-  { label: "キー", key: "templateKey" },
+  { label: "テンプレートキー", key: "templateKey" },
   { label: "ステータス", key: "status" },
   { label: "更新日時", key: "updatedAt" }
 ] as const;

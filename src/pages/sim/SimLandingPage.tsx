@@ -23,7 +23,7 @@ export function SimLandingPage() {
           <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
             <p className="text-xs uppercase text-slate-500">テンプレート</p>
             <p className="mt-1 text-lg font-medium text-slate-900">{sampleTemplate.name}</p>
-            <p className="text-sm text-slate-500">キー: {sampleTemplate.templateKey}</p>
+            <p className="text-sm text-slate-500">テンプレートキー: {sampleTemplate.templateKey}</p>
             <p className="text-sm text-slate-500">ステータス: {statusLabels[sampleTemplate.status]}</p>
           </div>
           <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
