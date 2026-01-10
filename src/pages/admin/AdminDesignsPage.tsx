@@ -1,4 +1,4 @@
-import type { Design } from "@/domain/types";
+﻿import type { Design } from "@/domain/types";
 
 const sampleDesign: Design = {
   designId: "260109_K7M3Q9XR",
@@ -30,7 +30,7 @@ export function AdminDesignsPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">刻印履歴</h1>
         <p className="text-sm text-slate-500">
-          発行済みデザインは localStorage に保存され、PDF / IndexedDB から再生成可能です。
+          発行済みのデザイン一覧です。概要は localStorage、PDF/画像は IndexedDB に保存されます。
         </p>
       </div>
 
@@ -39,8 +39,8 @@ export function AdminDesignsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-slate-900">一覧</h2>
             <div className="flex gap-3 text-xs text-slate-500">
-              <span>検索：designId</span>
-              <span>絞り込み：templateKey</span>
+              <span>検索: デザインID</span>
+              <span>絞り込み: テンプレートキー</span>
             </div>
           </div>
         </div>
@@ -48,11 +48,11 @@ export function AdminDesignsPage() {
           <table className="min-w-full divide-y divide-slate-100 text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-6 py-3 text-left">Design ID</th>
-                <th className="px-6 py-3 text-left">Template Key</th>
-                <th className="px-6 py-3 text-left">Created At</th>
+                <th className="px-6 py-3 text-left">デザインID</th>
+                <th className="px-6 py-3 text-left">テンプレートキー</th>
+                <th className="px-6 py-3 text-left">作成日時</th>
                 <th className="px-6 py-3 text-left">PDF</th>
-                <th className="px-6 py-3 text-left">Actions</th>
+                <th className="px-6 py-3 text-left">操作</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -69,9 +69,7 @@ export function AdminDesignsPage() {
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="rounded-full border border-slate-200 px-3 py-1 text-slate-600">
-                    削除
-                  </button>
+                  <button className="rounded-full border border-slate-200 px-3 py-1 text-slate-600">削除</button>
                 </td>
               </tr>
             </tbody>

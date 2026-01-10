@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+﻿import { Link, NavLink, Outlet } from "react-router-dom";
 
 const navItems = [
   { to: "/", label: "シミュレーター" },
@@ -15,7 +15,7 @@ export function AppLayout() {
             <Link to="/" className="text-2xl font-semibold text-slate-900">
               名入れ刻印シミュレーター
             </Link>
-            <p className="text-sm text-slate-500">ローカルで完結するMVP</p>
+            <p className="text-sm text-slate-500">ローカルで完結する最小構成</p>
           </div>
           <nav className="flex flex-wrap items-center gap-2 text-sm">
             {navItems.map((item) => (

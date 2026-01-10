@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dropzone } from "@/components/sim/Dropzone";
 import { sampleTemplate } from "@/data/sampleTemplate";
 import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
-import type { DesignPlacement, DesignLogoSettings } from "@/domain/types";
+import type { DesignPlacement, DesignLogoSettings, TemplateStatus } from "@/domain/types";
 import { saveDesign, listDesigns, saveTemplate } from "@/storage/local";
 import { AssetType, saveAsset } from "@/storage/idb";
 
@@ -29,6 +29,18 @@ const simPhaseLabels: Record<SimPhase, string> = {
   ISSUED: "発行済み",
   ERROR: "エラー"
 };
+
+const statusLabels: Record<TemplateStatus, string> = {
+  draft: "下書き",
+  tested: "テスト済み",
+  published: "公開中"
+};
+
+const transparentOptions: Array<{ value: DesignLogoSettings["transparentLevel"]; label: string }> = [
+  { value: "weak", label: "弱め" },
+  { value: "medium", label: "普通" },
+  { value: "strong", label: "強め" }
+];
 
 const basePlacement = (() => {
   const area = sampleTemplate.engravingArea;
@@ -324,7 +336,7 @@ export function SimPage() {
       <header className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">シミュレーター</h1>
         <p className="text-sm text-slate-500">
-          templateKey: {sampleTemplate.templateKey} ({sampleTemplate.status})
+          テンプレートキー: {sampleTemplate.templateKey}（{statusLabels[sampleTemplate.status]}）
         </p>
       </header>
 
@@ -349,7 +361,7 @@ export function SimPage() {
           <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">トリミング (正規化座標)</p>
+            <p className="text-sm font-semibold text-slate-600">トリミング（正規化座標）</p>
             <div className="space-y-4 text-sm text-slate-500">
               {cropInputs.map((field) => (
                 <div key={field.key} className="space-y-1">
@@ -372,25 +384,25 @@ export function SimPage() {
               ))}
             </div>
             <p className="text-xs text-slate-400">
-              値はすべて 0〜1 の正規化座標です。幅・高さは 0.2 以上で固定し、画像に対して切り抜きます。
+              値は 0〜1 の正規化座標です。幅と高さは 0.2 以上で固定し、画像を切り抜きます。
             </p>
           </div>
 
           <div className="space-y-3">
             <p className="text-sm font-semibold text-slate-600">背景透過 / モノクロ</p>
             <div className="grid grid-cols-3 gap-2 text-xs">
-              {(["weak", "medium", "strong"] as const).map((level) => (
+              {transparentOptions.map((option) => (
                 <button
-                  key={level}
+                  key={option.value}
                   type="button"
                   className={`rounded-full border px-2 py-1 transition ${
-                    transparentLevel === level
+                    transparentLevel === option.value
                       ? "border-slate-900 bg-slate-900 text-white"
                       : "border-slate-200 bg-white text-slate-500"
                   }`}
-                  onClick={() => setTransparentLevel(level)}
+                  onClick={() => setTransparentLevel(option.value)}
                 >
-                  {level}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -401,7 +413,7 @@ export function SimPage() {
                 onChange={(event) => setMonochrome(event.target.checked)}
                 className="h-4 w-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
               />
-              モノクロ化
+              モノクロにする
             </label>
           </div>
 
@@ -462,14 +474,14 @@ export function SimPage() {
               className="text-xs font-semibold text-slate-500 underline underline-offset-2"
               onClick={() => setPlacement(basePlacement)}
             >
-              枠内中央にリセット
+              枠の中央に戻す
             </button>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-900 px-4 py-3 text-center text-white">
-            <p className="text-xs uppercase">最終ステップ</p>
+            <p className="text-xs">最終ステップ</p>
             <p className="text-lg font-semibold">発行（PDF確認 + 刻印用）</p>
-            <p className="text-xs text-slate-200">Design ID + IndexedDB 保存 + PDF 自動ダウンロード</p>
+            <p className="text-xs text-slate-200">デザインID・IndexedDB保存・PDF自動ダウンロード</p>
           </div>
         </div>
 
@@ -479,7 +491,7 @@ export function SimPage() {
               <h2 className="text-lg font-semibold text-slate-900">プレビュー</h2>
               <p className="text-xs text-slate-500">背景 + 刻印枠 + 透過/モノクロ反映ロゴ</p>
             </div>
-            <span className="text-xs font-semibold text-slate-500">Scale: 1.0x</span>
+            <span className="text-xs font-semibold text-slate-500">倍率: 1.0x</span>
           </div>
           <div className="mt-4 h-[420px]">
             <StagePreview template={sampleTemplate} crop={crop} placement={placement} bitmap={imageBitmap} />
@@ -487,7 +499,7 @@ export function SimPage() {
 
           <div className="mt-4 grid gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
             <div>
-              <p className="text-xs text-slate-500">Design ID</p>
+              <p className="text-xs text-slate-500">デザインID</p>
               <p className="font-semibold text-slate-900">発行後に自動生成</p>
             </div>
             <div>
@@ -521,7 +533,7 @@ export function SimPage() {
               {isIssuing ? "発行中..." : "発行する（PDF生成＋IndexedDB保存）"}
             </button>
             <p className="mt-2 text-left text-xs text-slate-400">
-              発行後は localStorage / IndexedDB に design・PDF が保持され、/admin/designs で再ダウンロードできます。
+              発行後は localStorage / IndexedDB にデザインとPDFが保存され、/admin/designs で再ダウンロードできます。
             </p>
           </div>
         </div>
