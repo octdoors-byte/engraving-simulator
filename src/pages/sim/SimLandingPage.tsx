@@ -36,6 +36,8 @@ export function SimLandingPage() {
   const [sortKey, setSortKey] = useState<"updatedAtDesc" | "updatedAtAsc" | "nameAsc">("updatedAtDesc");
   const [columns, setColumns] = useState(defaultColumns);
   const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
+  const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
+  const [rowPadding, setRowPadding] = useState<"tight" | "normal" | "wide">("wide");
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -47,6 +49,8 @@ export function SimLandingPage() {
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 
+  const visibleColumns = columns.filter((col) => !hiddenColumns.has(col.key));
+
   const moveColumn = (direction: "left" | "right") => {
     const index = columns.findIndex((col) => col.key === selectedColumnKey);
     if (index < 0) return;
@@ -57,6 +61,9 @@ export function SimLandingPage() {
     next.splice(nextIndex, 0, item);
     setColumns(next);
   };
+
+  const rowPaddingClass =
+    rowPadding === "tight" ? "py-2" : rowPadding === "normal" ? "py-4" : "py-5";
 
   return (
     <section className="space-y-6">
@@ -106,6 +113,37 @@ export function SimLandingPage() {
           >
             右へ
           </button>
+          <span className="ml-2">行間</span>
+          <select
+            className="rounded border border-slate-200 px-2 py-1 text-sm"
+            value={rowPadding}
+            onChange={(event) => setRowPadding(event.target.value as typeof rowPadding)}
+          >
+            <option value="tight">狭い</option>
+            <option value="normal">普通</option>
+            <option value="wide">広い</option>
+          </select>
+          <span className="ml-2">表示</span>
+          {columns.map((col) => (
+            <label key={col.key} className="inline-flex items-center gap-1 text-sm">
+              <input
+                type="checkbox"
+                checked={!hiddenColumns.has(col.key)}
+                onChange={(event) => {
+                  setHiddenColumns((prev) => {
+                    const next = new Set(prev);
+                    if (event.target.checked) {
+                      next.delete(col.key);
+                    } else {
+                      next.add(col.key);
+                    }
+                    return next;
+                  });
+                }}
+              />
+              {col.label}
+            </label>
+          ))}
         </div>
         {sortedTemplates.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">テンプレートがありません。</p>
@@ -114,7 +152,7 @@ export function SimLandingPage() {
             <table className="min-w-full divide-y divide-slate-100 text-base">
               <thead className="bg-slate-50 text-sm uppercase tracking-wide text-slate-600">
                 <tr>
-                  {columns.map((col) => (
+                  {visibleColumns.map((col) => (
                     <th key={col.key} className="px-6 py-4 text-left">
                       {col.label}
                     </th>
@@ -126,17 +164,17 @@ export function SimLandingPage() {
                   const simPath = `/sim/${template.templateKey}`;
                   return (
                     <tr key={template.templateKey}>
-                      {columns.map((col) => {
+                      {visibleColumns.map((col) => {
                         if (col.key === "name") {
                           return (
-                            <td key={col.key} className="px-6 py-5 font-medium text-slate-900">
+                            <td key={col.key} className={`px-6 ${rowPaddingClass} font-medium text-slate-900`}>
                               {template.name}
                             </td>
                           );
                         }
                         if (col.key === "templateKey") {
                           return (
-                            <td key={col.key} className="px-6 py-5 text-slate-600">
+                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`}>
                               {template.templateKey}
                             </td>
                           );
@@ -146,7 +184,9 @@ export function SimLandingPage() {
                           return (
                             <td
                               key={col.key}
-                              className={`px-6 py-5 ${isPublished ? "font-semibold text-emerald-600" : "text-slate-600"}`}
+                              className={`px-6 ${rowPaddingClass} ${
+                                isPublished ? "font-semibold text-emerald-600" : "text-slate-600"
+                              }`}
                             >
                               {statusLabels[template.status]}
                             </td>
@@ -154,13 +194,13 @@ export function SimLandingPage() {
                         }
                         if (col.key === "updatedAt") {
                           return (
-                            <td key={col.key} className="px-6 py-5 text-slate-600">
+                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`}>
                               {formatDateTime(template.updatedAt)}
                             </td>
                           );
                         }
                         return (
-                          <td key={col.key} className="px-6 py-5">
+                          <td key={col.key} className={`px-6 ${rowPaddingClass}`}>
                             <a
                               href={simPath}
                               className="text-sm text-slate-500 underline decoration-slate-300 hover:text-slate-700"
