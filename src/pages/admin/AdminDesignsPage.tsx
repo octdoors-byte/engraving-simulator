@@ -24,6 +24,11 @@ export function AdminDesignsPage() {
   const [templateFilter, setTemplateFilter] = useState("");
   const [templateOptions, setTemplateOptions] = useState<TemplateSummary[]>([]);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
+  const [previewInfo, setPreviewInfo] = useState<{ designId: string; kind: "confirm" | "engrave" } | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const reload = useCallback(() => {
     const summaries = listDesigns();
@@ -84,24 +89,28 @@ export function AdminDesignsPage() {
     });
   }, [designs, search, templateFilter]);
 
-  const handleDownload = useCallback(async (design: Design, kind: "confirm" | "engrave") => {
+  const allSelected = useMemo(() => {
+    if (filteredDesigns.length === 0) return false;
+    return filteredDesigns.every((design) => selectedIds.has(design.designId));
+  }, [filteredDesigns, selectedIds]);
+
+  const getPdfBlob = useCallback(async (design: Design, kind: "confirm" | "engrave") => {
     try {
       const assetId = kind === "confirm" ? design.pdf.confirmAssetId : design.pdf.engraveAssetId;
       const asset = await getAssetById(assetId);
       if (asset) {
-        downloadBlob(asset.blob, `${design.designId}-${kind}.pdf`);
-        return;
+        return asset.blob;
       }
       const template = getTemplate(design.templateKey);
       if (!template) {
         setToast({ message: "テンプレートが見つかりません。", tone: "error" });
-        return;
+        return null;
       }
       const bgAsset = await getAssetById(`asset:templateBg:${design.templateKey}`);
       const logoAsset = await getAssetById(`asset:logoEdited:${design.designId}`);
       if (!logoAsset) {
         setToast({ message: "ロゴ画像が見つかりません。", tone: "error" });
-        return;
+        return null;
       }
       const pdfBlob =
         kind === "confirm"
@@ -116,29 +125,68 @@ export function AdminDesignsPage() {
         blob: pdfBlob,
         createdAt: new Date().toISOString()
       });
-      downloadBlob(pdfBlob, `${design.designId}-${kind}.pdf`);
+      return pdfBlob;
     } catch (error) {
       console.error(error);
       setToast({ message: "PDFのダウンロードに失敗しました。", tone: "error" });
+      return null;
     }
   }, []);
 
-  const handleDelete = useCallback(
-    async (design: Design) => {
-      const confirmed = window.confirm("デザイン発行履歴を削除しますか？");
-      if (!confirmed) return;
-      deleteDesign(design.designId);
-      await deleteAssets([
-        `asset:logoOriginal:${design.designId}`,
-        `asset:logoEdited:${design.designId}`,
-        `asset:pdfConfirm:${design.designId}`,
-        `asset:pdfEngrave:${design.designId}`
-      ]);
-      reload();
-      setToast({ message: "デザイン発行履歴を削除しました。", tone: "success" });
+  const handlePreview = useCallback(
+    async (design: Design, kind: "confirm" | "engrave") => {
+      setIsPreviewLoading(true);
+      const blob = await getPdfBlob(design, kind);
+      setIsPreviewLoading(false);
+      if (!blob) return;
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
+      setPreviewBlob(blob);
+      setPreviewInfo({ designId: design.designId, kind });
     },
-    [reload]
+    [getPdfBlob, previewUrl]
   );
+
+  const handleClosePreview = useCallback(() => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl(null);
+    setPreviewBlob(null);
+    setPreviewInfo(null);
+  }, [previewUrl]);
+
+  const handleBulkDelete = useCallback(async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const confirmed = window.confirm("選択したデザイン発行履歴を削除しますか？");
+    if (!confirmed) return;
+    await Promise.all(
+      ids.map(async (designId) => {
+        deleteDesign(designId);
+        await deleteAssets([
+          `asset:logoOriginal:${designId}`,
+          `asset:logoEdited:${designId}`,
+          `asset:pdfConfirm:${designId}`,
+          `asset:pdfEngrave:${designId}`
+        ]);
+      })
+    );
+    setSelectedIds(new Set());
+    reload();
+    setToast({ message: "選択したデザイン発行履歴を削除しました。", tone: "success" });
+  }, [selectedIds, reload]);
+
+  useEffect(() => {
+    setSelectedIds((prev) => {
+      const existing = new Set(designs.map((design) => design.designId));
+      const next = new Set([...prev].filter((id) => existing.has(id)));
+      return next;
+    });
+  }, [designs]);
 
   return (
     <section className="space-y-6">
@@ -167,6 +215,14 @@ export function AdminDesignsPage() {
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            className="rounded-full border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleBulkDelete}
+            disabled={selectedIds.size === 0}
+          >
+            選択したものを削除
+          </button>
         </div>
       </div>
 
@@ -178,12 +234,25 @@ export function AdminDesignsPage() {
           <table className="min-w-full divide-y divide-slate-100 text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
+                <th className="px-6 py-3 text-left">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={(event) => {
+                      if (event.target.checked) {
+                        setSelectedIds(new Set(filteredDesigns.map((design) => design.designId)));
+                      } else {
+                        setSelectedIds(new Set());
+                      }
+                    }}
+                    aria-label="すべて選択"
+                  />
+                </th>
                 <th className="px-6 py-3 text-left">プレビュー</th>
                 <th className="px-6 py-3 text-left">デザインID</th>
                 <th className="px-6 py-3 text-left">テンプレキー</th>
                 <th className="px-6 py-3 text-left">発行日</th>
                 <th className="px-6 py-3 text-left">PDF</th>
-                <th className="px-6 py-3 text-left">操作</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -196,6 +265,24 @@ export function AdminDesignsPage() {
               ) : (
                 filteredDesigns.map((design) => (
                   <tr key={design.designId}>
+                    <td className="px-6 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(design.designId)}
+                        onChange={(event) => {
+                          setSelectedIds((prev) => {
+                            const next = new Set(prev);
+                            if (event.target.checked) {
+                              next.add(design.designId);
+                            } else {
+                              next.delete(design.designId);
+                            }
+                            return next;
+                          });
+                        }}
+                        aria-label={`${design.designId} を選択`}
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-50">
                         {previewUrls[design.designId] ? (
@@ -218,25 +305,16 @@ export function AdminDesignsPage() {
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                        onClick={() => handleDownload(design, "confirm")}
+                        onClick={() => handlePreview(design, "confirm")}
                       >
-                        確認用
+                        確認用プレビュー
                       </button>
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                        onClick={() => handleDownload(design, "engrave")}
+                        onClick={() => handlePreview(design, "engrave")}
                       >
-                        刻印用
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        type="button"
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                        onClick={() => handleDelete(design)}
-                      >
-                        削除
+                        刻印用プレビュー
                       </button>
                     </td>
                   </tr>
@@ -246,6 +324,45 @@ export function AdminDesignsPage() {
           </table>
         </div>
       </div>
+      {previewUrl && previewInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
+              <span>
+                {previewInfo.designId} / {previewInfo.kind === "confirm" ? "確認用" : "刻印用"}
+              </span>
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                onClick={handleClosePreview}
+              >
+                閉じる
+              </button>
+            </div>
+            <div className="h-[70vh] bg-slate-50">
+              <object data={previewUrl} type="application/pdf" className="h-full w-full">
+                <p className="p-4 text-sm text-slate-500">PDFを表示できません。</p>
+              </object>
+            </div>
+            <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs">
+              <span className="text-slate-500">
+                {isPreviewLoading ? "プレビューを読み込み中..." : "プレビューを確認してからダウンロードできます。"}
+              </span>
+              <button
+                type="button"
+                className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 font-semibold text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!previewBlob}
+                onClick={() => {
+                  if (!previewBlob || !previewInfo) return;
+                  downloadBlob(previewBlob, `${previewInfo.designId}-${previewInfo.kind}.pdf`);
+                }}
+              >
+                ダウンロード
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
