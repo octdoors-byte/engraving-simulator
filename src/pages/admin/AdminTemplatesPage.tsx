@@ -14,7 +14,7 @@ import {
   loadTemplateBgFallback,
   saveTemplateBgFallback
 } from "@/storage/local";
-import { getAssetById, saveAsset, deleteAsset } from "@/storage/idb";
+import { getAssetById, listAssets, saveAsset, deleteAsset } from "@/storage/idb";
 
 const columns = [
   { label: "プレビュー", key: "preview" },
@@ -25,6 +25,36 @@ const columns = [
 ] as const;
 
 type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
+
+type BackupPayload = {
+  version: string;
+  exportedAt: string;
+  localStorage: Record<string, string>;
+  assets: Array<{ id: string; type: string; createdAt: string; dataUrl: string }>;
+};
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") resolve(reader.result);
+      else reject(new Error("Invalid data URL"));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read blob"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [header, data] = dataUrl.split(",");
+  const mime = header.match(/data:(.*?);base64/)?.[1] ?? "application/octet-stream";
+  const binary = atob(data);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mime });
+}
 
 async function adjustTemplateToImage(template: Template, imageFile: File): Promise<{
   template: Template;
@@ -92,6 +122,7 @@ export function AdminTemplatesPage() {
   const [editingName, setEditingName] = useState("");
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
+  const restoreInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
 
   const reloadTemplates = useCallback(() => {
@@ -343,6 +374,83 @@ export function AdminTemplatesPage() {
     request.onerror = () => window.location.reload();
   }, []);
 
+  const handleBackupExport = useCallback(async () => {
+    try {
+      const localData: Record<string, string> = {};
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith("ksim:"))
+        .forEach((key) => {
+          const value = localStorage.getItem(key);
+          if (value !== null) localData[key] = value;
+        });
+      const assets = await listAssets();
+      const assetData = await Promise.all(
+        assets.map(async (asset) => ({
+          id: asset.id,
+          type: asset.type,
+          createdAt: asset.createdAt,
+          dataUrl: await blobToDataUrl(asset.blob)
+        }))
+      );
+      const payload: BackupPayload = {
+        version: "1.1",
+        exportedAt: new Date().toISOString(),
+        localStorage: localData,
+        assets: assetData
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `ksim-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setToast({ message: "バックアップを保存しました。", tone: "success" });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "バックアップの保存に失敗しました。", tone: "error" });
+    }
+  }, []);
+
+  const handleBackupRestore = useCallback(async (file: File | null) => {
+    if (!file) return;
+    const confirmed = window.confirm("現在のデータは上書きされます。復元しますか？");
+    if (!confirmed) return;
+    try {
+      const raw = JSON.parse(await file.text()) as BackupPayload;
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith("ksim:"))
+        .forEach((key) => localStorage.removeItem(key));
+      const request = indexedDB.deleteDatabase("ksim_db");
+      await new Promise((resolve) => {
+        request.onsuccess = () => resolve(null);
+        request.onerror = () => resolve(null);
+        request.onblocked = () => resolve(null);
+      });
+      Object.entries(raw.localStorage ?? {}).forEach(([key, value]) => {
+        localStorage.setItem(key, value);
+      });
+      if (Array.isArray(raw.assets)) {
+        for (const asset of raw.assets) {
+          const blob = dataUrlToBlob(asset.dataUrl);
+          await saveAsset({
+            id: asset.id,
+            type: asset.type as never,
+            blob,
+            createdAt: asset.createdAt
+          });
+        }
+      }
+      setToast({ message: "バックアップを復元しました。再読み込みします。", tone: "success" });
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "バックアップの復元に失敗しました。", tone: "error" });
+    }
+  }, []);
+
   return (
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
@@ -573,6 +681,33 @@ export function AdminTemplatesPage() {
       <details className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <summary className="cursor-pointer text-sm font-semibold text-slate-700">＋ 共通ヘッダー / フッター設定</summary>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="space-y-2 md:col-span-2">
+            <p className="text-xs font-semibold text-slate-600">バックアップ</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
+                onClick={handleBackupExport}
+              >
+                バックアップを保存
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
+                onClick={() => restoreInputRef.current?.click()}
+              >
+                バックアップを読み込み
+              </button>
+              <input
+                ref={restoreInputRef}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={(event) => handleBackupRestore(event.target.files?.[0] ?? null)}
+              />
+            </div>
+            <p className="text-xs text-slate-500">※ 読み込みは現在のデータを上書きします。</p>
+          </div>
           <div>
             <label className="text-xs font-semibold text-slate-600">ロゴ画像</label>
             <input

@@ -100,3 +100,13 @@ export async function listAssetsByType(type: AssetType): Promise<AssetRecord[]> 
     request.onerror = () => reject(request.error);
   });
 }
+
+export async function listAssets(): Promise<AssetRecord[]> {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const request = tx.objectStore(STORE_NAME).getAll();
+    request.onsuccess = () => resolve(request.result ?? []);
+    request.onerror = () => reject(request.error);
+  });
+}
