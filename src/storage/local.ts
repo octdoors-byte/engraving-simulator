@@ -1,4 +1,4 @@
-import type { CommonSettings, Design, DesignSummary, Template, TemplateSummary } from "../domain/types";
+﻿import type { CommonSettings, Design, DesignSummary, Template, TemplateSummary } from "../domain/types";
 
 const STORAGE_PREFIX = "ksim:";
 const APP_VERSION = "1.1.0";
@@ -111,15 +111,8 @@ export function loadTemplateBgFallback(templateKey: string): string | null {
 }
 
 const GARBLED_TEXT_MAP: Record<string, string> = {
-  "è¨¼æ›¸ã‚«ãƒãE A4 å³ä¸‹åˆ»å°": "証書カバー A4 右下刻印",
-  "è¨¼æ›¸ã‚«ãƒãE A4 å·¦ä¸‹åˆ»å°": "証書カバー A4 左下刻印",
-  "å³ä¸‹åˆ»å°æž ": "右下刻印枠",
-  "å·¦ä¸‹åˆ»å°æž ": "左下刻印枠",
   "險ｼ譖ｸ繧ｫ繝舌・ A4 蜿ｳ荳句綾蜊ｰ": "証書カバー A4 右下刻印",
-  "險ｼ譖ｸ繧ｫ繝舌・ A4 蟾ｦ荳句綾蜊ｰ": "証書カバー A4 左下刻印",
-  "繝ｭ繝ｼ繧ｫ繝ｫ縺ｧ螳檎ｵ舌☆繧区怙蟆乗ｧ区・": "",
-  "繝悶Λ繧ｦ繧ｶ縺ｮ localStorage / IndexedDB 繧呈ｴｻ逕ｨ": "",
-  "�f�U�C���V�~�����[�^�[": "デザインシミュレーター"
+  "險ｼ譖ｸ繧ｫ繝舌・ A4 蟾ｦ荳句綾蜊ｰ": "証書カバー A4 左下刻印"
 };
 
 function fixGarbledText(value: string): string {
@@ -129,6 +122,8 @@ function fixGarbledText(value: string): string {
       next = next.replaceAll(from, to);
     }
   });
+  next = next.replaceAll("証書カバ\uFFFD", "証書カバー");
+  next = next.replaceAll("デザインシミュレータ\uFFFD", "デザインシミュレーター");
   return next;
 }
 
@@ -167,3 +162,7 @@ export function migrateLegacyText(): void {
     }
   }
 }
+
+
+
+
