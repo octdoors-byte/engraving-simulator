@@ -1,4 +1,5 @@
-﻿import type { TemplateStatus } from "@/domain/types";
+﻿import { useState } from "react";
+import type { TemplateStatus } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
 const statusLabels: Record<TemplateStatus, string> = {
@@ -88,5 +89,7 @@ export function SimLandingPage() {
     </section>
   );
 }
+
+
 
 
