@@ -1,5 +1,9 @@
-# AGENTS Instructions
+# AGENT ルール
 
-## Core Rules
-- Always ask for confirmation before deleting any files or folders.
-- Commit after every change.
+## 削除・破壊的操作
+- ファイル削除や破壊的操作は、必ず事前にユーザーへ確認すること。
+- 既存ファイルの削除、内容の大幅消去、リセット系の操作は実行前に確認すること。
+
+## コミット方針
+- 変更があったら常にコミットすること。
+- コミットメッセージは日本語で簡潔にすること。
