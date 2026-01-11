@@ -27,21 +27,36 @@ export function SimLandingPage() {
         {templates.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">テンプレートがありません。</p>
         ) : (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {templates.map((template) => (
-              <div key={template.templateKey} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-xs uppercase text-slate-500">テンプレート</p>
-                <p className="mt-1 text-lg font-medium text-slate-900">{template.name}</p>
-                <p className="text-sm text-slate-500">キー: {template.templateKey}</p>
-                <p className="text-sm text-slate-500">状態: {statusLabels[template.status]}</p>
-                <Link
-                  to={`/sim/${template.templateKey}`}
-                  className="mt-3 inline-flex rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+          <div className="mt-4 space-y-3">
+            {templates.map((template) => {
+              const simPath = `/sim/${template.templateKey}`;
+              return (
+                <div
+                  key={template.templateKey}
+                  className="flex flex-col gap-2 rounded-xl border border-slate-100 bg-slate-50 p-4"
                 >
-                  シミュレーターを開く
-                </Link>
-              </div>
-            ))}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-lg font-medium text-slate-900">{template.name}</p>
+                      <p className="text-sm text-slate-500">キー: {template.templateKey}</p>
+                      <p className="text-sm text-slate-500">状態: {statusLabels[template.status]}</p>
+                    </div>
+                    <Link
+                      to={simPath}
+                      className="inline-flex rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                    >
+                      シミュレーターを開く
+                    </Link>
+                  </div>
+                  <a
+                    href={simPath}
+                    className="text-xs text-slate-500 underline decoration-slate-300 hover:text-slate-700"
+                  >
+                    {simPath}
+                  </a>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
