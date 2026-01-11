@@ -80,6 +80,13 @@ export function SimLandingPage() {
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">{landingTitle}</h1>
+        <div className="mt-4 space-y-2 text-sm text-slate-600">
+          <p className="font-semibold text-slate-700">使い方</p>
+          <p>ステップ1：テンプレート一覧から使いたいテンプレートを選ぶ</p>
+          <p>ステップ2：公開URLをクリックしてシミュレーターを開く</p>
+          <p>ステップ3：ロゴをアップロードして、配置を確認する</p>
+          <p>ステップ4：問題がなければPDFを発行する</p>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
