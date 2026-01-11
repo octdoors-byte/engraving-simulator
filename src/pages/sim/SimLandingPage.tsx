@@ -38,6 +38,7 @@ export function SimLandingPage() {
   const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
   const [rowPadding, setRowPadding] = useState<"tight" | "normal" | "wide">("wide");
+  const [rowPaddingPx, setRowPaddingPx] = useState(12);
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -64,6 +65,7 @@ export function SimLandingPage() {
 
   const rowPaddingClass =
     rowPadding === "tight" ? "py-2" : rowPadding === "normal" ? "py-4" : "py-5";
+  const rowPaddingStyle = rowPadding === "tight" ? { paddingTop: rowPaddingPx, paddingBottom: rowPaddingPx } : undefined;
 
   return (
     <section className="space-y-6">
@@ -123,6 +125,19 @@ export function SimLandingPage() {
             <option value="normal">普通</option>
             <option value="wide">広い</option>
           </select>
+          {rowPadding === "tight" && (
+            <label className="inline-flex items-center gap-2 text-sm">
+              <span>細かく</span>
+              <input
+                type="range"
+                min={6}
+                max={20}
+                value={rowPaddingPx}
+                onChange={(event) => setRowPaddingPx(Number(event.target.value))}
+              />
+              <span>{rowPaddingPx}px</span>
+            </label>
+          )}
           <span className="ml-2">表示</span>
           {columns.map((col) => (
             <label key={col.key} className="inline-flex items-center gap-1 text-sm">
@@ -167,14 +182,18 @@ export function SimLandingPage() {
                       {visibleColumns.map((col) => {
                         if (col.key === "name") {
                           return (
-                            <td key={col.key} className={`px-6 ${rowPaddingClass} font-medium text-slate-900`}>
+                            <td
+                              key={col.key}
+                              className={`px-6 ${rowPaddingClass} font-medium text-slate-900`}
+                              style={rowPaddingStyle}
+                            >
                               {template.name}
                             </td>
                           );
                         }
                         if (col.key === "templateKey") {
                           return (
-                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`}>
+                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`} style={rowPaddingStyle}>
                               {template.templateKey}
                             </td>
                           );
@@ -187,6 +206,7 @@ export function SimLandingPage() {
                               className={`px-6 ${rowPaddingClass} ${
                                 isPublished ? "font-semibold text-emerald-600" : "text-slate-600"
                               }`}
+                              style={rowPaddingStyle}
                             >
                               {statusLabels[template.status]}
                             </td>
@@ -194,13 +214,13 @@ export function SimLandingPage() {
                         }
                         if (col.key === "updatedAt") {
                           return (
-                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`}>
+                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`} style={rowPaddingStyle}>
                               {formatDateTime(template.updatedAt)}
                             </td>
                           );
                         }
                         return (
-                          <td key={col.key} className={`px-6 ${rowPaddingClass}`}>
+                          <td key={col.key} className={`px-6 ${rowPaddingClass}`} style={rowPaddingStyle}>
                             <a
                               href={simPath}
                               className="text-sm text-slate-500 underline decoration-slate-300 hover:text-slate-700"
