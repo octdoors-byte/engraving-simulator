@@ -47,7 +47,7 @@ export function AppLayout() {
             )}
             <div>
               <Link to="/top" className="text-2xl font-semibold text-slate-900">
-                名入れ刻印シミュレーター
+                デザインシミュレーター
               </Link>
               <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
                 {settings?.headerText ?? ""}
