@@ -6,7 +6,7 @@ import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 const navItems = [
   { to: "/top", label: "トップ" },
   { to: "/admin/templates", label: "テンプレート管理" },
-  { to: "/admin/designs", label: "刻印履歴" }
+  { to: "/admin/designs", label: "デザイン発行履歴" }
 ];
 
 function sizeClass(size?: "sm" | "md" | "lg") {

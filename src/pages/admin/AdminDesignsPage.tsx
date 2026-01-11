@@ -92,7 +92,7 @@ export function AdminDesignsPage() {
   }, []);
 
   const handleDelete = useCallback(async (design: Design) => {
-    const confirmed = window.confirm("デザイン履歴を削除しますか？");
+    const confirmed = window.confirm("デザイン発行履歴を削除しますか？");
     if (!confirmed) return;
     deleteDesign(design.designId);
     await deleteAssets([
@@ -102,7 +102,7 @@ export function AdminDesignsPage() {
       `asset:pdfEngrave:${design.designId}`
     ]);
     reload();
-    setToast({ message: "デザイン履歴を削除しました。", tone: "success" });
+    setToast({ message: "デザイン発行履歴を削除しました。", tone: "success" });
   }, [reload]);
 
   return (
@@ -110,7 +110,7 @@ export function AdminDesignsPage() {
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">刻印履歴</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">デザイン発行履歴</h1>
         <p className="text-sm text-slate-500">
           発行済みのデザイン一覧です。概要は localStorage、PDF/画像は IndexedDB に保存されます。
         </p>
@@ -156,7 +156,7 @@ export function AdminDesignsPage() {
               {filteredDesigns.length === 0 ? (
                 <tr>
                   <td className="px-6 py-6 text-sm text-slate-500" colSpan={5}>
-                    デザイン履歴がありません。
+                    デザイン発行履歴がありません。
                   </td>
                 </tr>
               ) : (
