@@ -38,15 +38,20 @@ export async function generateEngravePdf(
     color: rgb(1, 1, 1)
   });
 
-  const viewScaleX = width / template.background.canvasWidthPx;
-  const viewScaleY = height / template.background.canvasHeightPx;
+  const canvasWidth = template.background.canvasWidthPx;
+  const canvasHeight = template.background.canvasHeightPx;
+  const scale = Math.min(width / canvasWidth, height / canvasHeight);
+  const drawWidth = canvasWidth * scale;
+  const drawHeight = canvasHeight * scale;
+  const offsetX = (width - drawWidth) / 2;
+  const offsetY = (height - drawHeight) / 2;
 
   const engravingArea = template.engravingArea;
   page.drawRectangle({
-    x: engravingArea.x * viewScaleX,
-    y: height - (engravingArea.y + engravingArea.h) * viewScaleY,
-    width: engravingArea.w * viewScaleX,
-    height: engravingArea.h * viewScaleY,
+    x: offsetX + engravingArea.x * scale,
+    y: offsetY + (canvasHeight - (engravingArea.y + engravingArea.h)) * scale,
+    width: engravingArea.w * scale,
+    height: engravingArea.h * scale,
     borderColor: rgb(0.7, 0.7, 0.7),
     borderWidth: 1
   });
@@ -55,10 +60,10 @@ export async function generateEngravePdf(
     const logoImage = await embedImage(pdfDoc, logoBlob);
     if (logoImage) {
       page.drawImage(logoImage, {
-        x: placement.x * viewScaleX,
-        y: height - (placement.y + placement.h) * viewScaleY,
-        width: placement.w * viewScaleX,
-        height: placement.h * viewScaleY
+        x: offsetX + placement.x * scale,
+        y: offsetY + (canvasHeight - (placement.y + placement.h)) * scale,
+        width: placement.w * scale,
+        height: placement.h * scale
       });
     }
   }

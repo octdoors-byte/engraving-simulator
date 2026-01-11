@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Toast } from "@/components/common/Toast";
 import type { CommonSettings, Template, TemplateStatus, TemplateSummary } from "@/domain/types";
@@ -22,9 +22,68 @@ const columns = [
   { label: "更新日", key: "updatedAt" }
 ] as const;
 
+type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
+
+async function adjustTemplateToImage(template: Template, imageFile: File): Promise<{
+  template: Template;
+  adjusted: boolean;
+}> {
+  try {
+    const bitmap = await createImageBitmap(imageFile);
+    const imageWidth = bitmap.width;
+    const imageHeight = bitmap.height;
+    if ("close" in bitmap) {
+      bitmap.close();
+    }
+    if (!imageWidth || !imageHeight) {
+      return { template, adjusted: false };
+    }
+    const canvasWidth = template.background.canvasWidthPx;
+    const canvasHeight = template.background.canvasHeightPx;
+    if (canvasWidth === imageWidth && canvasHeight === imageHeight) {
+      return { template, adjusted: false };
+    }
+    const scaleX = imageWidth / canvasWidth;
+    const scaleY = imageHeight / canvasHeight;
+    let x = Math.round(template.engravingArea.x * scaleX);
+    let y = Math.round(template.engravingArea.y * scaleY);
+    let w = Math.max(1, Math.round(template.engravingArea.w * scaleX));
+    let h = Math.max(1, Math.round(template.engravingArea.h * scaleY));
+    x = Math.max(0, Math.min(x, imageWidth - 1));
+    y = Math.max(0, Math.min(y, imageHeight - 1));
+    if (x + w > imageWidth) {
+      w = Math.max(1, imageWidth - x);
+    }
+    if (y + h > imageHeight) {
+      h = Math.max(1, imageHeight - y);
+    }
+    return {
+      template: {
+        ...template,
+        background: {
+          ...template.background,
+          canvasWidthPx: imageWidth,
+          canvasHeightPx: imageHeight
+        },
+        engravingArea: {
+          ...template.engravingArea,
+          x,
+          y,
+          w,
+          h
+        }
+      },
+      adjusted: true
+    };
+  } catch (error) {
+    console.error(error);
+    return { template, adjusted: false };
+  }
+}
+
 export function AdminTemplatesPage() {
   const [templates, setTemplates] = useState<TemplateSummary[]>([]);
-  const [toast, setToast] = useState<{ message: string; tone?: "info" | "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
   const [editingKey, setEditingKey] = useState<string | null>(null);
@@ -107,6 +166,14 @@ export function AdminTemplatesPage() {
         if (template.background.fileName !== imageFile.name) {
           setToast({ message: "背景画像のファイル名が template.json と一致しません。", tone: "error" });
           return;
+        }
+        const adjusted = await adjustTemplateToImage(template, imageFile);
+        if (adjusted.adjusted) {
+          template = adjusted.template;
+          setToast({
+            message: "背景画像サイズに合わせてテンプレートを自動補正しました。",
+            tone: "info"
+          });
         }
         if (listTemplates().some((entry) => entry.templateKey === template.templateKey)) {
           setToast({ message: "同じキーが既に登録されています。", tone: "error" });
@@ -204,20 +271,6 @@ export function AdminTemplatesPage() {
     [reloadTemplates]
   );
 
-  const handleResetStorage = useCallback(() => {
-    const confirmed = window.confirm("保存データを初期化します。よろしいですか？");
-    if (!confirmed) return;
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith("ksim:"))
-      .forEach((key) => localStorage.removeItem(key));
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith("ksim:templateBgFallback:"))
-      .forEach((key) => localStorage.removeItem(key));
-    const request = indexedDB.deleteDatabase("ksim_db");
-    request.onsuccess = () => window.location.reload();
-    request.onerror = () => window.location.reload();
-  }, []);
-
   const handleLogoChange = useCallback(async (file: File | null) => {
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
@@ -233,17 +286,28 @@ export function AdminTemplatesPage() {
     reader.readAsDataURL(file);
   }, []);
 
+  const handleResetStorage = useCallback(() => {
+    const confirmed = window.confirm("保存データを初期化します。よろしいですか？");
+    if (!confirmed) return;
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("ksim:"))
+      .forEach((key) => localStorage.removeItem(key));
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("ksim:templateBgFallback:"))
+      .forEach((key) => localStorage.removeItem(key));
+    const request = indexedDB.deleteDatabase("ksim_db");
+    request.onsuccess = () => window.location.reload();
+    request.onerror = () => window.location.reload();
+  }, []);
+
   return (
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-slate-900">テンプレート管理</h1>
-        <p className="text-sm text-slate-500">
-            template.json と背景画像を同時に登録します。背景画像のファイル名は template.background.fileName と一致が必要です。
-        </p>
-      </div>
+          <h1 className="text-2xl font-semibold text-slate-900">テンプレート管理</h1>
+        </div>
 
         <div
           className={`mt-6 flex flex-col gap-3 rounded-2xl border-2 border-dashed p-4 text-sm ${
@@ -269,9 +333,9 @@ export function AdminTemplatesPage() {
             handleTemplateFiles(event.dataTransfer.files);
           }}
         >
-          <p>template.json と背景画像を同時に置いてください。</p>
-          <p>背景画像の fileName は JSON と一致が必要です。</p>
-          <p>JSON は localStorage、画像は IndexedDB に保存されます。</p>
+          <p>✅ 「template.json」と背景画像をいっしょに置く</p>
+          <p>✅ 画像の名前は JSON に書いた名前と同じ</p>
+          <p>✅ JSON と画像はブラウザに保存される</p>
           <input
             ref={inputRef}
             type="file"
@@ -294,6 +358,11 @@ export function AdminTemplatesPage() {
             >
               新規登録（ドラッグ&ドロップ）
             </button>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            <p>✅ 表示名はダブルクリックで変更</p>
+            <p>✅ テスト/スマホ/PCで表示確認</p>
+            <p>✅ 状態は下書き/テスト済み/公開中で切り替え</p>
           </div>
           <div className="mt-3">
             <button
@@ -444,9 +513,7 @@ export function AdminTemplatesPage() {
       </div>
 
       <details className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-700">
-          ＋ 共通ヘッダー / フッター設定
-        </summary>
+        <summary className="cursor-pointer text-sm font-semibold text-slate-700">＋ 共通ヘッダー / フッター設定</summary>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <label className="text-xs font-semibold text-slate-600">ロゴ画像</label>
@@ -576,3 +643,5 @@ export function AdminTemplatesPage() {
     </section>
   );
 }
+
+

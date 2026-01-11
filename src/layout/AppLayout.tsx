@@ -4,7 +4,7 @@ import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 
 const navItems = [
-  { to: "/", label: "シミュレーター" },
+  { to: "/top", label: "トップ" },
   { to: "/admin/templates", label: "テンプレート管理" },
   { to: "/admin/designs", label: "刻印履歴" }
 ];
@@ -47,7 +47,7 @@ export function AppLayout() {
               <img src={settings.logoImage} alt="共通ロゴ" className={`${logoHeight} w-auto`} />
             )}
             <div>
-              <Link to="/" className="text-2xl font-semibold text-slate-900">
+              <Link to="/top" className="text-2xl font-semibold text-slate-900">
                 名入れ刻印シミュレーター
               </Link>
               <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
@@ -60,7 +60,7 @@ export function AppLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === "/"}
+                end={item.to === "/top"}
                 className={({ isActive }) =>
                   [
                     "rounded-full px-3 py-1 transition",
@@ -79,10 +79,9 @@ export function AppLayout() {
       </main>
       <footer className="border-t bg-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-4 text-xs text-slate-500">
-          <p>仕様書 v1.1 に準拠</p>
-          <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)}`}>
-            {settings?.footerText ?? "ブラウザの localStorage / IndexedDB を活用"}
-          </p>
+          {settings?.footerText && (
+            <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)}`}>{settings.footerText}</p>
+          )}
         </div>
       </footer>
     </div>

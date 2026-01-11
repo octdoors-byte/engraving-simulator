@@ -48,7 +48,7 @@ export interface DesignLogoSettings {
   mimeType: string;
   sizeBytes: number;
   crop: { x: number; y: number; w: number; h: number };
-  transparentLevel: "weak" | "medium" | "strong";
+  transparentColor: { r: number; g: number; b: number } | null;
   monochrome: boolean;
 }
 

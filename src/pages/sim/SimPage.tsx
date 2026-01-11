@@ -1,4 +1,5 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
+import type { MouseEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Dropzone } from "@/components/sim/Dropzone";
 import { CropModal } from "@/components/sim/CropModal";
@@ -26,6 +27,15 @@ type SimPhase =
 type LogoBaseSize = { width: number; height: number };
 
 type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
+
+function isPlacementInside(placement: DesignPlacement, area: Template["engravingArea"]) {
+  return (
+    placement.x >= area.x &&
+    placement.y >= area.y &&
+    placement.x + placement.w <= area.x + area.w &&
+    placement.y + placement.h <= area.y + area.h
+  );
+}
 
 function downloadBlob(blob: Blob, fileName: string) {
   const id = URL.createObjectURL(blob);
@@ -63,7 +73,7 @@ export function SimPage() {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const [backgroundBlob, setBackgroundBlob] = useState<Blob | null>(null);
   const [crop, setCrop] = useState<DesignLogoSettings["crop"]>({ x: 0, y: 0, w: 1, h: 1 });
-  const [transparentLevel, setTransparentLevel] = useState<DesignLogoSettings["transparentLevel"]>("medium");
+  const [transparentColor, setTransparentColor] = useState<DesignLogoSettings["transparentColor"]>(null);
   const [processedLogoBlob, setProcessedLogoBlob] = useState<Blob | null>(null);
   const [processedLogoUrl, setProcessedLogoUrl] = useState<string | null>(null);
   const [logoBaseSize, setLogoBaseSize] = useState<LogoBaseSize | null>(null);
@@ -72,6 +82,7 @@ export function SimPage() {
   const [issuedDesignId, setIssuedDesignId] = useState<string | null>(null);
   const [cropOpen, setCropOpen] = useState(false);
   const placementInitialized = useRef(false);
+  const colorCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (!templateKey) {
@@ -83,10 +94,7 @@ export function SimPage() {
       setErrorMessage("テンプレートが見つかりません。");
       return;
     }
-    if (![
-      "tested",
-      "published"
-    ].includes(loaded.status)) {
+    if (!["tested", "published"].includes(loaded.status)) {
       setErrorMessage("このテンプレートは現在ご利用いただけません（未公開）。");
       return;
     }
@@ -167,7 +175,7 @@ export function SimPage() {
       try {
         const blob = await processLogo(imageBitmap, {
           crop,
-          transparentLevel,
+          transparentColor,
           monochrome: logoSettings.monochrome,
           maxOutputWidth: 1024,
           maxOutputHeight: 1024
@@ -185,7 +193,18 @@ export function SimPage() {
     return () => {
       cancelled = true;
     };
-  }, [imageBitmap, crop, template, transparentLevel]);
+  }, [imageBitmap, crop, template, transparentColor]);
+
+  useEffect(() => {
+    if (!imageBitmap || !colorCanvasRef.current) return;
+    const canvas = colorCanvasRef.current;
+    canvas.width = imageBitmap.width;
+    canvas.height = imageBitmap.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imageBitmap, 0, 0);
+  }, [imageBitmap]);
 
   useEffect(() => {
     if (!processedLogoBlob || !template) return;
@@ -214,9 +233,13 @@ export function SimPage() {
 
   useEffect(() => {
     if (processedLogoBlob && placement && !isIssuing && phase !== "ISSUED") {
-      setPhase("READY_TO_ISSUE");
+      if (template && isPlacementInside(placement, template.engravingArea)) {
+        setPhase("READY_TO_ISSUE");
+      } else {
+        setPhase("PLACEMENT");
+      }
     }
-  }, [processedLogoBlob, placement, isIssuing, phase]);
+  }, [processedLogoBlob, placement, isIssuing, phase, template]);
 
   const handleReject = useCallback((message: string) => {
     setToast({ message, tone: "error" });
@@ -230,11 +253,11 @@ export function SimPage() {
       setImageBitmap(bitmap);
       setUploadedFile(file);
       setCrop({ x: 0, y: 0, w: 1, h: 1 });
+      setTransparentColor(null);
       setPlacement(null);
       placementInitialized.current = false;
       setImageUrl(URL.createObjectURL(file));
       setPhase("EDITING");
-      setCropOpen(true);
     } catch (error) {
       console.error(error);
       setToast({ message: "画像の読み込みに失敗しました。", tone: "error" });
@@ -248,7 +271,7 @@ export function SimPage() {
       const clamped = clampPlacement(next, template.engravingArea);
       setPlacement(clamped);
       if (!isIssuing) {
-        setPhase("READY_TO_ISSUE");
+        setPhase(isPlacementInside(clamped, template.engravingArea) ? "READY_TO_ISSUE" : "PLACEMENT");
       }
     },
     [template, isIssuing]
@@ -257,6 +280,11 @@ export function SimPage() {
   const handleIssue = useCallback(async () => {
     if (!template || !imageBitmap || !uploadedFile || !processedLogoBlob || !placement) {
       setToast({ message: "先に画像をアップロードしてください。", tone: "error" });
+      return;
+    }
+    if (!isPlacementInside(placement, template.engravingArea)) {
+      setToast({ message: "ロゴを刻印枠内に収めてください。", tone: "error" });
+      setPhase("PLACEMENT");
       return;
     }
     setIsIssuing(true);
@@ -295,7 +323,7 @@ export function SimPage() {
           mimeType: uploadedFile.type,
           sizeBytes: uploadedFile.size,
           crop,
-          transparentLevel,
+          transparentColor,
           monochrome: logoSettings.monochrome
         },
         placement,
@@ -330,18 +358,24 @@ export function SimPage() {
     processedLogoBlob,
     placement,
     crop,
-    transparentLevel,
+    transparentColor,
     backgroundBlob
   ]);
 
-  const cropInputs = useMemo(
-    () => [
-      { label: "横の位置", key: "x" as const, min: 0, max: 0.9 },
-      { label: "縦の位置", key: "y" as const, min: 0, max: 0.9 },
-      { label: "横の大きさ", key: "w" as const, min: 0.2, max: 1 },
-      { label: "縦の大きさ", key: "h" as const, min: 0.2, max: 1 }
-    ],
-    []
+  const handlePickTransparent = useCallback(
+    (event: MouseEvent<HTMLImageElement>) => {
+      if (!imageBitmap || !colorCanvasRef.current) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const relX = (event.clientX - rect.left) / rect.width;
+      const relY = (event.clientY - rect.top) / rect.height;
+      const px = Math.min(imageBitmap.width - 1, Math.max(0, Math.floor(relX * imageBitmap.width)));
+      const py = Math.min(imageBitmap.height - 1, Math.max(0, Math.floor(relY * imageBitmap.height)));
+      const ctx = colorCanvasRef.current.getContext("2d");
+      if (!ctx) return;
+      const [r, g, b] = ctx.getImageData(px, py, 1, 1).data;
+      setTransparentColor({ r, g, b });
+    },
+    [imageBitmap]
   );
 
   if (errorMessage) {
@@ -368,99 +402,93 @@ export function SimPage() {
           <p className="text-xs text-slate-400">管理ID: {template.templateKey}</p>
         </div>
         <h1 className="mt-2 text-2xl font-semibold text-slate-900">デザインシミュレーター</h1>
-        <p className="text-sm text-slate-500">
-          ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。
-        </p>
+        <p className="text-sm text-slate-500">ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。</p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
         <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div>
-            <p className="text-sm font-semibold text-slate-600">操作の3ステップ</p>
-            <ol className="mt-2 space-y-1 text-sm text-slate-600">
-              <li>1. ロゴをアップロード</li>
-              <li>2. トリミングと加工</li>
-              <li>3. 配置してデザインIDを発行</li>
-            </ol>
-          </div>
-
-          <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
-
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">トリミング調整</p>
-            <div
-              className={`space-y-4 text-sm text-slate-500 ${!imageBitmap ? "opacity-50" : ""}`}
-              aria-disabled={!imageBitmap}
-            >
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-white px-4 py-4 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white">
+                  ステップ1
+                </span>
+                <p className="text-sm font-semibold text-rose-700">ロゴをアップロード</p>
+              </div>
+              <div className="mt-3">
+                <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
+              </div>
+            </div>
+            <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-white px-4 py-4 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-sky-500 px-3 py-1 text-xs font-semibold text-white">
+                  ステップ2
+                </span>
+                <p className="text-sm font-semibold text-sky-700">トリミングと透過</p>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">ロゴをアップロードすると操作できます。</p>
               <button
                 type="button"
-                className="w-full rounded-full border border-slate-200 px-4 py-2 text-xs text-slate-600"
+                className="mt-3 w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm"
                 disabled={!imageBitmap}
                 onClick={() => setCropOpen(true)}
               >
                 トリミングを開く
               </button>
-              {cropInputs.map((field) => (
-                <div key={field.key} className="space-y-1">
-                  <div className="flex items-center justify-between font-medium text-slate-600">
-                    <span>{field.label}</span>
-                    <span>{crop[field.key].toFixed(2)}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={field.min}
-                    max={field.max}
-                    step={0.01}
-                    value={crop[field.key]}
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs text-slate-500">ロゴの色をクリックして透過します。</p>
+                  <button
+                    type="button"
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                    onClick={() => setTransparentColor(null)}
                     disabled={!imageBitmap}
-                    onChange={(event) => {
-                      const value = Number(event.target.value);
-                      setCrop((prev) => {
-                        const next = { ...prev, [field.key]: value };
-                        if (field.key === "w" && next.x + value > 1) {
-                          next.x = Math.max(0, 1 - value);
-                        }
-                        if (field.key === "h" && next.y + value > 1) {
-                          next.y = Math.max(0, 1 - value);
-                        }
-                        if (field.key === "x") {
-                          next.x = Math.min(value, 1 - next.w);
-                        }
-                        if (field.key === "y") {
-                          next.y = Math.min(value, 1 - next.h);
-                        }
-                        return next;
-                      });
-                    }}
-                  />
+                  >
+                    透過なし
+                  </button>
                 </div>
-              ))}
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="透過色の選択"
+                      className="max-h-40 w-full cursor-crosshair rounded-md object-contain"
+                      onClick={handlePickTransparent}
+                    />
+                  ) : (
+                    <p className="text-center text-xs text-slate-400">ロゴをアップロードしてください。</p>
+                  )}
+                </div>
+                <div className="mt-3 flex items-center gap-2 text-xs text-slate-600">
+                  <span>選択中:</span>
+                  {transparentColor ? (
+                    <>
+                      <span
+                        className="h-5 w-5 rounded-full border border-slate-200"
+                        style={{
+                          backgroundColor: `rgb(${transparentColor.r}, ${transparentColor.g}, ${transparentColor.b})`
+                        }}
+                      />
+                      <span>
+                        RGB({transparentColor.r}, {transparentColor.g}, {transparentColor.b})
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-slate-400">なし</span>
+                  )}
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-slate-400">ロゴをアップロードすると調整できます。</p>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">背景透過</p>
-            <div className="flex flex-wrap gap-2 text-xs">
-              {(["weak", "medium", "strong"] as DesignLogoSettings["transparentLevel"][]).map((level) => (
-                <label key={level} className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1">
-                  <input
-                    type="radio"
-                    name="transparentLevel"
-                    value={level}
-                    checked={transparentLevel === level}
-                    onChange={() => setTransparentLevel(level)}
-                    disabled={!imageBitmap}
-                  />
-                  {level === "weak" ? "弱" : level === "medium" ? "中" : "強"}
-                </label>
-              ))}
+            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-white px-4 py-4 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-white">
+                  ステップ3
+                </span>
+                <p className="text-sm font-semibold text-amber-700">配置して発行</p>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">右側のプレビューで配置を調整してください。</p>
+              <p className="mt-1 text-xs text-slate-500">カラー/モノクロはテンプレート管理の設定が反映されます。</p>
             </div>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">カラー設定</p>
-            <p className="text-xs text-slate-500">カラー/モノクロはテンプレート管理で設定されています。</p>
           </div>
 
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-900 px-4 py-4 text-center text-white">
@@ -546,6 +574,9 @@ export function SimPage() {
           setPhase("PLACEMENT");
         }}
       />
+      <canvas ref={colorCanvasRef} className="hidden" />
     </section>
   );
 }
+
+

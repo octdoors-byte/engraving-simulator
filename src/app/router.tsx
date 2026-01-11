@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppLayout } from "@/layout/AppLayout";
 import { AdminDesignsPage } from "@/pages/admin/AdminDesignsPage";
 import { AdminTemplatesPage } from "@/pages/admin/AdminTemplatesPage";
@@ -14,6 +14,10 @@ export const appRouter = createBrowserRouter([
     children: [
       {
         index: true,
+        element: <Navigate to="/top" replace />
+      },
+      {
+        path: "top",
         element: <SimLandingPage />
       },
       {

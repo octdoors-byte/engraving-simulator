@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "@/components/common/Modal";
 
 type CropRect = { x: number; y: number; w: number; h: number };
@@ -13,17 +13,34 @@ type CropModalProps = {
 
 type DragMode = "move" | "nw" | "ne" | "sw" | "se" | null;
 
+type ImageBounds = { x: number; y: number; w: number; h: number } | null;
+
 const MIN_SIZE = 0.05;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+function getContainedImageBounds(container: HTMLDivElement, img: HTMLImageElement): ImageBounds {
+  const containerRect = container.getBoundingClientRect();
+  const naturalW = img.naturalWidth;
+  const naturalH = img.naturalHeight;
+  if (!naturalW || !naturalH) return null;
+  const scale = Math.min(containerRect.width / naturalW, containerRect.height / naturalH);
+  const displayW = naturalW * scale;
+  const displayH = naturalH * scale;
+  const offsetX = (containerRect.width - displayW) / 2;
+  const offsetY = (containerRect.height - displayH) / 2;
+  return { x: offsetX, y: offsetY, w: displayW, h: displayH };
+}
+
 export function CropModal({ open, imageUrl, crop, onClose, onApply }: CropModalProps) {
   const [localCrop, setLocalCrop] = useState<CropRect>(crop);
-  const [zoom, setZoom] = useState(1);
+  const [imageBounds, setImageBounds] = useState<ImageBounds>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
   const dragRef = useRef<{ mode: DragMode; startX: number; startY: number; origin: CropRect } | null>(null);
+
   const handleClose = useCallback(() => {
     setLocalCrop(crop);
     onClose();
@@ -33,42 +50,58 @@ export function CropModal({ open, imageUrl, crop, onClose, onApply }: CropModalP
     setLocalCrop(crop);
   }, [crop, open]);
 
-  const applyDrag = useCallback((dx: number, dy: number, mode: DragMode, origin: CropRect) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const dxNorm = dx / rect.width;
-    const dyNorm = dy / rect.height;
-    let next = { ...origin };
-    if (mode === "move") {
-      next.x = clamp(origin.x + dxNorm, 0, 1 - origin.w);
-      next.y = clamp(origin.y + dyNorm, 0, 1 - origin.h);
-    }
-    if (mode === "se") {
-      next.w = clamp(origin.w + dxNorm, MIN_SIZE, 1 - origin.x);
-      next.h = clamp(origin.h + dyNorm, MIN_SIZE, 1 - origin.y);
-    }
-    if (mode === "nw") {
-      const nextX = clamp(origin.x + dxNorm, 0, origin.x + origin.w - MIN_SIZE);
-      const nextY = clamp(origin.y + dyNorm, 0, origin.y + origin.h - MIN_SIZE);
-      next.w = origin.w + (origin.x - nextX);
-      next.h = origin.h + (origin.y - nextY);
-      next.x = nextX;
-      next.y = nextY;
-    }
-    if (mode === "ne") {
-      const nextY = clamp(origin.y + dyNorm, 0, origin.y + origin.h - MIN_SIZE);
-      next.w = clamp(origin.w + dxNorm, MIN_SIZE, 1 - origin.x);
-      next.h = origin.h + (origin.y - nextY);
-      next.y = nextY;
-    }
-    if (mode === "sw") {
-      const nextX = clamp(origin.x + dxNorm, 0, origin.x + origin.w - MIN_SIZE);
-      next.w = origin.w + (origin.x - nextX);
-      next.h = clamp(origin.h + dyNorm, MIN_SIZE, 1 - origin.y);
-      next.x = nextX;
-    }
-    setLocalCrop(next);
+  const syncBounds = useCallback(() => {
+    if (!containerRef.current || !imgRef.current) return;
+    const bounds = getContainedImageBounds(containerRef.current, imgRef.current);
+    setImageBounds(bounds);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => syncBounds());
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [open, syncBounds]);
+
+  const applyDrag = useCallback(
+    (dx: number, dy: number, mode: DragMode, origin: CropRect) => {
+      if (!imageBounds) return;
+      const dxNorm = dx / imageBounds.w;
+      const dyNorm = dy / imageBounds.h;
+      let next = { ...origin };
+      if (mode === "move") {
+        next.x = clamp(origin.x + dxNorm, 0, 1 - origin.w);
+        next.y = clamp(origin.y + dyNorm, 0, 1 - origin.h);
+      }
+      if (mode === "se") {
+        next.w = clamp(origin.w + dxNorm, MIN_SIZE, 1 - origin.x);
+        next.h = clamp(origin.h + dyNorm, MIN_SIZE, 1 - origin.y);
+      }
+      if (mode === "nw") {
+        const nextX = clamp(origin.x + dxNorm, 0, origin.x + origin.w - MIN_SIZE);
+        const nextY = clamp(origin.y + dyNorm, 0, origin.y + origin.h - MIN_SIZE);
+        next.w = origin.w + (origin.x - nextX);
+        next.h = origin.h + (origin.y - nextY);
+        next.x = nextX;
+        next.y = nextY;
+      }
+      if (mode === "ne") {
+        const nextY = clamp(origin.y + dyNorm, 0, origin.y + origin.h - MIN_SIZE);
+        next.w = clamp(origin.w + dxNorm, MIN_SIZE, 1 - origin.x);
+        next.h = origin.h + (origin.y - nextY);
+        next.y = nextY;
+      }
+      if (mode === "sw") {
+        const nextX = clamp(origin.x + dxNorm, 0, origin.x + origin.w - MIN_SIZE);
+        next.w = origin.w + (origin.x - nextX);
+        next.h = clamp(origin.h + dyNorm, MIN_SIZE, 1 - origin.y);
+        next.x = nextX;
+      }
+      setLocalCrop(next);
+    },
+    [imageBounds]
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -89,49 +122,31 @@ export function CropModal({ open, imageUrl, crop, onClose, onApply }: CropModalP
   }, [applyDrag, open]);
 
   return (
-    <Modal
-      title="トリミング調整"
-      open={open}
-      onClose={handleClose}
-    >
+    <Modal title="トリミング調整" open={open} onClose={handleClose}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between text-xs text-slate-500">
-          <span>ドラッグで移動、ハンドルでサイズ調整します。</span>
-          <div className="flex items-center gap-2">
-            <span>ズーム</span>
-            <input
-              type="range"
-              min={1}
-              max={2}
-              step={0.05}
-              value={zoom}
-              onChange={(event) => setZoom(Number(event.target.value))}
-            />
-          </div>
-        </div>
+        <div className="text-xs text-slate-500">ドラッグで移動、ハンドルでサイズ調整します。</div>
         <div
           ref={containerRef}
           className="relative h-[60vh] max-h-[600px] overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
         >
-          <div
-            className="absolute inset-0"
-            style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}
-          >
-            {imageUrl && (
-              <img
-                src={imageUrl}
-                alt="トリミング対象"
-                className="absolute inset-0 h-full w-full object-contain"
-                draggable={false}
-              />
-            )}
+          {imageUrl && (
+            <img
+              ref={imgRef}
+              src={imageUrl}
+              alt="トリミング対象"
+              className="absolute inset-0 h-full w-full object-contain"
+              draggable={false}
+              onLoad={syncBounds}
+            />
+          )}
+          {imageBounds && (
             <div
               className="absolute border-2 border-sky-400 bg-sky-200/10"
               style={{
-                left: `${localCrop.x * 100}%`,
-                top: `${localCrop.y * 100}%`,
-                width: `${localCrop.w * 100}%`,
-                height: `${localCrop.h * 100}%`
+                left: imageBounds.x + localCrop.x * imageBounds.w,
+                top: imageBounds.y + localCrop.y * imageBounds.h,
+                width: localCrop.w * imageBounds.w,
+                height: localCrop.h * imageBounds.h
               }}
               onPointerDown={(event) => {
                 dragRef.current = {
@@ -167,7 +182,7 @@ export function CropModal({ open, imageUrl, crop, onClose, onApply }: CropModalP
                 />
               ))}
             </div>
-          </div>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button

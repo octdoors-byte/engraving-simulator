@@ -31,12 +31,27 @@ export async function generateConfirmPdf(
   const pdfDoc = await PDFDocument.create();
   const { width, height } = getPageDimensions(template);
   const page = pdfDoc.addPage([width, height]);
-  const viewScaleX = width / template.background.canvasWidthPx;
-  const viewScaleY = height / template.background.canvasHeightPx;
+  const canvasWidth = template.background.canvasWidthPx;
+  const canvasHeight = template.background.canvasHeightPx;
+  const scale = Math.min(width / canvasWidth, height / canvasHeight);
+  const drawWidth = canvasWidth * scale;
+  const drawHeight = canvasHeight * scale;
+  const offsetX = (width - drawWidth) / 2;
+  const offsetY = (height - drawHeight) / 2;
 
   const background = await embedImage(pdfDoc, bgBlob);
   if (background) {
-    page.drawImage(background, { x: 0, y: 0, width, height });
+    const bgScale = Math.min(canvasWidth / background.width, canvasHeight / background.height);
+    const bgDrawWidth = background.width * bgScale;
+    const bgDrawHeight = background.height * bgScale;
+    const bgOffsetX = (canvasWidth - bgDrawWidth) / 2;
+    const bgOffsetY = (canvasHeight - bgDrawHeight) / 2;
+    page.drawImage(background, {
+      x: offsetX + bgOffsetX * scale,
+      y: offsetY + (canvasHeight - (bgOffsetY + bgDrawHeight)) * scale,
+      width: bgDrawWidth * scale,
+      height: bgDrawHeight * scale
+    });
   } else {
     page.drawRectangle({
       x: 0,
@@ -49,10 +64,10 @@ export async function generateConfirmPdf(
 
   const engravingArea = template.engravingArea;
   page.drawRectangle({
-    x: engravingArea.x * viewScaleX,
-    y: height - (engravingArea.y + engravingArea.h) * viewScaleY,
-    width: engravingArea.w * viewScaleX,
-    height: engravingArea.h * viewScaleY,
+    x: offsetX + engravingArea.x * scale,
+    y: offsetY + (canvasHeight - (engravingArea.y + engravingArea.h)) * scale,
+    width: engravingArea.w * scale,
+    height: engravingArea.h * scale,
     borderColor: rgb(0.1, 0.4, 0.9),
     borderWidth: 1
   });
@@ -61,10 +76,10 @@ export async function generateConfirmPdf(
     const logoImage = await embedImage(pdfDoc, logoBlob);
     if (logoImage) {
       page.drawImage(logoImage, {
-        x: placement.x * viewScaleX,
-        y: height - (placement.y + placement.h) * viewScaleY,
-        width: placement.w * viewScaleX,
-        height: placement.h * viewScaleY
+        x: offsetX + placement.x * scale,
+        y: offsetY + (canvasHeight - (placement.y + placement.h)) * scale,
+        width: placement.w * scale,
+        height: placement.h * scale
       });
     }
   }

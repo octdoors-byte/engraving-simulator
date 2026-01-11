@@ -17,6 +17,15 @@ type DragState =
   | null;
 
 const MIN_LOGO_SIZE = 10;
+const A4_SIZE = { width: 595.28, height: 841.89 };
+
+function getPageDimensions(template: Template) {
+  const { orientation } = template.pdf;
+  if (orientation === "portrait") {
+    return { width: A4_SIZE.width, height: A4_SIZE.height };
+  }
+  return { width: A4_SIZE.height, height: A4_SIZE.width };
+}
 
 export function StageCanvas({
   template,
@@ -40,12 +49,16 @@ export function StageCanvas({
     return () => observer.disconnect();
   }, []);
 
-  const viewScale = useMemo(() => {
-    if (!viewWidth) return 1;
-    return viewWidth / template.background.canvasWidthPx;
-  }, [viewWidth, template.background.canvasWidthPx]);
-
-  const viewHeight = template.background.canvasHeightPx * viewScale;
+  const pageSize = useMemo(() => getPageDimensions(template), [template]);
+  const pageHeight = viewWidth ? viewWidth * (pageSize.height / pageSize.width) : 0;
+  const canvasWidth = template.background.canvasWidthPx;
+  const canvasHeight = template.background.canvasHeightPx;
+  const scale = useMemo(() => {
+    if (!viewWidth || !pageHeight) return 1;
+    return Math.min(viewWidth / canvasWidth, pageHeight / canvasHeight);
+  }, [viewWidth, pageHeight, canvasWidth, canvasHeight]);
+  const offsetX = (viewWidth - canvasWidth * scale) / 2;
+  const offsetY = (pageHeight - canvasHeight * scale) / 2;
 
   const applyClamp = useCallback(
     (next: DesignPlacement) => {
@@ -59,8 +72,8 @@ export function StageCanvas({
         const ratio = logoBaseSize.height / logoBaseSize.width;
         const nextH = Math.max(MIN_LOGO_SIZE, nextW * ratio);
         result = { ...result, w: nextW, h: nextH };
-      }
-      if (template.placementRules.keepInsideEngravingArea) {
+    }
+    if (template.placementRules.keepInsideEngravingArea) {
         result = clampPlacement(result, template.engravingArea);
       }
       return result;
@@ -73,8 +86,8 @@ export function StageCanvas({
     const handleMove = (event: PointerEvent) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
-      const dx = (event.clientX - rect.left - dragState.startX) / viewScale;
-      const dy = (event.clientY - rect.top - dragState.startY) / viewScale;
+      const dx = (event.clientX - rect.left - dragState.startX) / scale;
+      const dy = (event.clientY - rect.top - dragState.startY) / scale;
       if (dragState.type === "move") {
         const next = {
           ...dragState.origin,
@@ -98,36 +111,42 @@ export function StageCanvas({
       window.removeEventListener("pointermove", handleMove);
       window.removeEventListener("pointerup", handleUp);
     };
-  }, [dragState, viewScale, applyClamp, onPlacementChange, logoBaseSize]);
+  }, [dragState, scale, applyClamp, onPlacementChange, logoBaseSize]);
 
   return (
     <div ref={containerRef} className="relative w-full rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
-      <div style={{ height: viewHeight }} />
+      <div style={{ height: pageHeight }} />
       {backgroundUrl && (
         <img
           src={backgroundUrl}
           alt="背景"
-          className="absolute inset-0 h-full w-full rounded-2xl object-contain"
+          className="absolute rounded-2xl object-contain"
+          style={{
+            left: offsetX,
+            top: offsetY,
+            width: canvasWidth * scale,
+            height: canvasHeight * scale
+          }}
           draggable={false}
         />
       )}
       <div
         className="pointer-events-none absolute border-2 border-dashed border-amber-400/80 bg-amber-200/10"
         style={{
-          left: template.engravingArea.x * viewScale,
-          top: template.engravingArea.y * viewScale,
-          width: template.engravingArea.w * viewScale,
-          height: template.engravingArea.h * viewScale
+          left: offsetX + template.engravingArea.x * scale,
+          top: offsetY + template.engravingArea.y * scale,
+          width: template.engravingArea.w * scale,
+          height: template.engravingArea.h * scale
         }}
       />
       {logoUrl && (
         <div
           className="absolute cursor-move rounded border-2 border-sky-400"
           style={{
-            left: placement.x * viewScale,
-            top: placement.y * viewScale,
-            width: placement.w * viewScale,
-            height: placement.h * viewScale
+            left: offsetX + placement.x * scale,
+            top: offsetY + placement.y * scale,
+            width: placement.w * scale,
+            height: placement.h * scale
           }}
           onPointerDown={(event) => {
             const rect = containerRef.current?.getBoundingClientRect();

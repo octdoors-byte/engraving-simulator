@@ -1,4 +1,4 @@
-import type { Design, DesignLogoSettings, DesignPlacement, Template } from "@/domain/types";
+﻿import type { Design, DesignLogoSettings, DesignPlacement, Template } from "@/domain/types";
 import { processLogo } from "@/domain/image/processLogo";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
@@ -20,7 +20,7 @@ function createTemplateSet(): Template[] {
   return [
     {
       templateKey: "certificate_cover_a4_v1",
-      name: "証書カバー A4 右下刻印",
+      name: "險ｼ譖ｸ繧ｫ繝舌・ A4 蜿ｳ荳句綾蜊ｰ",
       status: "published",
       updatedAt: "2026-01-09T10:00:00.000+09:00",
       background: {
@@ -29,7 +29,7 @@ function createTemplateSet(): Template[] {
         canvasHeightPx: 1600
       },
       engravingArea: {
-        label: "右下刻印枠",
+        label: "蜿ｳ荳句綾蜊ｰ譫",
         x: 820,
         y: 1220,
         w: 280,
@@ -52,7 +52,7 @@ function createTemplateSet(): Template[] {
     },
     {
       templateKey: "certificate_cover_a4_left_v1",
-      name: "証書カバー A4 左下刻印",
+      name: "險ｼ譖ｸ繧ｫ繝舌・ A4 蟾ｦ荳句綾蜊ｰ",
       status: "tested",
       updatedAt: "2026-01-09T10:30:00.000+09:00",
       background: {
@@ -61,7 +61,7 @@ function createTemplateSet(): Template[] {
         canvasHeightPx: 1600
       },
       engravingArea: {
-        label: "左下刻印枠",
+        label: "蟾ｦ荳句綾蜊ｰ譫",
         x: 100,
         y: 1220,
         w: 280,
@@ -173,8 +173,8 @@ export async function seedIfEmpty(): Promise<void> {
 
     if (!hasSettings) {
       saveCommonSettings({
-        headerText: "ローカルで完結する最小構成",
-        footerText: "ブラウザの localStorage / IndexedDB を活用",
+        headerText: "繝ｭ繝ｼ繧ｫ繝ｫ縺ｧ螳檎ｵ舌☆繧区怙蟆乗ｧ区・",
+        footerText: "繝悶Λ繧ｦ繧ｶ縺ｮ localStorage / IndexedDB 繧呈ｴｻ逕ｨ",
         logoAlign: "left",
         headerTextAlign: "left",
         footerTextAlign: "center",
@@ -194,13 +194,13 @@ export async function seedIfEmpty(): Promise<void> {
           templateKey: string;
           designId: string;
           createdAt: string;
-          transparentLevel: DesignLogoSettings["transparentLevel"];
+          transparentColor: DesignLogoSettings["transparentColor"];
         }> = [
           {
             templateKey: templates[0].templateKey,
             designId: "260109_TESTDATA",
             createdAt: "2026-01-09T11:12:34.000+09:00",
-            transparentLevel: "medium"
+            transparentColor: null
           },
           ...(templates[1]
             ? [
@@ -208,7 +208,7 @@ export async function seedIfEmpty(): Promise<void> {
                   templateKey: templates[1].templateKey,
                   designId: "260109_EXAMDATA",
                   createdAt: "2026-01-09T12:04:10.000+09:00",
-                  transparentLevel: "strong"
+                  transparentColor: null
                 }
               ]
             : [])
@@ -219,7 +219,7 @@ export async function seedIfEmpty(): Promise<void> {
           if (!fullTemplate) continue;
           const processedBlob = await processLogo(bitmap, {
             crop: { x: 0, y: 0, w: 1, h: 1 },
-            transparentLevel: seed.transparentLevel,
+            transparentColor: seed.transparentColor,
             monochrome: fullTemplate.logoSettings?.monochrome ?? false,
             maxOutputWidth: 600,
             maxOutputHeight: 300
@@ -269,7 +269,7 @@ export async function seedIfEmpty(): Promise<void> {
               mimeType: "image/png",
               sizeBytes: originalBlob.size,
               crop: { x: 0, y: 0, w: 1, h: 1 },
-              transparentLevel: seed.transparentLevel,
+              transparentColor: seed.transparentColor,
               monochrome: fullTemplate.logoSettings?.monochrome ?? false
             },
             placement,
@@ -288,3 +288,4 @@ export async function seedIfEmpty(): Promise<void> {
     console.error("seed failed", error);
   }
 }
+
