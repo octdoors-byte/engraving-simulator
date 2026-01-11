@@ -1,5 +1,4 @@
-﻿import { Link } from "react-router-dom";
-import type { TemplateStatus } from "@/domain/types";
+﻿import type { TemplateStatus } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
 const statusLabels: Record<TemplateStatus, string> = {
@@ -27,42 +26,40 @@ export function SimLandingPage() {
         {templates.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">テンプレートがありません。</p>
         ) : (
-          <div className="mt-4 space-y-3">
-            {templates.map((template) => {
-              const simPath = `/sim/${template.templateKey}`;
-              return (
-                <div
-                  key={template.templateKey}
-                  className="flex flex-col gap-2 rounded-xl border border-slate-100 bg-slate-50 p-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <p className="text-lg font-medium text-slate-900">{template.name}</p>
-                      <p className="text-xs text-slate-500">
-                        キー: {template.templateKey} / 状態: {statusLabels[template.status]}
-                      </p>
-                    </div>
-                    <Link
-                      to={simPath}
-                      className="inline-flex rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                    >
-                      シミュレーターを開く
-                    </Link>
-                  </div>
-                  <a
-                    href={simPath}
-                    className="text-xs text-slate-500 underline decoration-slate-300 hover:text-slate-700"
-                  >
-                    {simPath}
-                  </a>
-                </div>
-              );
-            })}
+          <div className="mt-4 overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-6 py-3 text-left">表示名</th>
+                  <th className="px-6 py-3 text-left">テンプレキー</th>
+                  <th className="px-6 py-3 text-left">状態</th>
+                  <th className="px-6 py-3 text-left">URL</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {templates.map((template) => {
+                  const simPath = `/sim/${template.templateKey}`;
+                  return (
+                    <tr key={template.templateKey}>
+                      <td className="px-6 py-4 font-medium text-slate-900">{template.name}</td>
+                      <td className="px-6 py-4 text-slate-600">{template.templateKey}</td>
+                      <td className="px-6 py-4 text-slate-600">{statusLabels[template.status]}</td>
+                      <td className="px-6 py-4">
+                        <a
+                          href={simPath}
+                          className="text-xs text-slate-500 underline decoration-slate-300 hover:text-slate-700"
+                        >
+                          {simPath}
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
     </section>
   );
 }
-
-
