@@ -501,19 +501,16 @@ export function SimPage() {
             >
               {isIssuing ? "発行中..." : "デザインIDを発行する"}
             </button>
-            <div className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-left">
-              <p className="text-xs text-slate-300">デザインID</p>
+            <div className="rounded-xl border border-amber-400/60 bg-slate-800 px-4 py-3 text-left shadow">
+              <p className="text-xs font-semibold text-amber-300">デザインID</p>
               {issuedDesignId ? (
-                <div className="mt-1 flex items-center gap-2">
-                  <input
-                    type="text"
-                    readOnly
-                    value={issuedDesignId}
-                    className="w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
-                  />
+                <div className="mt-2 space-y-2">
+                  <div className="rounded-lg border border-amber-400/40 bg-slate-900 px-3 py-3 text-center text-lg font-semibold tracking-widest text-amber-100">
+                    {issuedDesignId}
+                  </div>
                   <button
                     type="button"
-                    className="rounded-full border border-slate-500 px-2 py-1 text-xs text-slate-200"
+                    className="w-full rounded-full border border-amber-300 bg-amber-200 px-3 py-2 text-xs font-semibold text-slate-900"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(issuedDesignId);
@@ -524,11 +521,11 @@ export function SimPage() {
                       }
                     }}
                   >
-                    コピー
+                    デザインIDをコピー
                   </button>
                 </div>
               ) : (
-                <p className="mt-1 text-xs text-slate-400">発行後に表示されます</p>
+                <p className="mt-2 text-sm text-slate-400">発行後に表示されます</p>
               )}
             </div>
           </div>
