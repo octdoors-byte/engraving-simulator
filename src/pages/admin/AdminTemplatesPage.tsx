@@ -333,9 +333,7 @@ export function AdminTemplatesPage() {
             handleTemplateFiles(event.dataTransfer.files);
           }}
         >
-          <p>✅ 「template.json」と背景画像をいっしょに置く</p>
-          <p>✅ 画像の名前は JSON に書いた名前と同じ</p>
-          <p>✅ JSON と画像はブラウザに保存される</p>
+          <p>ここに template.json と背景画像をまとめて置いてください</p>
           <input
             ref={inputRef}
             type="file"
@@ -363,6 +361,10 @@ export function AdminTemplatesPage() {
             <p>✅ 表示名はダブルクリックで変更</p>
             <p>✅ テスト/スマホ/PCで表示確認</p>
             <p>✅ 状態は下書き/テスト済み/公開中で切り替え</p>
+            <p>✅ 登録後はシミュレーターとPDFで見た目を必ず確認</p>
+            <p>✅ 「template.json」と背景画像をいっしょに置く</p>
+            <p>✅ 画像の名前は JSON に書いた名前と同じ</p>
+            <p>✅ JSON と画像はブラウザに保存される</p>
           </div>
           <div className="mt-3">
             <button
@@ -643,5 +645,10 @@ export function AdminTemplatesPage() {
     </section>
   );
 }
+
+
+
+
+
 
 
