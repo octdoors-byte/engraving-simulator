@@ -33,7 +33,7 @@ export function SimLandingPage() {
                   <th className="px-6 py-3 text-left">表示名</th>
                   <th className="px-6 py-3 text-left">テンプレキー</th>
                   <th className="px-6 py-3 text-left">状態</th>
-                  <th className="px-6 py-3 text-left">URL</th>
+                  <th className="px-6 py-3 text-left">公開URL</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
