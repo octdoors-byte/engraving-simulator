@@ -9,9 +9,22 @@ import "./styles/global.css";
 
 async function bootstrap() {
   const autoBackup = await getAutoBackupPayload();
-  if (autoBackup) {
-    await restoreFromPayload(autoBackup);
-  } else {
+  let restored = false;
+  if (autoBackup?.localStorage) {
+    const rawIndex = autoBackup.localStorage["ksim:templates:index"];
+    if (rawIndex) {
+      try {
+        const list = JSON.parse(rawIndex);
+        if (Array.isArray(list) && list.length > 0) {
+          await restoreFromPayload(autoBackup);
+          restored = true;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+  if (!restored) {
     await seedIfEmpty("ifEmpty");
   }
   migrateLegacyText();
