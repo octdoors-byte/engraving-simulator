@@ -450,13 +450,6 @@ export function AdminTemplatesPage() {
         <div className="border-b border-slate-100 px-6 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-slate-900">テンプレート一覧</h2>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
-              onClick={() => inputRef.current?.click()}
-            >
-              新規登録（ドラッグ&ドロップ）
-            </button>
           </div>
           <div className="mt-3 text-xs text-slate-500">
             <p>✅ 表示名はダブルクリックで変更</p>
