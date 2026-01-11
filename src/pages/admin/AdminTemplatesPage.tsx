@@ -14,7 +14,8 @@ import {
   loadTemplateBgFallback,
   saveTemplateBgFallback
 } from "@/storage/local";
-import { getAssetById, listAssets, saveAsset, deleteAsset } from "@/storage/idb";
+import { getAssetById, saveAsset, deleteAsset } from "@/storage/idb";
+import { createBackupPayload, getAutoBackupPayload, restoreFromPayload } from "@/storage/backup";
 
 const columns = [
   { label: "プレビュー", key: "preview" },
@@ -25,36 +26,6 @@ const columns = [
 ] as const;
 
 type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
-
-type BackupPayload = {
-  version: string;
-  exportedAt: string;
-  localStorage: Record<string, string>;
-  assets: Array<{ id: string; type: string; createdAt: string; dataUrl: string }>;
-};
-
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") resolve(reader.result);
-      else reject(new Error("Invalid data URL"));
-    };
-    reader.onerror = () => reject(reader.error ?? new Error("Failed to read blob"));
-    reader.readAsDataURL(blob);
-  });
-}
-
-function dataUrlToBlob(dataUrl: string): Blob {
-  const [header, data] = dataUrl.split(",");
-  const mime = header.match(/data:(.*?);base64/)?.[1] ?? "application/octet-stream";
-  const binary = atob(data);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return new Blob([bytes], { type: mime });
-}
 
 async function adjustTemplateToImage(template: Template, imageFile: File): Promise<{
   template: Template;
@@ -376,28 +347,7 @@ export function AdminTemplatesPage() {
 
   const handleBackupExport = useCallback(async () => {
     try {
-      const localData: Record<string, string> = {};
-      Object.keys(localStorage)
-        .filter((key) => key.startsWith("ksim:"))
-        .forEach((key) => {
-          const value = localStorage.getItem(key);
-          if (value !== null) localData[key] = value;
-        });
-      const assets = await listAssets();
-      const assetData = await Promise.all(
-        assets.map(async (asset) => ({
-          id: asset.id,
-          type: asset.type,
-          createdAt: asset.createdAt,
-          dataUrl: await blobToDataUrl(asset.blob)
-        }))
-      );
-      const payload: BackupPayload = {
-        version: "1.1",
-        exportedAt: new Date().toISOString(),
-        localStorage: localData,
-        assets: assetData
-      };
+      const payload = await createBackupPayload();
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
@@ -419,35 +369,31 @@ export function AdminTemplatesPage() {
     const confirmed = window.confirm("現在のデータは上書きされます。復元しますか？");
     if (!confirmed) return;
     try {
-      const raw = JSON.parse(await file.text()) as BackupPayload;
-      Object.keys(localStorage)
-        .filter((key) => key.startsWith("ksim:"))
-        .forEach((key) => localStorage.removeItem(key));
-      const request = indexedDB.deleteDatabase("ksim_db");
-      await new Promise((resolve) => {
-        request.onsuccess = () => resolve(null);
-        request.onerror = () => resolve(null);
-        request.onblocked = () => resolve(null);
-      });
-      Object.entries(raw.localStorage ?? {}).forEach(([key, value]) => {
-        localStorage.setItem(key, value);
-      });
-      if (Array.isArray(raw.assets)) {
-        for (const asset of raw.assets) {
-          const blob = dataUrlToBlob(asset.dataUrl);
-          await saveAsset({
-            id: asset.id,
-            type: asset.type as never,
-            blob,
-            createdAt: asset.createdAt
-          });
-        }
-      }
+      const raw = JSON.parse(await file.text());
+      await restoreFromPayload(raw);
       setToast({ message: "バックアップを復元しました。再読み込みします。", tone: "success" });
       window.location.reload();
     } catch (error) {
       console.error(error);
       setToast({ message: "バックアップの復元に失敗しました。", tone: "error" });
+    }
+  }, []);
+
+  const handleAutoBackupRestore = useCallback(async () => {
+    const payload = await getAutoBackupPayload();
+    if (!payload) {
+      setToast({ message: "自動バックアップが見つかりません。", tone: "error" });
+      return;
+    }
+    const confirmed = window.confirm("自動バックアップで復元します。現在のデータは上書きされます。");
+    if (!confirmed) return;
+    try {
+      await restoreFromPayload(payload);
+      setToast({ message: "自動バックアップを復元しました。再読み込みします。", tone: "success" });
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "自動バックアップの復元に失敗しました。", tone: "error" });
     }
   }, []);
 
@@ -698,6 +644,13 @@ export function AdminTemplatesPage() {
               >
                 バックアップを読み込み
               </button>
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
+                onClick={handleAutoBackupRestore}
+              >
+                自動バックアップから復元
+              </button>
               <input
                 ref={restoreInputRef}
                 type="file"
@@ -706,7 +659,9 @@ export function AdminTemplatesPage() {
                 onChange={(event) => handleBackupRestore(event.target.files?.[0] ?? null)}
               />
             </div>
-            <p className="text-xs text-slate-500">※ 読み込みは現在のデータを上書きします。</p>
+            <p className="text-xs text-slate-500">
+              ※ 読み込みは現在のデータを上書きします。自動バックアップは起動時に保存されます。
+            </p>
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600">ロゴ画像</label>
