@@ -1,6 +1,6 @@
 ﻿import { Link } from "react-router-dom";
 import type { TemplateStatus } from "@/domain/types";
-import { listTemplates } from "@/storage/local";
+import { listTemplates, loadCommonSettings } from "@/storage/local";
 
 const statusLabels: Record<TemplateStatus, string> = {
   draft: "下書き",
@@ -10,11 +10,13 @@ const statusLabels: Record<TemplateStatus, string> = {
 
 export function SimLandingPage() {
   const templates = listTemplates();
+  const settings = loadCommonSettings();
+  const landingTitle = settings?.landingTitle?.trim() || "デザインシミュレーター";
 
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">名入れ刻印シミュレーター v1.1</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">{landingTitle}</h1>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -46,3 +48,5 @@ export function SimLandingPage() {
     </section>
   );
 }
+
+

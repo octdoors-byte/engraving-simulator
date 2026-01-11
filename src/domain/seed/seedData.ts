@@ -175,6 +175,7 @@ export async function seedIfEmpty(): Promise<void> {
       saveCommonSettings({
         headerText: "繝ｭ繝ｼ繧ｫ繝ｫ縺ｧ螳檎ｵ舌☆繧区怙蟆乗ｧ区・",
         footerText: "繝悶Λ繧ｦ繧ｶ縺ｮ localStorage / IndexedDB 繧呈ｴｻ逕ｨ",
+        landingTitle: "デザインシミュレーター",
         logoAlign: "left",
         headerTextAlign: "left",
         footerTextAlign: "center",

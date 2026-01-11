@@ -90,6 +90,7 @@ export interface CommonSettings {
   logoImage?: string;
   headerText?: string;
   footerText?: string;
+  landingTitle?: string;
   logoAlign?: "left" | "center" | "right";
   headerTextAlign?: "left" | "center" | "right";
   footerTextAlign?: "left" | "center" | "right";

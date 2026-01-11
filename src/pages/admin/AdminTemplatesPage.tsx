@@ -583,6 +583,15 @@ export function AdminTemplatesPage() {
             />
           </div>
           <div>
+            <label className="text-xs font-semibold text-slate-600">トップのタイトル</label>
+            <input
+              type="text"
+              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+              value={settings.landingTitle ?? "デザインシミュレーター"}
+              onChange={(event) => setSettings((prev) => ({ ...prev, landingTitle: event.target.value }))}
+            />
+          </div>
+          <div>
             <label className="text-xs font-semibold text-slate-600">ロゴ配置</label>
             <select
               className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
