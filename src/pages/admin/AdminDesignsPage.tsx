@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import { Toast } from "@/components/common/Toast";
 import type { Design, TemplateSummary } from "@/domain/types";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
@@ -23,6 +23,7 @@ export function AdminDesignsPage() {
   const [search, setSearch] = useState("");
   const [templateFilter, setTemplateFilter] = useState("");
   const [templateOptions, setTemplateOptions] = useState<TemplateSummary[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
 
   const reload = useCallback(() => {
     const summaries = listDesigns();
@@ -44,6 +45,37 @@ export function AdminDesignsPage() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
+  useEffect(() => {
+    let active = true;
+    const blobUrls: string[] = [];
+    const loadPreviews = async () => {
+      const next: Record<string, string> = {};
+      for (const design of designs) {
+        const asset = await getAssetById(`asset:logoEdited:${design.designId}`);
+        if (asset?.blob) {
+          const url = URL.createObjectURL(asset.blob);
+          blobUrls.push(url);
+          next[design.designId] = url;
+        }
+      }
+      if (!active) {
+        blobUrls.forEach((url) => URL.revokeObjectURL(url));
+        return;
+      }
+      setPreviewUrls((prev) => {
+        Object.values(prev)
+          .filter((url) => url.startsWith("blob:"))
+          .forEach((url) => URL.revokeObjectURL(url));
+        return next;
+      });
+    };
+    loadPreviews();
+    return () => {
+      active = false;
+      blobUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [designs]);
+
   const filteredDesigns = useMemo(() => {
     return designs.filter((design) => {
       const matchesSearch = search ? design.designId.includes(search) : true;
@@ -62,13 +94,13 @@ export function AdminDesignsPage() {
       }
       const template = getTemplate(design.templateKey);
       if (!template) {
-        setToast({ message: "テンプレートが削除されています。PDFを再生成できません。", tone: "error" });
+        setToast({ message: "テンプレートが見つかりません。", tone: "error" });
         return;
       }
       const bgAsset = await getAssetById(`asset:templateBg:${design.templateKey}`);
       const logoAsset = await getAssetById(`asset:logoEdited:${design.designId}`);
       if (!logoAsset) {
-        setToast({ message: "編集済みロゴが見つかりません。PDFを再生成できません。", tone: "error" });
+        setToast({ message: "ロゴ画像が見つかりません。", tone: "error" });
         return;
       }
       const pdfBlob =
@@ -91,19 +123,22 @@ export function AdminDesignsPage() {
     }
   }, []);
 
-  const handleDelete = useCallback(async (design: Design) => {
-    const confirmed = window.confirm("デザイン発行履歴を削除しますか？");
-    if (!confirmed) return;
-    deleteDesign(design.designId);
-    await deleteAssets([
-      `asset:logoOriginal:${design.designId}`,
-      `asset:logoEdited:${design.designId}`,
-      `asset:pdfConfirm:${design.designId}`,
-      `asset:pdfEngrave:${design.designId}`
-    ]);
-    reload();
-    setToast({ message: "デザイン発行履歴を削除しました。", tone: "success" });
-  }, [reload]);
+  const handleDelete = useCallback(
+    async (design: Design) => {
+      const confirmed = window.confirm("デザイン発行履歴を削除しますか？");
+      if (!confirmed) return;
+      deleteDesign(design.designId);
+      await deleteAssets([
+        `asset:logoOriginal:${design.designId}`,
+        `asset:logoEdited:${design.designId}`,
+        `asset:pdfConfirm:${design.designId}`,
+        `asset:pdfEngrave:${design.designId}`
+      ]);
+      reload();
+      setToast({ message: "デザイン発行履歴を削除しました。", tone: "success" });
+    },
+    [reload]
+  );
 
   return (
     <section className="space-y-6">
@@ -111,9 +146,7 @@ export function AdminDesignsPage() {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">デザイン発行履歴</h1>
-        <p className="text-sm text-slate-500">
-          発行済みのデザイン一覧です。概要は localStorage、PDF/画像は IndexedDB に保存されます。
-        </p>
+        <p className="text-sm text-slate-500">発行済みのデザインを一覧で確認できます。</p>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
           <input
             type="text"
@@ -127,7 +160,7 @@ export function AdminDesignsPage() {
             value={templateFilter}
             onChange={(event) => setTemplateFilter(event.target.value)}
           >
-            <option value="">テンプレートキーで絞り込み</option>
+            <option value="">テンプレキーで絞り込み</option>
             {templateOptions.map((template) => (
               <option key={template.templateKey} value={template.templateKey}>
                 {template.templateKey}
@@ -145,9 +178,10 @@ export function AdminDesignsPage() {
           <table className="min-w-full divide-y divide-slate-100 text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
+                <th className="px-6 py-3 text-left">プレビュー</th>
                 <th className="px-6 py-3 text-left">デザインID</th>
-                <th className="px-6 py-3 text-left">テンプレートキー</th>
-                <th className="px-6 py-3 text-left">作成日時</th>
+                <th className="px-6 py-3 text-left">テンプレキー</th>
+                <th className="px-6 py-3 text-left">発行日</th>
                 <th className="px-6 py-3 text-left">PDF</th>
                 <th className="px-6 py-3 text-left">操作</th>
               </tr>
@@ -155,16 +189,29 @@ export function AdminDesignsPage() {
             <tbody className="divide-y divide-slate-100 bg-white">
               {filteredDesigns.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={5}>
+                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={6}>
                     デザイン発行履歴がありません。
                   </td>
                 </tr>
               ) : (
                 filteredDesigns.map((design) => (
                   <tr key={design.designId}>
+                    <td className="px-6 py-4">
+                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-50">
+                        {previewUrls[design.designId] ? (
+                          <img
+                            src={previewUrls[design.designId]}
+                            alt={`${design.designId} のロゴ`}
+                            className="h-full w-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-xs text-slate-400">なし</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4">{design.designId}</td>
                     <td className="px-6 py-4">
-                      {getTemplate(design.templateKey) ? design.templateKey : "削除済みテンプレート"}
+                      {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
                     </td>
                     <td className="px-6 py-4">{design.createdAt}</td>
                     <td className="px-6 py-4 space-x-2">

@@ -11,11 +11,13 @@ import {
   getTemplate,
   deleteTemplate,
   loadCommonSettings,
+  loadTemplateBgFallback,
   saveTemplateBgFallback
 } from "@/storage/local";
-import { saveAsset, deleteAsset } from "@/storage/idb";
+import { getAssetById, saveAsset, deleteAsset } from "@/storage/idb";
 
 const columns = [
+  { label: "プレビュー", key: "preview" },
   { label: "表示名", key: "name" },
   { label: "テンプレキー", key: "templateKey" },
   { label: "状態", key: "status" },
@@ -88,6 +90,7 @@ export function AdminTemplatesPage() {
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
 
@@ -100,6 +103,46 @@ export function AdminTemplatesPage() {
   useEffect(() => {
     reloadTemplates();
   }, [reloadTemplates]);
+
+  useEffect(() => {
+    let active = true;
+    const blobUrls: string[] = [];
+    const loadPreviews = async () => {
+      const next: Record<string, string> = {};
+      for (const template of templates) {
+        try {
+          const asset = await getAssetById(`asset:templateBg:${template.templateKey}`);
+          if (asset?.blob) {
+            const url = URL.createObjectURL(asset.blob);
+            blobUrls.push(url);
+            next[template.templateKey] = url;
+            continue;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+        const fallback = loadTemplateBgFallback(template.templateKey);
+        if (fallback) {
+          next[template.templateKey] = fallback;
+        }
+      }
+      if (!active) {
+        blobUrls.forEach((url) => URL.revokeObjectURL(url));
+        return;
+      }
+      setTemplatePreviewUrls((prev) => {
+        Object.values(prev)
+          .filter((url) => url.startsWith("blob:"))
+          .forEach((url) => URL.revokeObjectURL(url));
+        return next;
+      });
+    };
+    loadPreviews();
+    return () => {
+      active = false;
+      blobUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [templates]);
 
   useEffect(() => {
     if (!toast) return;
@@ -391,13 +434,26 @@ export function AdminTemplatesPage() {
             <tbody className="divide-y divide-slate-100 bg-white">
               {templates.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={5}>
+                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={6}>
                     テンプレートがありません。
                   </td>
                 </tr>
               ) : (
                 templates.map((template) => (
                   <tr key={template.templateKey}>
+                    <td className="px-6 py-4">
+                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-50">
+                        {templatePreviewUrls[template.templateKey] ? (
+                          <img
+                            src={templatePreviewUrls[template.templateKey]}
+                            alt={`${template.name} の背景`}
+                            className="h-full w-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-xs text-slate-400">なし</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       {editingKey === template.templateKey ? (
                         <input
