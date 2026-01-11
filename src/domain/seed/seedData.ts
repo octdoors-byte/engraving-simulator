@@ -38,7 +38,7 @@ function createTemplateSet(): Template[] {
   return [
     {
       templateKey: "certificate_cover_a4_v1",
-      name: "險ｼ譖ｸ繧ｫ繝舌・ A4 蜿ｳ荳句綾蜊ｰ",
+      name: "証書カバー A4 右下刻印",
       status: "published",
       updatedAt: "2026-01-09T10:00:00.000+09:00",
       background: {
@@ -47,7 +47,7 @@ function createTemplateSet(): Template[] {
         canvasHeightPx: 1600
       },
       engravingArea: {
-        label: "蜿ｳ荳句綾蜊ｰ譫",
+        label: "右下刻印枠",
         x: 820,
         y: 1220,
         w: 280,
@@ -70,7 +70,7 @@ function createTemplateSet(): Template[] {
     },
     {
       templateKey: "certificate_cover_a4_left_v1",
-      name: "險ｼ譖ｸ繧ｫ繝舌・ A4 蟾ｦ荳句綾蜊ｰ",
+      name: "証書カバー A4 左下刻印",
       status: "tested",
       updatedAt: "2026-01-09T10:30:00.000+09:00",
       background: {
@@ -79,7 +79,7 @@ function createTemplateSet(): Template[] {
         canvasHeightPx: 1600
       },
       engravingArea: {
-        label: "蟾ｦ荳句綾蜊ｰ譫",
+        label: "左下刻印枠",
         x: 100,
         y: 1220,
         w: 280,
@@ -195,8 +195,8 @@ export async function seedIfEmpty(mode: "ifEmpty" | "always" = "ifEmpty"): Promi
 
     if (!hasSettings) {
       saveCommonSettings({
-        headerText: "繝ｭ繝ｼ繧ｫ繝ｫ縺ｧ螳檎ｵ舌☆繧区怙蟆乗ｧ区・",
-        footerText: "繝悶Λ繧ｦ繧ｶ縺ｮ localStorage / IndexedDB 繧呈ｴｻ逕ｨ",
+        headerText: "",
+        footerText: "",
         landingTitle: "デザインシミュレーター",
         logoAlign: "left",
         headerTextAlign: "left",
@@ -311,4 +311,3 @@ export async function seedIfEmpty(mode: "ifEmpty" | "always" = "ifEmpty"): Promi
     console.error("seed failed", error);
   }
 }
-

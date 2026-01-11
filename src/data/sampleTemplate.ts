@@ -1,4 +1,4 @@
-import type { Template } from "@/domain/types";
+﻿import type { Template } from "@/domain/types";
 
 export const sampleTemplate: Template = {
   templateKey: "certificate_cover_a4_v1",
