@@ -2,11 +2,21 @@
 import type { TemplateStatus } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
+type ColumnKey = "name" | "templateKey" | "status" | "updatedAt" | "url";
+
 const statusLabels: Record<TemplateStatus, string> = {
   draft: "下書き",
   tested: "テスト済み",
   published: "公開中"
 };
+
+const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
+  { key: "name", label: "表示名" },
+  { key: "templateKey", label: "テンプレキー" },
+  { key: "status", label: "状態" },
+  { key: "updatedAt", label: "登録日" },
+  { key: "url", label: "公開URL" }
+];
 
 function formatDateTime(value: string) {
   const date = new Date(value);
@@ -24,6 +34,8 @@ export function SimLandingPage() {
   const settings = loadCommonSettings();
   const landingTitle = settings?.landingTitle?.trim() || "デザインシミュレーター";
   const [sortKey, setSortKey] = useState<"updatedAtDesc" | "updatedAtAsc" | "nameAsc">("updatedAtDesc");
+  const [columns, setColumns] = useState(defaultColumns);
+  const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -34,6 +46,17 @@ export function SimLandingPage() {
     }
     return b.updatedAt.localeCompare(a.updatedAt);
   });
+
+  const moveColumn = (direction: "left" | "right") => {
+    const index = columns.findIndex((col) => col.key === selectedColumnKey);
+    if (index < 0) return;
+    const nextIndex = direction === "left" ? index - 1 : index + 1;
+    if (nextIndex < 0 || nextIndex >= columns.length) return;
+    const next = [...columns];
+    const [item] = next.splice(index, 1);
+    next.splice(nextIndex, 0, item);
+    setColumns(next);
+  };
 
   return (
     <section className="space-y-6">
@@ -46,10 +69,10 @@ export function SimLandingPage() {
         <p className="mt-2 text-sm text-slate-500">
           ここから使いたいテンプレートを選びます。公開中のテンプレートだけ利用できます。
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-600">
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-600">
           <span>並び替え</span>
           <select
-            className="rounded border border-slate-200 px-2 py-1 text-xs"
+            className="rounded border border-slate-200 px-2 py-1 text-sm"
             value={sortKey}
             onChange={(event) => setSortKey(event.target.value as typeof sortKey)}
           >
@@ -57,19 +80,45 @@ export function SimLandingPage() {
             <option value="updatedAtAsc">登録日（古い順）</option>
             <option value="nameAsc">表示名（あいうえお順）</option>
           </select>
+          <span className="ml-2">列の並び替え</span>
+          <select
+            className="rounded border border-slate-200 px-2 py-1 text-sm"
+            value={selectedColumnKey}
+            onChange={(event) => setSelectedColumnKey(event.target.value as ColumnKey)}
+          >
+            {columns.map((col) => (
+              <option key={col.key} value={col.key}>
+                {col.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="rounded border border-slate-200 px-2 py-1 text-sm"
+            onClick={() => moveColumn("left")}
+          >
+            左へ
+          </button>
+          <button
+            type="button"
+            className="rounded border border-slate-200 px-2 py-1 text-sm"
+            onClick={() => moveColumn("right")}
+          >
+            右へ
+          </button>
         </div>
         {sortedTemplates.length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">テンプレートがありません。</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-100 text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <table className="min-w-full divide-y divide-slate-100 text-base">
+              <thead className="bg-slate-50 text-sm uppercase tracking-wide text-slate-600">
                 <tr>
-                  <th className="px-6 py-3 text-left">表示名</th>
-                  <th className="px-6 py-3 text-left">テンプレキー</th>
-                  <th className="px-6 py-3 text-left">状態</th>
-                  <th className="px-6 py-3 text-left">登録日</th>
-                  <th className="px-6 py-3 text-left">公開URL</th>
+                  {columns.map((col) => (
+                    <th key={col.key} className="px-6 py-4 text-left">
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -77,18 +126,50 @@ export function SimLandingPage() {
                   const simPath = `/sim/${template.templateKey}`;
                   return (
                     <tr key={template.templateKey}>
-                      <td className="px-6 py-4 font-medium text-slate-900">{template.name}</td>
-                      <td className="px-6 py-4 text-slate-600">{template.templateKey}</td>
-                      <td className="px-6 py-4 text-slate-600">{statusLabels[template.status]}</td>
-                      <td className="px-6 py-4 text-slate-600">{formatDateTime(template.updatedAt)}</td>
-                      <td className="px-6 py-4">
-                        <a
-                          href={simPath}
-                          className="text-xs text-slate-500 underline decoration-slate-300 hover:text-slate-700"
-                        >
-                          {simPath}
-                        </a>
-                      </td>
+                      {columns.map((col) => {
+                        if (col.key === "name") {
+                          return (
+                            <td key={col.key} className="px-6 py-5 font-medium text-slate-900">
+                              {template.name}
+                            </td>
+                          );
+                        }
+                        if (col.key === "templateKey") {
+                          return (
+                            <td key={col.key} className="px-6 py-5 text-slate-600">
+                              {template.templateKey}
+                            </td>
+                          );
+                        }
+                        if (col.key === "status") {
+                          const isPublished = template.status === "published";
+                          return (
+                            <td
+                              key={col.key}
+                              className={`px-6 py-5 ${isPublished ? "font-semibold text-emerald-600" : "text-slate-600"}`}
+                            >
+                              {statusLabels[template.status]}
+                            </td>
+                          );
+                        }
+                        if (col.key === "updatedAt") {
+                          return (
+                            <td key={col.key} className="px-6 py-5 text-slate-600">
+                              {formatDateTime(template.updatedAt)}
+                            </td>
+                          );
+                        }
+                        return (
+                          <td key={col.key} className="px-6 py-5">
+                            <a
+                              href={simPath}
+                              className="text-sm text-slate-500 underline decoration-slate-300 hover:text-slate-700"
+                            >
+                              {simPath}
+                            </a>
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })}
