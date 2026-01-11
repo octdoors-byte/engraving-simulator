@@ -106,6 +106,9 @@ export function SimLandingPage() {
             </span>
             <span>問題がなければPDFを発行する</span>
           </div>
+          <p className="mt-2 text-sm text-amber-700">
+            注意：用紙のサイズやデザイン範囲の大きさが、テンプレートの大きさと相違が出ないか必ずチェックしてください。
+          </p>
         </div>
       </div>
 
