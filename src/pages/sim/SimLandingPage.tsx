@@ -80,12 +80,32 @@ export function SimLandingPage() {
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">{landingTitle}</h1>
-        <div className="mt-4 space-y-2 text-sm text-slate-600">
-          <p className="font-semibold text-slate-700">使い方</p>
-          <p>ステップ1：テンプレート一覧から使いたいテンプレートを選ぶ</p>
-          <p>ステップ2：公開URLをクリックしてシミュレーターを開く</p>
-          <p>ステップ3：ロゴをアップロードして、配置を確認する</p>
-          <p>ステップ4：問題がなければPDFを発行する</p>
+        <div className="mt-5 space-y-3 text-base text-slate-700">
+          <p className="font-semibold text-slate-800">使い方</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
+              ステップ1
+            </span>
+            <span>テンプレート一覧から使いたいテンプレートを選ぶ</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+              ステップ2
+            </span>
+            <span>公開URLをクリックしてシミュレーターを開く</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+              ステップ3
+            </span>
+            <span>ロゴをアップロードして、配置を確認する</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              ステップ4
+            </span>
+            <span>問題がなければPDFを発行する</span>
+          </div>
         </div>
       </div>
 
