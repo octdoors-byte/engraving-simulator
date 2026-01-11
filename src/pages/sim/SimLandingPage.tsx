@@ -38,6 +38,7 @@ export function SimLandingPage() {
   const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
   const [rowPaddingPx, setRowPaddingPx] = useState(12);
+  const [draggingKey, setDraggingKey] = useState<ColumnKey | null>(null);
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -59,6 +60,17 @@ export function SimLandingPage() {
     const next = [...columns];
     const [item] = next.splice(index, 1);
     next.splice(nextIndex, 0, item);
+    setColumns(next);
+  };
+
+  const moveColumnByKeys = (fromKey: ColumnKey, toKey: ColumnKey) => {
+    if (fromKey === toKey) return;
+    const fromIndex = columns.findIndex((col) => col.key === fromKey);
+    const toIndex = columns.findIndex((col) => col.key === toKey);
+    if (fromIndex < 0 || toIndex < 0) return;
+    const next = [...columns];
+    const [item] = next.splice(fromIndex, 1);
+    next.splice(toIndex, 0, item);
     setColumns(next);
   };
 
@@ -112,6 +124,7 @@ export function SimLandingPage() {
           >
             右へ
           </button>
+          <span className="text-xs text-slate-400">※ 列名をドラッグでも並び替えできます</span>
           <span className="ml-2">行間</span>
           <label className="inline-flex items-center gap-2 text-sm">
             <input
@@ -153,8 +166,21 @@ export function SimLandingPage() {
               <thead className="bg-slate-50 text-sm uppercase tracking-wide text-slate-600">
                 <tr>
                   {visibleColumns.map((col) => (
-                    <th key={col.key} className="px-6 py-4 text-left">
-                      {col.label}
+                    <th
+                      key={col.key}
+                      className={`px-6 py-4 text-left ${draggingKey === col.key ? "bg-slate-100" : ""}`}
+                      draggable
+                      onDragStart={() => setDraggingKey(col.key)}
+                      onDragEnd={() => setDraggingKey(null)}
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={() => {
+                        if (draggingKey) {
+                          moveColumnByKeys(draggingKey, col.key);
+                        }
+                        setDraggingKey(null);
+                      }}
+                    >
+                      <span className="cursor-move">{col.label}</span>
                     </th>
                   ))}
                 </tr>
