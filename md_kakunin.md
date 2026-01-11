@@ -724,3 +724,9 @@ spec_id: engraving-simulator-local-final-v1.2
 # 最終注意
 - v1.2は「ロゴ1点」「枠内配置」「PDF2種」「履歴管理」を最小確実セットとして固定する。
 - Fabric.jsや回転などの拡張は、v1.2の安定稼働後に別バージョンで行う。
+
+---
+
+## �ǋL�iUI�X�V�j
+- �e���v���[�g�ꗗ�́u�\�����v�̓_�u���N���b�N�ŕύX�ł���
+- ���ʃw�b�_�[ / �t�b�^�[�ݒ�͍ŉ����ɔz�u���A�u�{�v�ŊJ���i�ʏ�͕���j

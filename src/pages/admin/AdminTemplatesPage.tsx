@@ -15,8 +15,8 @@ import {
 import { saveAsset, deleteAsset } from "@/storage/idb";
 
 const columns = [
-  { label: "テンプレ名", key: "name" },
-  { label: "キー", key: "templateKey" },
+  { label: "表示名", key: "name" },
+  { label: "テンプレキー", key: "templateKey" },
   { label: "状態", key: "status" },
   { label: "更新日", key: "updatedAt" }
 ] as const;
@@ -26,6 +26,8 @@ export function AdminTemplatesPage() {
   const [toast, setToast] = useState<{ message: string; tone?: "info" | "success" | "error" } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
 
@@ -122,6 +124,24 @@ export function AdminTemplatesPage() {
       setToast({ message: "状態を更新しました。", tone: "success" });
     },
     [reloadTemplates]
+  );
+
+  const commitDisplayName = useCallback(
+    (templateKey: string) => {
+      const template = getTemplate(templateKey);
+      if (!template) return;
+      const nextName = editingName.trim();
+      if (!nextName) {
+        setToast({ message: "表示名は必須です。", tone: "error" });
+        return;
+      }
+      const next: Template = { ...template, name: nextName, updatedAt: new Date().toISOString() };
+      saveTemplate(next);
+      reloadTemplates();
+      setEditingKey(null);
+      setToast({ message: "表示名を更新しました。", tone: "success" });
+    },
+    [editingName, reloadTemplates]
   );
 
   const handleDelete = useCallback(
@@ -241,7 +261,45 @@ export function AdminTemplatesPage() {
               ) : (
                 templates.map((template) => (
                   <tr key={template.templateKey}>
-                    <td className="px-6 py-4">{template.name}</td>
+                    <td className="px-6 py-4">
+                      {editingKey === template.templateKey ? (
+                        <input
+                          type="text"
+                          className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                          value={editingName}
+                          onChange={(event) => setEditingName(event.target.value)}
+                          onBlur={() => commitDisplayName(template.templateKey)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              commitDisplayName(template.templateKey);
+                            }
+                            if (event.key === "Escape") {
+                              setEditingKey(null);
+                            }
+                          }}
+                          autoFocus
+                        />
+                      ) : (
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          className="cursor-pointer"
+                          onDoubleClick={() => {
+                            setEditingKey(template.templateKey);
+                            setEditingName(template.name);
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              setEditingKey(template.templateKey);
+                              setEditingName(template.name);
+                            }
+                          }}
+                        >
+                          {template.name}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-6 py-4">{template.templateKey}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-2">
