@@ -407,8 +407,8 @@ export function AdminTemplatesPage() {
         </div>
 
         <div
-          className={`mt-6 flex flex-col gap-3 rounded-2xl border-2 border-dashed p-4 text-sm ${
-            isDragging ? "border-sky-400 bg-sky-50 text-sky-700" : "border-slate-300 bg-white text-slate-500"
+          className={`mt-6 flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed px-6 py-10 text-base ${
+            isDragging ? "border-sky-400 bg-sky-50 text-sky-700" : "border-slate-300 bg-white text-slate-600"
           }`}
           role="button"
           tabIndex={0}
@@ -430,6 +430,10 @@ export function AdminTemplatesPage() {
             handleTemplateFiles(event.dataTransfer.files);
           }}
         >
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-2xl">
+            ⬆️
+          </div>
+          <p className="text-lg font-semibold text-slate-800">新規登録（ドラッグ&ドロップ）</p>
           <p>ここに template.json と背景画像をまとめて置いてください</p>
           <input
             ref={inputRef}
