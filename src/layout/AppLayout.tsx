@@ -4,9 +4,9 @@ import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 
 const navItems = [
-  { to: "/top", label: "繝医ャ繝・ },
-  { to: "/admin/templates", label: "繝・Φ繝励Ξ繝ｼ繝育ｮ｡逅・ },
-  { to: "/admin/designs", label: "繝・じ繧､繝ｳ逋ｺ陦悟ｱ･豁ｴ" }
+  { to: "/top", label: "トップ" },
+  { to: "/admin/templates", label: "テンプレート管理" },
+  { to: "/admin/designs", label: "デザイン発行履歴" }
 ];
 
 function sizeClass(size?: "sm" | "md" | "lg") {
@@ -35,8 +35,7 @@ export function AppLayout() {
   const logoAlign = alignClass[settings?.logoAlign ?? "left"];
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
   const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
-  const logoHeight =
-    settings?.logoSize === "lg" ? "h-12" : settings?.logoSize === "md" ? "h-10" : "h-8";
+  const logoHeight = settings?.logoSize === "lg" ? "h-12" : settings?.logoSize === "md" ? "h-10" : "h-8";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -44,11 +43,11 @@ export function AppLayout() {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between">
           <div className={`flex items-center gap-3 ${logoAlign}`}>
             {settings?.logoImage && (
-              <img src={settings.logoImage} alt="蜈ｱ騾壹Ο繧ｴ" className={`${logoHeight} w-auto`} />
+              <img src={settings.logoImage} alt="ロゴ" className={`${logoHeight} w-auto`} />
             )}
             <div>
               <Link to="/top" className="text-2xl font-semibold text-slate-900">
-                蜷榊・繧悟綾蜊ｰ繧ｷ繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ
+                名入れ刻印シミュレーター
               </Link>
               <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
                 {settings?.headerText ?? ""}
@@ -87,4 +86,3 @@ export function AppLayout() {
     </div>
   );
 }
-
