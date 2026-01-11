@@ -13,19 +13,39 @@ export interface AssetRecord {
 }
 
 const DB_NAME = "ksim_db";
+const DB_VERSION = 10;
 const STORE_NAME = "assets";
+
+function ensureStore(db: IDBDatabase) {
+  if (!db.objectStoreNames.contains(STORE_NAME)) {
+    const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
+    store.createIndex("type", "type", { unique: false });
+  }
+}
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
-        store.createIndex("type", "type", { unique: false });
-      }
+      ensureStore(db);
     };
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const nextVersion = db.version + 1;
+        db.close();
+        const upgradeRequest = indexedDB.open(DB_NAME, nextVersion);
+        upgradeRequest.onupgradeneeded = () => {
+          const upgraded = upgradeRequest.result;
+          ensureStore(upgraded);
+        };
+        upgradeRequest.onsuccess = () => resolve(upgradeRequest.result);
+        upgradeRequest.onerror = () => reject(upgradeRequest.error);
+        return;
+      }
+      resolve(db);
+    };
     request.onerror = () => reject(request.error);
   });
 }

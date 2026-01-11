@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Dropzone } from "@/components/sim/Dropzone";
 import { CropModal } from "@/components/sim/CropModal";
@@ -10,7 +10,7 @@ import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
 import { clampPlacement } from "@/domain/placement/clampPlacement";
 import type { DesignPlacement, DesignLogoSettings, Template } from "@/domain/types";
-import { getTemplate, listDesigns, saveDesign } from "@/storage/local";
+import { getTemplate, listDesigns, loadTemplateBgFallback, saveDesign } from "@/storage/local";
 import { AssetType, deleteAssets, getAssetById, saveAsset } from "@/storage/idb";
 
 type SimPhase =
@@ -24,6 +24,8 @@ type SimPhase =
   | "ERROR";
 
 type LogoBaseSize = { width: number; height: number };
+
+type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
 
 function downloadBlob(blob: Blob, fileName: string) {
   const id = URL.createObjectURL(blob);
@@ -53,7 +55,7 @@ export function SimPage() {
   const { templateKey } = useParams();
   const [template, setTemplate] = useState<Template | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ message: string; tone?: "info" | "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
   const [phase, setPhase] = useState<SimPhase>("EMPTY");
   const [imageBitmap, setImageBitmap] = useState<ImageBitmap | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -62,7 +64,6 @@ export function SimPage() {
   const [backgroundBlob, setBackgroundBlob] = useState<Blob | null>(null);
   const [crop, setCrop] = useState<DesignLogoSettings["crop"]>({ x: 0, y: 0, w: 1, h: 1 });
   const [transparentLevel, setTransparentLevel] = useState<DesignLogoSettings["transparentLevel"]>("medium");
-  const [monochrome, setMonochrome] = useState(false);
   const [processedLogoBlob, setProcessedLogoBlob] = useState<Blob | null>(null);
   const [processedLogoUrl, setProcessedLogoUrl] = useState<string | null>(null);
   const [logoBaseSize, setLogoBaseSize] = useState<LogoBaseSize | null>(null);
@@ -82,7 +83,10 @@ export function SimPage() {
       setErrorMessage("テンプレートが見つかりません。");
       return;
     }
-    if (!["tested", "published"].includes(loaded.status)) {
+    if (![
+      "tested",
+      "published"
+    ].includes(loaded.status)) {
       setErrorMessage("このテンプレートは現在ご利用いただけません（未公開）。");
       return;
     }
@@ -94,11 +98,24 @@ export function SimPage() {
     if (!template) return;
     let active = true;
     const loadBackground = async () => {
-      const asset = await getAssetById(`asset:templateBg:${template.templateKey}`);
-      if (!active) return;
-      if (asset?.blob) {
-        setBackgroundBlob(asset.blob);
-        setBackgroundUrl(URL.createObjectURL(asset.blob));
+      try {
+        const asset = await getAssetById(`asset:templateBg:${template.templateKey}`);
+        if (!active) return;
+        if (asset?.blob) {
+          setBackgroundBlob(asset.blob);
+          setBackgroundUrl(URL.createObjectURL(asset.blob));
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      const fallback = loadTemplateBgFallback(template.templateKey);
+      if (fallback) {
+        const response = await fetch(fallback);
+        const blob = await response.blob();
+        if (!active) return;
+        setBackgroundBlob(blob);
+        setBackgroundUrl(URL.createObjectURL(blob));
         return;
       }
       try {
@@ -119,40 +136,39 @@ export function SimPage() {
   }, [template]);
 
   useEffect(() => {
-    if (!backgroundUrl) return;
-    return () => URL.revokeObjectURL(backgroundUrl);
-  }, [backgroundUrl]);
-
-  useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(null), 3200);
     return () => window.clearTimeout(timer);
   }, [toast]);
 
   useEffect(() => {
-    if (imageUrl) {
-      return () => URL.revokeObjectURL(imageUrl);
-    }
+    if (!imageUrl) return;
+    return () => URL.revokeObjectURL(imageUrl);
   }, [imageUrl]);
 
   useEffect(() => {
-    if (processedLogoUrl) {
-      return () => URL.revokeObjectURL(processedLogoUrl);
-    }
+    if (!backgroundUrl) return;
+    return () => URL.revokeObjectURL(backgroundUrl);
+  }, [backgroundUrl]);
+
+  useEffect(() => {
+    if (!processedLogoUrl) return;
+    return () => URL.revokeObjectURL(processedLogoUrl);
   }, [processedLogoUrl]);
 
   useEffect(() => {
-    if (!imageBitmap) {
+    if (!imageBitmap || !template) {
       setProcessedLogoBlob(null);
       return;
     }
+    const logoSettings = template.logoSettings ?? { monochrome: false };
     let cancelled = false;
     const run = async () => {
       try {
         const blob = await processLogo(imageBitmap, {
           crop,
           transparentLevel,
-          monochrome,
+          monochrome: logoSettings.monochrome,
           maxOutputWidth: 1024,
           maxOutputHeight: 1024
         });
@@ -169,7 +185,7 @@ export function SimPage() {
     return () => {
       cancelled = true;
     };
-  }, [imageBitmap, crop, transparentLevel, monochrome]);
+  }, [imageBitmap, crop, template, transparentLevel]);
 
   useEffect(() => {
     if (!processedLogoBlob || !template) return;
@@ -214,8 +230,6 @@ export function SimPage() {
       setImageBitmap(bitmap);
       setUploadedFile(file);
       setCrop({ x: 0, y: 0, w: 1, h: 1 });
-      setTransparentLevel("medium");
-      setMonochrome(false);
       setPlacement(null);
       placementInitialized.current = false;
       setImageUrl(URL.createObjectURL(file));
@@ -252,6 +266,7 @@ export function SimPage() {
     try {
       const existingIds = new Set(listDesigns().map((entry) => entry.designId));
       designId = generateDesignId(existingIds);
+      const logoSettings = template.logoSettings ?? { monochrome: false };
       const confirmPdf = await generateConfirmPdf(template, backgroundBlob, processedLogoBlob, placement, designId);
       const engravePdf = await generateEngravePdf(template, processedLogoBlob, placement, {
         designId,
@@ -281,7 +296,7 @@ export function SimPage() {
           sizeBytes: uploadedFile.size,
           crop,
           transparentLevel,
-          monochrome
+          monochrome: logoSettings.monochrome
         },
         placement,
         pdf: {
@@ -316,8 +331,7 @@ export function SimPage() {
     placement,
     crop,
     transparentLevel,
-    monochrome,
-    backgroundBlob,
+    backgroundBlob
   ]);
 
   const cropInputs = useMemo(
@@ -445,16 +459,8 @@ export function SimPage() {
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-slate-600">モノクロ</p>
-            <label className="flex items-center gap-2 text-xs text-slate-600">
-              <input
-                type="checkbox"
-                checked={monochrome}
-                onChange={(event) => setMonochrome(event.target.checked)}
-                disabled={!imageBitmap}
-              />
-              モノクロに変換する
-            </label>
+            <p className="text-sm font-semibold text-slate-600">カラー設定</p>
+            <p className="text-xs text-slate-500">カラー/モノクロはテンプレート管理で設定されています。</p>
           </div>
 
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-900 px-4 py-4 text-center text-white">
@@ -506,22 +512,25 @@ export function SimPage() {
               <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
               <p className="text-xs text-slate-500">背景とロゴの見え方を確認できます。</p>
             </div>
-            <span className="text-xs font-semibold text-slate-500">
-              状態: {phase === "READY_TO_ISSUE" ? "発行可能" : phase}
-            </span>
+            <span className="text-xs font-semibold text-slate-500">状態: {phase === "READY_TO_ISSUE" ? "発行可能" : phase}</span>
           </div>
           <div className="mt-4">
-            {placement && (
-              <StageCanvas
-                template={template}
-                backgroundUrl={backgroundUrl}
-                logoUrl={processedLogoUrl}
-                placement={placement}
-                logoBaseSize={logoBaseSize}
-                onPlacementChange={handlePlacementChange}
-              />
-            )}
-            {!placement && <div className="text-xs text-slate-400">ロゴをアップロードするとプレビューが表示されます。</div>}
+            <StageCanvas
+              template={template}
+              backgroundUrl={backgroundUrl}
+              logoUrl={processedLogoUrl}
+              placement={
+                placement ?? {
+                  x: template.engravingArea.x,
+                  y: template.engravingArea.y,
+                  w: template.engravingArea.w,
+                  h: template.engravingArea.h
+                }
+              }
+              logoBaseSize={logoBaseSize}
+              onPlacementChange={handlePlacementChange}
+            />
+            {!imageBitmap && <div className="mt-2 text-xs text-slate-400">ロゴをアップロードすると配置できます。</div>}
           </div>
         </div>
       </div>

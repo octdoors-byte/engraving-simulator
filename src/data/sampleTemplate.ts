@@ -23,6 +23,9 @@ export const sampleTemplate: Template = {
     minScale: 0.1,
     maxScale: 6.0
   },
+  logoSettings: {
+    monochrome: false
+  },
   pdf: {
     pageSize: "A4",
     orientation: "portrait",

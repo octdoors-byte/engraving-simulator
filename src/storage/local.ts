@@ -5,6 +5,7 @@ const APP_VERSION = "1.1.0";
 const KEY_APP_VERSION = `${STORAGE_PREFIX}appVersion`;
 const INDEX_TEMPLATES = `${STORAGE_PREFIX}templates:index`;
 const INDEX_DESIGNS = `${STORAGE_PREFIX}designs:index`;
+const TEMPLATE_BG_FALLBACK_PREFIX = `${STORAGE_PREFIX}templateBgFallback:`;
 
 function readJson<T>(key: string): T | null {
   const raw = localStorage.getItem(key);
@@ -64,6 +65,7 @@ export function getTemplate(templateKey: string): Template | null {
 
 export function deleteTemplate(templateKey: string): void {
   localStorage.removeItem(`${STORAGE_PREFIX}template:${templateKey}`);
+  localStorage.removeItem(`${TEMPLATE_BG_FALLBACK_PREFIX}${templateKey}`);
   const remaining = (readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? []).filter(
     (entry) => entry.templateKey !== templateKey
   );
@@ -98,4 +100,12 @@ export function saveCommonSettings(settings: CommonSettings): void {
 
 export function loadCommonSettings(): CommonSettings | null {
   return readJson<CommonSettings>(`${STORAGE_PREFIX}commonSettings`);
+}
+
+export function saveTemplateBgFallback(templateKey: string, dataUrl: string): void {
+  localStorage.setItem(`${TEMPLATE_BG_FALLBACK_PREFIX}${templateKey}`, dataUrl);
+}
+
+export function loadTemplateBgFallback(templateKey: string): string | null {
+  return localStorage.getItem(`${TEMPLATE_BG_FALLBACK_PREFIX}${templateKey}`);
 }

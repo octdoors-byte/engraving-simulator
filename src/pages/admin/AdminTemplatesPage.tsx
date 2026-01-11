@@ -10,7 +10,8 @@ import {
   saveTemplate,
   getTemplate,
   deleteTemplate,
-  loadCommonSettings
+  loadCommonSettings,
+  saveTemplateBgFallback
 } from "@/storage/local";
 import { saveAsset, deleteAsset } from "@/storage/idb";
 
@@ -77,6 +78,19 @@ export function AdminTemplatesPage() {
         setToast({ message: "template.json と背景画像を同時に選択してください。", tone: "error" });
         return;
       }
+      const readAsDataUrl = (file: File) =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === "string") {
+              resolve(reader.result);
+            } else {
+              reject(new Error("Invalid data URL"));
+            }
+          };
+          reader.onerror = () => reject(reader.error ?? new Error("Failed to read image"));
+          reader.readAsDataURL(file);
+        });
       try {
         const raw = JSON.parse(await jsonFile.text());
         const validation = validateTemplate(raw);
@@ -84,7 +98,12 @@ export function AdminTemplatesPage() {
           setToast({ message: validation.errors.join(" / "), tone: "error" });
           return;
         }
-        const template = validation.template;
+        const template = {
+          ...validation.template,
+          logoSettings: validation.template.logoSettings ?? {
+            monochrome: false
+          }
+        };
         if (template.background.fileName !== imageFile.name) {
           setToast({ message: "背景画像のファイル名が template.json と一致しません。", tone: "error" });
           return;
@@ -94,12 +113,19 @@ export function AdminTemplatesPage() {
           return;
         }
         saveTemplate(template);
-        await saveAsset({
-          id: `asset:templateBg:${template.templateKey}`,
-          type: "templateBg",
-          blob: imageFile,
-          createdAt: new Date().toISOString()
-        });
+        try {
+          await saveAsset({
+            id: `asset:templateBg:${template.templateKey}`,
+            type: "templateBg",
+            blob: imageFile,
+            createdAt: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error(error);
+          const dataUrl = await readAsDataUrl(imageFile);
+          saveTemplateBgFallback(template.templateKey, dataUrl);
+          setToast({ message: "背景をローカル保存に切り替えました。", tone: "info" });
+        }
         reloadTemplates();
         setToast({ message: "テンプレートを登録しました。", tone: "success" });
       } catch (error) {
@@ -122,6 +148,23 @@ export function AdminTemplatesPage() {
       saveTemplate(next);
       reloadTemplates();
       setToast({ message: "状態を更新しました。", tone: "success" });
+    },
+    [reloadTemplates]
+  );
+
+  const handleLogoSettingsChange = useCallback(
+    (templateKey: string, updates: Partial<Template["logoSettings"]>) => {
+      const template = getTemplate(templateKey);
+      if (!template) return;
+      const current = template.logoSettings ?? { monochrome: false };
+      const next: Template = {
+        ...template,
+        logoSettings: { ...current, ...updates },
+        updatedAt: new Date().toISOString()
+      };
+      saveTemplate(next);
+      reloadTemplates();
+      setToast({ message: "ロゴ設定を更新しました。", tone: "success" });
     },
     [reloadTemplates]
   );
@@ -160,6 +203,20 @@ export function AdminTemplatesPage() {
     },
     [reloadTemplates]
   );
+
+  const handleResetStorage = useCallback(() => {
+    const confirmed = window.confirm("保存データを初期化します。よろしいですか？");
+    if (!confirmed) return;
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("ksim:"))
+      .forEach((key) => localStorage.removeItem(key));
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("ksim:templateBgFallback:"))
+      .forEach((key) => localStorage.removeItem(key));
+    const request = indexedDB.deleteDatabase("ksim_db");
+    request.onsuccess = () => window.location.reload();
+    request.onerror = () => window.location.reload();
+  }, []);
 
   const handleLogoChange = useCallback(async (file: File | null) => {
     if (!file) return;
@@ -236,6 +293,15 @@ export function AdminTemplatesPage() {
               onClick={() => inputRef.current?.click()}
             >
               新規登録（ドラッグ&ドロップ）
+            </button>
+          </div>
+          <div className="mt-3">
+            <button
+              type="button"
+              className="rounded-full border border-rose-200 px-4 py-2 text-xs font-semibold text-rose-600"
+              onClick={handleResetStorage}
+            >
+              保存データを初期化
             </button>
           </div>
         </div>
@@ -317,10 +383,32 @@ export function AdminTemplatesPage() {
                             </option>
                           ))}
                         </select>
+                        <label className="flex items-center gap-1 text-xs text-slate-600">
+                          <input
+                            type="checkbox"
+                            checked={getTemplate(template.templateKey)?.logoSettings?.monochrome ?? false}
+                            onChange={(event) =>
+                              handleLogoSettingsChange(template.templateKey, {
+                                monochrome: event.target.checked
+                              })
+                            }
+                          />
+                          モノクロ
+                        </label>
                       </div>
                     </td>
                     <td className="px-6 py-4">{template.updatedAt}</td>
                     <td className="px-6 py-4 space-x-2 text-xs">
+                      <button
+                        type="button"
+                        className="rounded-full border border-slate-200 px-3 py-1 text-slate-600"
+                        onClick={() => {
+                          handleStatusChange(template.templateKey, "tested");
+                          window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844");
+                        }}
+                      >
+                        テスト
+                      </button>
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-slate-600"
@@ -329,6 +417,15 @@ export function AdminTemplatesPage() {
                         }
                       >
                         スマホ表示
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded-full border border-slate-200 px-3 py-1 text-slate-600"
+                        onClick={() =>
+                          window.open(`/sim/${template.templateKey}`, "_blank", "width=1280,height=720")
+                        }
+                      >
+                        PC表示
                       </button>
                       <button
                         type="button"

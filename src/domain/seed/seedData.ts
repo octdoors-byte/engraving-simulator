@@ -12,6 +12,7 @@ import {
   saveTemplate
 } from "@/storage/local";
 import { getAssetById, saveAsset } from "@/storage/idb";
+import { saveTemplateBgFallback } from "@/storage/local";
 
 const SEED_KEY = "ksim:seeded";
 
@@ -39,6 +40,9 @@ function createTemplateSet(): Template[] {
         keepInsideEngravingArea: true,
         minScale: 0.1,
         maxScale: 6.0
+      },
+      logoSettings: {
+        monochrome: false
       },
       pdf: {
         pageSize: "A4",
@@ -68,6 +72,9 @@ function createTemplateSet(): Template[] {
         keepInsideEngravingArea: true,
         minScale: 0.1,
         maxScale: 6.0
+      },
+      logoSettings: {
+        monochrome: true
       },
       pdf: {
         pageSize: "A4",
@@ -119,6 +126,21 @@ async function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   });
 }
 
+async function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Invalid data URL"));
+      }
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read blob"));
+    reader.readAsDataURL(blob);
+  });
+}
+
 export async function seedIfEmpty(): Promise<void> {
   if (localStorage.getItem(SEED_KEY)) return;
   const hasTemplates = listTemplates().length > 0;
@@ -133,12 +155,18 @@ export async function seedIfEmpty(): Promise<void> {
       for (const template of templates) {
         saveTemplate(template);
         if (bgBlob) {
-          await saveAsset({
-            id: `asset:templateBg:${template.templateKey}`,
-            type: "templateBg",
-            blob: bgBlob,
-            createdAt: new Date().toISOString()
-          });
+          try {
+            await saveAsset({
+              id: `asset:templateBg:${template.templateKey}`,
+              type: "templateBg",
+              blob: bgBlob,
+              createdAt: new Date().toISOString()
+            });
+          } catch (error) {
+            console.error(error);
+            const dataUrl = await blobToDataUrl(bgBlob);
+            saveTemplateBgFallback(template.templateKey, dataUrl);
+          }
         }
       }
     }
@@ -167,14 +195,12 @@ export async function seedIfEmpty(): Promise<void> {
           designId: string;
           createdAt: string;
           transparentLevel: DesignLogoSettings["transparentLevel"];
-          monochrome: boolean;
         }> = [
           {
             templateKey: templates[0].templateKey,
             designId: "260109_TESTDATA",
             createdAt: "2026-01-09T11:12:34.000+09:00",
-            transparentLevel: "medium",
-            monochrome: false
+            transparentLevel: "medium"
           },
           ...(templates[1]
             ? [
@@ -182,8 +208,7 @@ export async function seedIfEmpty(): Promise<void> {
                   templateKey: templates[1].templateKey,
                   designId: "260109_EXAMDATA",
                   createdAt: "2026-01-09T12:04:10.000+09:00",
-                  transparentLevel: "strong",
-                  monochrome: true
+                  transparentLevel: "strong"
                 }
               ]
             : [])
@@ -195,7 +220,7 @@ export async function seedIfEmpty(): Promise<void> {
           const processedBlob = await processLogo(bitmap, {
             crop: { x: 0, y: 0, w: 1, h: 1 },
             transparentLevel: seed.transparentLevel,
-            monochrome: seed.monochrome,
+            monochrome: fullTemplate.logoSettings?.monochrome ?? false,
             maxOutputWidth: 600,
             maxOutputHeight: 300
           });
@@ -245,7 +270,7 @@ export async function seedIfEmpty(): Promise<void> {
               sizeBytes: originalBlob.size,
               crop: { x: 0, y: 0, w: 1, h: 1 },
               transparentLevel: seed.transparentLevel,
-              monochrome: seed.monochrome
+              monochrome: fullTemplate.logoSettings?.monochrome ?? false
             },
             placement,
             pdf: {
