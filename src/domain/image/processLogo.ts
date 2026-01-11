@@ -48,6 +48,7 @@ function applyTransparency(imageData: ImageData, level: DesignLogoSettings["tran
     strong: 64
   };
   const threshold = thresholds[level];
+  const softRange = 12;
   const bgColor = sampleBackgroundColor(imageData);
   const { data } = imageData;
   for (let i = 0; i < data.length; i += 4) {
@@ -59,6 +60,9 @@ function applyTransparency(imageData: ImageData, level: DesignLogoSettings["tran
     );
     if (d < threshold) {
       data[i + 3] = 0;
+    } else if (d < threshold + softRange) {
+      const ratio = (d - threshold) / softRange;
+      data[i + 3] = Math.round(data[i + 3] * ratio);
     }
   }
 }

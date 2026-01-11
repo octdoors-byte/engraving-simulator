@@ -63,6 +63,13 @@ export async function deleteAsset(id: string): Promise<void> {
   });
 }
 
+export async function deleteAssets(ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  await withStore("readwrite", (store) => {
+    ids.forEach((id) => store.delete(id));
+  });
+}
+
 export async function listAssetsByType(type: AssetType): Promise<AssetRecord[]> {
   const db = await openDb();
   return new Promise((resolve, reject) => {

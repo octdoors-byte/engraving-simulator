@@ -2,7 +2,7 @@ import type { Template } from "@/domain/types";
 
 export const sampleTemplate: Template = {
   templateKey: "certificate_cover_a4_v1",
-  name: "証書カバーA4：右下刻印",
+  name: "証書カバー A4 右下刻印",
   status: "published",
   updatedAt: "2026-01-09T10:00:00.000+09:00",
   background: {

@@ -1,6 +1,8 @@
 import type { CommonSettings, Design, DesignSummary, Template, TemplateSummary } from "../domain/types";
 
 const STORAGE_PREFIX = "ksim:";
+const APP_VERSION = "1.1.0";
+const KEY_APP_VERSION = `${STORAGE_PREFIX}appVersion`;
 const INDEX_TEMPLATES = `${STORAGE_PREFIX}templates:index`;
 const INDEX_DESIGNS = `${STORAGE_PREFIX}designs:index`;
 
@@ -43,6 +45,15 @@ export function saveTemplate(template: Template): void {
   updateTemplateIndex(template);
 }
 
+export function ensureAppVersion(): string {
+  localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
+  return APP_VERSION;
+}
+
+export function getAppVersion(): string | null {
+  return localStorage.getItem(KEY_APP_VERSION);
+}
+
 export function listTemplates(): TemplateSummary[] {
   return readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? [];
 }
@@ -82,6 +93,7 @@ export function deleteDesign(designId: string): void {
 
 export function saveCommonSettings(settings: CommonSettings): void {
   writeJson(`${STORAGE_PREFIX}commonSettings`, settings);
+  window.dispatchEvent(new CustomEvent("ksim:commonSettingsUpdated"));
 }
 
 export function loadCommonSettings(): CommonSettings | null {

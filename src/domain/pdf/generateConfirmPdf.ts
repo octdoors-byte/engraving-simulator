@@ -54,8 +54,7 @@ export async function generateConfirmPdf(
     width: engravingArea.w * viewScaleX,
     height: engravingArea.h * viewScaleY,
     borderColor: rgb(0.1, 0.4, 0.9),
-    borderWidth: 1,
-    opacity: 0.4
+    borderWidth: 1
   });
 
   if (logoBlob) {
@@ -73,14 +72,6 @@ export async function generateConfirmPdf(
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   page.drawText(designId, {
     x: width - 200,
-    y: 24,
-    size: 8,
-    font,
-    color: rgb(0.1, 0.1, 0.1)
-  });
-
-  page.drawText(`Template: ${template.templateKey}`, {
-    x: 24,
     y: 24,
     size: 8,
     font,

@@ -10,7 +10,7 @@ type DropzoneProps = {
 const ACCEPTED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const MAX_BYTES = 5 * 1024 * 1024;
 
-export function Dropzone({ onFileAccepted, disabled }: DropzoneProps) {
+export function Dropzone({ onFileAccepted, onReject, disabled }: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -25,11 +25,11 @@ export function Dropzone({ onFileAccepted, disabled }: DropzoneProps) {
       if (!files || files.length === 0) return;
       const file = files[0];
       if (!ACCEPTED_TYPES.includes(file.type)) {
-        onReject?.("PNG/JPEG/WEBP のいずれかを選択してください");
+        onReject?.("画像形式は PNG/JPEG/WEBP を選択してください。");
         return;
       }
       if (file.size > MAX_BYTES) {
-        onReject?.("5MB 以下のファイルのみアップロードできます");
+        onReject?.("5MB 以上のファイルはアップロードできません。");
         return;
       }
       onFileAccepted(file);
@@ -41,17 +41,31 @@ export function Dropzone({ onFileAccepted, disabled }: DropzoneProps) {
     (event: DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       setIsDragging(false);
-      handleFiles(event.dataTransfer.files);
+      if (!disabled) {
+        handleFiles(event.dataTransfer.files);
+      }
     },
-    [handleFiles]
+    [handleFiles, disabled]
   );
 
   return (
     <div
       className={`rounded-2xl border-2 border-dashed px-6 py-10 text-center transition ${
-        disabled ? "border-slate-200 bg-slate-50 text-slate-400" : isDragging ? "border-sky-500 bg-sky-50" : "border-slate-200 bg-white text-slate-500"
+        disabled
+          ? "border-slate-200 bg-slate-50 text-slate-400"
+          : isDragging
+            ? "border-sky-500 bg-sky-50"
+            : "border-slate-200 bg-white text-slate-500"
       }`}
+      role="button"
+      tabIndex={0}
       onClick={triggerInput}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          triggerInput();
+        }
+      }}
       onDragOver={(event) => {
         event.preventDefault();
         if (!disabled) {
@@ -70,10 +84,10 @@ export function Dropzone({ onFileAccepted, disabled }: DropzoneProps) {
         disabled={disabled}
       />
       <p className="font-semibold text-slate-900">ロゴ画像をアップロード</p>
-      <p className="text-xs">
-        PNG/JPEG/WEBP、5MB以下。ドラッグ&ドロップまたはクリックして選択してください。
+      <p className="text-xs text-slate-500">
+        PNG/JPEG/WEBP・5MBまで。ドラッグ&ドロップでも選択できます。
       </p>
-      {disabled && <p className="mt-2 text-xxs text-rose-500">処理中のためアップロードできません</p>}
+      {disabled && <p className="mt-2 text-xxs text-rose-500">発行中はアップロードできません</p>}
     </div>
   );
 }

@@ -47,7 +47,7 @@ export async function generateEngravePdf(
     y: height - (engravingArea.y + engravingArea.h) * viewScaleY,
     width: engravingArea.w * viewScaleX,
     height: engravingArea.h * viewScaleY,
-    borderColor: rgb(0.8, 0.1, 0.1),
+    borderColor: rgb(0.7, 0.7, 0.7),
     borderWidth: 1
   });
 
@@ -68,21 +68,21 @@ export async function generateEngravePdf(
   page.drawText(`Design ID: ${meta.designId}`, {
     x: margin,
     y: margin,
-    size: 8,
+    size: 10,
     font,
     color: rgb(0.2, 0.2, 0.2)
   });
   page.drawText(`Template: ${template.templateKey}`, {
     x: margin,
     y: margin + 12,
-    size: 8,
+    size: 10,
     font,
     color: rgb(0.2, 0.2, 0.2)
   });
   page.drawText(`Created at: ${meta.createdAt}`, {
     x: margin,
     y: margin + 24,
-    size: 8,
+    size: 10,
     font,
     color: rgb(0.2, 0.2, 0.2)
   });

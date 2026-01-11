@@ -1,4 +1,7 @@
-﻿import { Link, NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import type { CommonSettings } from "@/domain/types";
+import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 
 const navItems = [
   { to: "/", label: "シミュレーター" },
@@ -6,16 +9,51 @@ const navItems = [
   { to: "/admin/designs", label: "刻印履歴" }
 ];
 
+function sizeClass(size?: "sm" | "md" | "lg") {
+  if (size === "lg") return "text-base";
+  if (size === "md") return "text-sm";
+  return "text-xs";
+}
+
+const alignClass: Record<"left" | "center" | "right", string> = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right"
+};
+
 export function AppLayout() {
+  const [settings, setSettings] = useState<CommonSettings | null>(null);
+
+  useEffect(() => {
+    ensureAppVersion();
+    setSettings(loadCommonSettings());
+    const handler = () => setSettings(loadCommonSettings());
+    window.addEventListener("ksim:commonSettingsUpdated", handler as EventListener);
+    return () => window.removeEventListener("ksim:commonSettingsUpdated", handler as EventListener);
+  }, []);
+
+  const logoAlign = alignClass[settings?.logoAlign ?? "left"];
+  const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
+  const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
+  const logoHeight =
+    settings?.logoSize === "lg" ? "h-12" : settings?.logoSize === "md" ? "h-10" : "h-8";
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="bg-white border-b shadow-sm">
+      <header className="border-b bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <Link to="/" className="text-2xl font-semibold text-slate-900">
-              名入れ刻印シミュレーター
-            </Link>
-            <p className="text-sm text-slate-500">ローカルで完結する最小構成</p>
+          <div className={`flex items-center gap-3 ${logoAlign}`}>
+            {settings?.logoImage && (
+              <img src={settings.logoImage} alt="共通ロゴ" className={`${logoHeight} w-auto`} />
+            )}
+            <div>
+              <Link to="/" className="text-2xl font-semibold text-slate-900">
+                名入れ刻印シミュレーター
+              </Link>
+              <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
+                {settings?.headerText ?? "ローカルで完結する最小構成"}
+              </p>
+            </div>
           </div>
           <nav className="flex flex-wrap items-center gap-2 text-sm">
             {navItems.map((item) => (
@@ -42,7 +80,9 @@ export function AppLayout() {
       <footer className="border-t bg-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-4 text-xs text-slate-500">
           <p>仕様書 v1.1 に準拠</p>
-          <p>ブラウザの localStorage / IndexedDB を活用</p>
+          <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)}`}>
+            {settings?.footerText ?? "ブラウザの localStorage / IndexedDB を活用"}
+          </p>
         </div>
       </footer>
     </div>
