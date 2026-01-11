@@ -5,7 +5,7 @@ import { appRouter } from "./app/router";
 import { seedIfEmpty } from "./domain/seed/seedData";
 import "./styles/global.css";
 
-seedIfEmpty();
+seedIfEmpty("always");
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

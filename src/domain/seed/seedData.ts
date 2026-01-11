@@ -15,6 +15,24 @@ import { getAssetById, saveAsset } from "@/storage/idb";
 import { saveTemplateBgFallback } from "@/storage/local";
 
 const SEED_KEY = "ksim:seeded";
+const STORAGE_PREFIX = "ksim:";
+const DB_NAME = "ksim_db";
+
+function deleteDatabase(name: string): Promise<void> {
+  return new Promise((resolve) => {
+    const request = indexedDB.deleteDatabase(name);
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  });
+}
+
+async function resetSeedStorage(): Promise<void> {
+  Object.keys(localStorage)
+    .filter((key) => key.startsWith(STORAGE_PREFIX))
+    .forEach((key) => localStorage.removeItem(key));
+  await deleteDatabase(DB_NAME);
+}
 
 function createTemplateSet(): Template[] {
   return [
@@ -141,8 +159,12 @@ async function blobToDataUrl(blob: Blob): Promise<string> {
   });
 }
 
-export async function seedIfEmpty(): Promise<void> {
-  if (localStorage.getItem(SEED_KEY)) return;
+export async function seedIfEmpty(mode: "ifEmpty" | "always" = "ifEmpty"): Promise<void> {
+  if (mode === "always") {
+    await resetSeedStorage();
+  } else if (localStorage.getItem(SEED_KEY)) {
+    return;
+  }
   const hasTemplates = listTemplates().length > 0;
   const hasDesigns = listDesigns().length > 0;
   const hasSettings = Boolean(loadCommonSettings());
