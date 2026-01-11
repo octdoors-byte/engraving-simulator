@@ -157,7 +157,7 @@ export function AdminTemplatesPage() {
           setToast({ message: validation.errors.join(" / "), tone: "error" });
           return;
         }
-        const template = {
+        let template = {
           ...validation.template,
           logoSettings: validation.template.logoSettings ?? {
             monochrome: false
