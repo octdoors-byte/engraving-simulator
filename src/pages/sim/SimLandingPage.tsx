@@ -37,7 +37,6 @@ export function SimLandingPage() {
   const [columns, setColumns] = useState(defaultColumns);
   const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
-  const [rowPadding, setRowPadding] = useState<"tight" | "normal" | "wide">("wide");
   const [rowPaddingPx, setRowPaddingPx] = useState(12);
 
   const sortedTemplates = [...templates].sort((a, b) => {
@@ -63,9 +62,7 @@ export function SimLandingPage() {
     setColumns(next);
   };
 
-  const rowPaddingClass =
-    rowPadding === "tight" ? "py-2" : rowPadding === "normal" ? "py-4" : "py-5";
-  const rowPaddingStyle = rowPadding === "tight" ? { paddingTop: rowPaddingPx, paddingBottom: rowPaddingPx } : undefined;
+  const rowPaddingStyle = { paddingTop: rowPaddingPx, paddingBottom: rowPaddingPx };
 
   return (
     <section className="space-y-6">
@@ -116,28 +113,16 @@ export function SimLandingPage() {
             右へ
           </button>
           <span className="ml-2">行間</span>
-          <select
-            className="rounded border border-slate-200 px-2 py-1 text-sm"
-            value={rowPadding}
-            onChange={(event) => setRowPadding(event.target.value as typeof rowPadding)}
-          >
-            <option value="tight">狭い</option>
-            <option value="normal">普通</option>
-            <option value="wide">広い</option>
-          </select>
-          {rowPadding === "tight" && (
-            <label className="inline-flex items-center gap-2 text-sm">
-              <span>細かく</span>
-              <input
-                type="range"
-                min={6}
-                max={20}
-                value={rowPaddingPx}
-                onChange={(event) => setRowPaddingPx(Number(event.target.value))}
-              />
-              <span>{rowPaddingPx}px</span>
-            </label>
-          )}
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="range"
+              min={6}
+              max={24}
+              value={rowPaddingPx}
+              onChange={(event) => setRowPaddingPx(Number(event.target.value))}
+            />
+            <span>{rowPaddingPx}px</span>
+          </label>
           <span className="ml-2">表示</span>
           {columns.map((col) => (
             <label key={col.key} className="inline-flex items-center gap-1 text-sm">
@@ -182,18 +167,14 @@ export function SimLandingPage() {
                       {visibleColumns.map((col) => {
                         if (col.key === "name") {
                           return (
-                            <td
-                              key={col.key}
-                              className={`px-6 ${rowPaddingClass} font-medium text-slate-900`}
-                              style={rowPaddingStyle}
-                            >
+                            <td key={col.key} className="px-6 font-medium text-slate-900" style={rowPaddingStyle}>
                               {template.name}
                             </td>
                           );
                         }
                         if (col.key === "templateKey") {
                           return (
-                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`} style={rowPaddingStyle}>
+                            <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
                               {template.templateKey}
                             </td>
                           );
@@ -203,7 +184,7 @@ export function SimLandingPage() {
                           return (
                             <td
                               key={col.key}
-                              className={`px-6 ${rowPaddingClass} ${
+                              className={`px-6 ${
                                 isPublished ? "font-semibold text-emerald-600" : "text-slate-600"
                               }`}
                               style={rowPaddingStyle}
@@ -214,13 +195,13 @@ export function SimLandingPage() {
                         }
                         if (col.key === "updatedAt") {
                           return (
-                            <td key={col.key} className={`px-6 ${rowPaddingClass} text-slate-600`} style={rowPaddingStyle}>
+                            <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
                               {formatDateTime(template.updatedAt)}
                             </td>
                           );
                         }
                         return (
-                          <td key={col.key} className={`px-6 ${rowPaddingClass}`} style={rowPaddingStyle}>
+                          <td key={col.key} className="px-6" style={rowPaddingStyle}>
                             <a
                               href={simPath}
                               className="text-sm text-slate-500 underline decoration-slate-300 hover:text-slate-700"
