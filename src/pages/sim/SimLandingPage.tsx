@@ -36,10 +36,11 @@ export function SimLandingPage() {
                   className="flex flex-col gap-2 rounded-xl border border-slate-100 bg-slate-50 p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
+                    <div className="flex flex-wrap items-center gap-3">
                       <p className="text-lg font-medium text-slate-900">{template.name}</p>
-                      <p className="text-sm text-slate-500">キー: {template.templateKey}</p>
-                      <p className="text-sm text-slate-500">状態: {statusLabels[template.status]}</p>
+                      <p className="text-xs text-slate-500">
+                        キー: {template.templateKey} / 状態: {statusLabels[template.status]}
+                      </p>
                     </div>
                     <Link
                       to={simPath}
