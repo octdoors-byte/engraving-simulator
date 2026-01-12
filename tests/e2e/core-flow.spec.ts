@@ -120,6 +120,7 @@ test("TC-E2E-02 管理：公開制御", async ({ page }) => {
   await resetStorage(page);
   await registerTemplate(page);
   await page.goto("/sim/test_template_a4");
+  await waitForAppReady(page);
   await expect(page.getByText(/未公開|見つかりません/)).toBeVisible();
 });
 

@@ -1,5 +1,5 @@
 ﻿import { useState } from "react";
-import type { TemplateStatus } from "@/domain/types";
+import type { TemplateStatus, TemplateSummary } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
 type ColumnKey = "name" | "templateKey" | "status" | "updatedAt" | "url";
@@ -18,6 +18,50 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "url", label: "公開URL" }
 ];
 
+type TemplateRow = {
+  key: string;
+  name: string;
+  status: TemplateStatus;
+  updatedAt: string;
+};
+
+function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
+  if (templateKey.endsWith("_front")) {
+    return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
+  }
+  if (templateKey.endsWith("_back")) {
+    return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
+  }
+  return { baseKey: templateKey, side: null };
+}
+
+function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
+  const map = new Map<string, TemplateSummary[]>();
+  list.forEach((template) => {
+    const { baseKey, side } = splitTemplateKey(template.templateKey);
+    const key = side ? baseKey : template.templateKey;
+    const items = map.get(key) ?? [];
+    items.push(template);
+    map.set(key, items);
+  });
+  return Array.from(map.entries()).map(([key, items]) => {
+    const sorted = [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    const preferred = items.find((item) => item.templateKey.endsWith("_front")) ?? items[0];
+    const name = items.length > 1 ? `${preferred.name}??/??` : preferred.name;
+    const status = items.some((item) => item.status === "published")
+      ? "published"
+      : items.some((item) => item.status === "tested")
+        ? "tested"
+        : "draft";
+    return {
+      key,
+      name,
+      status,
+      updatedAt: sorted[0]?.updatedAt ?? ""
+    };
+  });
+}
+
 function formatDateTime(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -30,7 +74,7 @@ function formatDateTime(value: string) {
 }
 
 export function SimLandingPage() {
-  const templates = listTemplates();
+  const templates = groupTemplates(listTemplates());
   const settings = loadCommonSettings();
   const landingTitle = settings?.landingTitle?.trim() || "デザインシミュレーター";
   const [sortKey, setSortKey] = useState<"updatedAtDesc" | "updatedAtAsc" | "nameAsc">("updatedAtDesc");
@@ -216,27 +260,27 @@ export function SimLandingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
-                {sortedTemplates.map((template) => {
-                  const simPath = `/sim/${template.templateKey}`;
+                {sortedTemplates.map((row) => {
+                  const simPath = `/sim/${row.key}`;
                   return (
-                    <tr key={template.templateKey}>
+                    <tr key={row.key}>
                       {visibleColumns.map((col) => {
                         if (col.key === "name") {
                           return (
                             <td key={col.key} className="px-6 font-medium text-slate-900" style={rowPaddingStyle}>
-                              {template.name}
+                              {row.name}
                             </td>
                           );
                         }
                         if (col.key === "templateKey") {
                           return (
                             <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
-                              {template.templateKey}
+                              {row.key}
                             </td>
                           );
                         }
                         if (col.key === "status") {
-                          const isPublished = template.status === "published";
+                          const isPublished = row.status === "published";
                           return (
                             <td
                               key={col.key}
@@ -245,14 +289,14 @@ export function SimLandingPage() {
                               }`}
                               style={rowPaddingStyle}
                             >
-                              {statusLabels[template.status]}
+                              {statusLabels[row.status]}
                             </td>
                           );
                         }
                         if (col.key === "updatedAt") {
                           return (
                             <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
-                              {formatDateTime(template.updatedAt)}
+                              {formatDateTime(row.updatedAt)}
                             </td>
                           );
                         }
