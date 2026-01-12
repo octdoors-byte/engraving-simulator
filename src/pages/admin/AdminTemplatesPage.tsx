@@ -586,7 +586,7 @@ export function AdminTemplatesPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span
                             role="button"
                             tabIndex={0}
@@ -606,7 +606,9 @@ export function AdminTemplatesPage() {
                           >
                             {template.name}
                           </span>
-                          {template.comment && <div className="text-xs text-slate-400">{template.comment}</div>}
+                          {template.comment && (
+                            <span className="text-xs font-normal text-slate-400">（{template.comment}）</span>
+                          )}
                         </div>
                       )}
                     </td>
