@@ -91,6 +91,7 @@ export function AdminTemplatesPage() {
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [editingComment, setEditingComment] = useState("");
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
@@ -292,23 +293,35 @@ export function AdminTemplatesPage() {
     [reloadTemplates]
   );
 
-  const commitDisplayName = useCallback(
+  const commitTemplateMeta = useCallback(
     (templateKey: string) => {
       const template = getTemplate(templateKey);
       if (!template) return;
       const nextName = editingName.trim();
+      const nextComment = editingComment.trim();
       if (!nextName) {
         setToast({ message: "表示名は必須です。", tone: "error" });
         return;
       }
-      const next: Template = { ...template, name: nextName, updatedAt: new Date().toISOString() };
+      const next: Template = {
+        ...template,
+        name: nextName,
+        comment: nextComment ? nextComment : undefined,
+        updatedAt: new Date().toISOString()
+      };
       saveTemplate(next);
       reloadTemplates();
       setEditingKey(null);
-      setToast({ message: "表示名を更新しました。", tone: "success" });
+      setToast({ message: "表示名とコメントを更新しました。", tone: "success" });
     },
-    [editingName, reloadTemplates]
+    [editingName, editingComment, reloadTemplates]
   );
+
+  const cancelEditing = useCallback(() => {
+    setEditingKey(null);
+    setEditingName("");
+    setEditingComment("");
+  }, []);
 
   const handleDelete = useCallback(
     async (templateKey: string) => {
@@ -522,25 +535,55 @@ export function AdminTemplatesPage() {
                     </td>
                     <td className="px-6 py-4">
                       {editingKey === template.templateKey ? (
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           <input
                             type="text"
                             className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
                             value={editingName}
                             onChange={(event) => setEditingName(event.target.value)}
-                            onBlur={() => commitDisplayName(template.templateKey)}
                             onKeyDown={(event) => {
                               if (event.key === "Enter") {
                                 event.preventDefault();
-                                commitDisplayName(template.templateKey);
+                                commitTemplateMeta(template.templateKey);
                               }
                               if (event.key === "Escape") {
-                                setEditingKey(null);
+                                cancelEditing();
                               }
                             }}
                             autoFocus
                           />
-                          {template.comment && <div className="text-xs text-slate-400">{template.comment}</div>}
+                          <input
+                            type="text"
+                            className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                            value={editingComment}
+                            onChange={(event) => setEditingComment(event.target.value)}
+                            placeholder="コメント（任意）"
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                event.preventDefault();
+                                commitTemplateMeta(template.templateKey);
+                              }
+                              if (event.key === "Escape") {
+                                cancelEditing();
+                              }
+                            }}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600"
+                              onClick={() => commitTemplateMeta(template.templateKey)}
+                            >
+                              保存
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-500"
+                              onClick={cancelEditing}
+                            >
+                              キャンセル
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="space-y-1">
@@ -551,11 +594,13 @@ export function AdminTemplatesPage() {
                             onDoubleClick={() => {
                               setEditingKey(template.templateKey);
                               setEditingName(template.name);
+                              setEditingComment(template.comment ?? "");
                             }}
                             onKeyDown={(event) => {
                               if (event.key === "Enter") {
                                 setEditingKey(template.templateKey);
                                 setEditingName(template.name);
+                                setEditingComment(template.comment ?? "");
                               }
                             }}
                           >
