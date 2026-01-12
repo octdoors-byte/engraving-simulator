@@ -95,8 +95,10 @@ export function AdminTemplatesPage() {
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
+  const commentInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
   const settingsRef = useRef<CommonSettings>(settings);
+  const focusCommentRef = useRef(false);
 
   const reloadTemplates = useCallback(() => {
     const list = listTemplates();
@@ -322,6 +324,12 @@ export function AdminTemplatesPage() {
     setEditingName("");
     setEditingComment("");
   }, []);
+
+  useEffect(() => {
+    if (!focusCommentRef.current) return;
+    focusCommentRef.current = false;
+    commentInputRef.current?.focus();
+  }, [editingKey]);
 
   const handleDelete = useCallback(
     async (templateKey: string) => {
@@ -558,6 +566,7 @@ export function AdminTemplatesPage() {
                             value={editingComment}
                             onChange={(event) => setEditingComment(event.target.value)}
                             placeholder="コメント（任意）"
+                            ref={commentInputRef}
                             onKeyDown={(event) => {
                               if (event.key === "Enter") {
                                 event.preventDefault();
@@ -607,7 +616,27 @@ export function AdminTemplatesPage() {
                             {template.name}
                           </span>
                           {template.comment && (
-                            <span className="text-xs font-normal text-slate-400">（{template.comment}）</span>
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              className="text-xs font-normal text-slate-400"
+                              onDoubleClick={() => {
+                                setEditingKey(template.templateKey);
+                                setEditingName(template.name);
+                                setEditingComment(template.comment ?? "");
+                                focusCommentRef.current = true;
+                              }}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  setEditingKey(template.templateKey);
+                                  setEditingName(template.name);
+                                  setEditingComment(template.comment ?? "");
+                                  focusCommentRef.current = true;
+                                }
+                              }}
+                            >
+                              （{template.comment}）
+                            </span>
                           )}
                         </div>
                       )}
