@@ -21,8 +21,6 @@
 
 ### 2.2 管琁E��テンプレ登録・管琁E- `/admin/templates` で `template.json` と背景画像！ENG/WebP/JPEG�E�を **同時D&D** で登録できる
 - チE��プレのスチE�EタスめE`draft/tested/published` で刁E��替え可能
-- `published` 以外�EチE��プレは `/sim/:templateKey` で**利用不可**�E��E確なエラー画面�E�E- チE��プレ背景に対して、管琁E��面で**刻印枠�E�矩形�E�をドラチE��持E��E*できる�E�比率座標で保存！E
-### 2.3 お客様：一連フロー�E�忁E��！E- `/sim/:templateKey` で、次が一連で成立すめE  1) ロゴアチE�Eロード！ENG/JPEG/WEBP、EMB以冁E��E  2) トリミング�E�任意篁E���E�E  3) 背景透過�E�弱/中/強 + 連続スライダーTolerance�E�E  4) モノクロ二値化！EN/OFF�E�E  5) 刻印枠冁E��配置�E�ドラチE��/拡大縮小、枠外不可�E�E  6) Design ID 発衁EↁE**確認用PDF�E�Eype A�E�E* を�E動DL
 
 ### 2.4 管琁E��履歴・再DL�E�忁E��！E- `/admin/designs` に発行履歴が永続化される（リロード後も残る�E�E- 履歴から **確認用PDF�E�Eype A�E�E* と **刻印用PDF�E�Eype B�E�E* を�Eダウンロードできる
 - PDFがIndexedDBに存在しなぁE��合�E、データから再生成して保存�EDLできる
@@ -240,7 +238,6 @@
 ### 10.8 配置�E�ドラチE���E�E��大縮小！E#### 10.8.1 操佁E- 移勁E Pointer EventsでドラチE��
 - リサイズ: **右下ハンドルのみ**�E�E1.2固定！E- 縦横比固定（ロゴ画像比！E- 最小サイズ:
   - `rules.minLogoSizePx`�E��E朁E0px�E�以丁E- 回転は実裁E��なぁE
-#### 10.8.2 枠冁E��紁E��固定：クランプ！E- `keepInsideEngravingArea=true` の場合、ロゴ矩形が枠外へ出なぁE- 計箁E
   - `x` は `[engraveX, engraveX + engraveW - logoW]`
   - `y` は `[engraveY, engraveY + engraveH - logoH]`
 - リサイズ時も同様にクランチE- もし `logoW > engraveW` また�E `logoH > engraveH` になった場合、E*自動縮小して枠冁E��収めめE*
@@ -290,7 +287,6 @@
 - key
 - status�E�バチE�� + セレクト！E- updatedAt
 - 操佁E
-  - プレビュー�E�Esim/:key を別ウィンドウで開く�E�E  - 編雁E��刻印枠設定！E  - 削除
 
 ### 13.2 新規登録�E�E&D�E�E- ドロチE�E領域に以下を同時投�E
   - `template.json`�E�忁E��Eつ�E�E  - 背景画像（忁E��Eつ�E�E
@@ -305,8 +301,6 @@
 ```
 
 #### 13.2.2 登録ルール�E�固定！E- keyはURLに使用するため、正規表現に合�E忁E��（後述�E�E- 背景画像�E `assets` に `asset:templateBg:{key}` で保孁E- templateレコードには `baseImageAssetId` を保孁E- `engravingAreaRatio` は登録時点では `null` でもよぁE��ただし�E開には忁E��E��E
-### 13.3 刻印枠�E�矩形�E�指定ツール�E�忁E��！E- チE��プレ編雁E��ーダル/ペ�Eジで、背景画像�Eレビュー上に矩形をドラチE��作�E
-- 作�Eした矩形を移動�Eリサイズできる�E�角ハンドル�E�E- 保存時は **比率座樁E*として `engravingAreaRatio` に保孁E- 0、Eの篁E��にクランプして保存すめE
 ### 13.4 バリチE�Eション�E�固定！E- `key`:
   - 忁E��E  - `^[a-z0-9][a-z0-9_-]{2,63}$`�E�E、E4斁E��、�E頭は英小文孁E数字！E  - 重褁E��止
 - `dpi`: 72、E00�E�整数�E�E- `canvas.widthPx/heightPx`: 200、E000�E�整数�E�E- `engravingAreaRatio`�E�保存時に忁E��チェチE���E�E  - `x,y,w,h` すべて 0、E
@@ -365,7 +359,6 @@
 ## 17. UI仕様！Eailwind�E�E### 17.1 ト�Eン
 - 業務ツール寁E��、裁E��は最封E- Tailwind標準�Eニュートラル + アクセント（青/緁E橙）程度
 
-### 17.2 忁E��コンポ�EネンチE- Dropzone�E�クリチE��選抁E+ D&D、ファイル吁Eサイズ表示�E�E- Toast�E��E劁E警呁E失敗！E- Modal�E�トリミング / チE��プレ枠編雁E��E- CanvasスチE�Eジ�E�背景・枠・ロゴ・ハンドル表示�E�E- Form�E�Eabel付き�E�E
 ### 17.3 アクセシビリチE��最低限
 - ボタンに `aria-label`
 - モーダルはフォーカストラチE�E、Escで閉じめE- 主要�EタンはTab移動可能
@@ -390,7 +383,6 @@
     - `sim/CropModal.tsx`
     - `sim/StepsPanel.tsx`
     - `sim/StageCanvas.tsx`
-    - `admin/TemplateEditor.tsx`�E�刻印枠編雁E��E  - `domain/`
     - `types.ts`
     - `id/designId.ts`
     - `image/`
@@ -408,7 +400,6 @@
 
 ### 18.2 主要E��数�E�忁E��！E- `validateTemplateDraft(input): { ok: boolean; errors: string[] }`
 - `saveTemplateWithBg(templateDraft, bgBlob): Promise<Template>`
-- `updateTemplateEngravingArea(key, engravingAreaRatio): Promise<void>`
 - `listTemplates(): Promise<Template[]>`
 - `generateDesignId(): string`
 - `processLogo(params): Promise<Blob>`�E�Erop→透過→二値化！E- `clampPlacement(placementPx, engravingAreaPx): placementPx`
@@ -420,10 +411,7 @@
 ---
 
 ## 19. 手動チE��ト頁E���E�最低限�E�E
-### 19.1 チE��プレ登録/枠編雁E- template.json + 背景画像D&D ↁE追加されめE- 枠をドラチE��作�E→保存�E再読込して残る
-- 枠なしでtested/publishedにできなぁE
 ### 19.2 お客様フロー
-- 5MB趁E��拒否されめE- tolerance/thresholdで見た目が変わめE- ロゴを枠外に動かせなぁE��常に枠冁E��クランプ！E- 発行�EPDF A が�E動DL→履歴に残る
 
 ### 19.3 管琁E��歴
 - PDF A/B が�EDLできる
@@ -455,7 +443,7 @@
   - IndexedDBのチE�Eタそ�Eも�EはキャチE��ュ対象ではなぁE��ブラウザ領域�E�E  - PWAは「読み込み安定化」であり「データ永続�E保証」ではなぁE
 ---
 
-## 22. 実裁E��ェーズ�E�タスクリスト！E- [ ] Phase 1: 基盤構築！Eite + React + TS + Tailwind + Router + Dexie�E�E- [ ] Phase 2: 画像加工コア�E�Erop + tolerance透過 + 二値化！E- [ ] Phase 3: 配置シミュレーター�E�枠冁E��紁E+ ハンドル�E�E- [ ] Phase 4: PDFエンジン�E�Edf-lib + オフスクリーンCanvas + Type A/B�E�E- [ ] Phase 5: 管琁E���E�E�テンプレD&D + 枠持E��E+ 履歴/再DL/削除�E�E
+- [ ] Phase 5: 管理画面（テンプレD&D + 履歴/再DL/削除）
 ---
 
 # 最終注愁E- v1.2は「ロゴ1点」「枠冁E�E置」「PDF2種」「履歴管琁E��を最小確実セチE��として固定する、E- Fabric.jsめE��転などの拡張は、v1.2の安定稼働後に別バ�Eジョンで行う、E
@@ -509,4 +497,6 @@
 ### 1.5.6 仕様書冁E�E名称�E�文書上�E推奨�E�E- 斁E��上�E「デザインシミュレーター」ではなく、以下�EぁE��れかを推奨する、E  - 刻印配置確認ツール
   - 刻印前確認シミュレーター
   - ロゴ配置確定ツール
+
+
 
