@@ -72,83 +72,82 @@
 ---
 
 ## 7. チE�EタモチE���E�厳寁E��E
-### 7.1 Template�E�台紙！E#### 7.1.1 Templateレコード！EndexedDB/templates�E�E```json
+### 7.1 Template�E�台紙！E
+#### 7.1.1 Templateレコード！EndexedDB/templates�E�E
+```json
 {
   "id": "uuid-v4",
-  "key": "certificate-a4-rightbottom-v1",
-  "name": "証書カバ�EA4�E�右下刻印�E�E,
+  "templateKey": "certificate_cover_a4_v1",
+  "name": "証書カバー A4 右下刻印",
   "status": "draft",
   "updatedAt": "2026-01-09T10:00:00.000+09:00",
-  "dpi": 300,
-  "baseImageAssetId": "asset:templateBg:certificate-a4-rightbottom-v1",
-  "canvas": {
-    "widthPx": 1200,
-    "heightPx": 1600
+  "background": {
+    "fileName": "certificate-cover-a4.png",
+    "canvasWidthPx": 1200,
+    "canvasHeightPx": 1600
   },
-  "engravingAreaRatio": {
-    "x": 0.68,
-    "y": 0.76,
-    "w": 0.23,
-    "h": 0.12
+  "engravingArea": {
+    "label": "右下刻印枠",
+    "x": 820,
+    "y": 1220,
+    "w": 280,
+    "h": 180
   },
-  "rules": {
-    "keepInsideEngravingArea": true,
+  "placementRules": {
     "allowRotate": false,
-    "minLogoSizePx": 10
+    "keepInsideEngravingArea": true,
+    "minScale": 0.1,
+    "maxScale": 6.0
+  },
+  "logoSettings": {
+    "monochrome": false
   },
   "pdf": {
     "pageSize": "A4",
     "orientation": "portrait",
-    "typeA": {
-      "showEngravingGuide": true,
-      "showHeaderFooter": true
-    },
-    "typeB": {
-      "showEngravingGuide": true,
-      "showMetaText": true,
-      "units": "mm"
-    }
+    "dpi": 300
   }
 }
 ```
 
-#### 7.1.2 engravingAreaRatio�E�比率座標�E定義�E�E- 背景画像�E**表示基準キャンバス�E�Eanvas.widthPx/heightPx�E�E*に対する比率�E�E.0、E.0�E�E- 実座標px変換:
-  - `xPx = ratio.x * canvas.widthPx`
-  - `yPx = ratio.y * canvas.heightPx`
-  - `wPx = ratio.w * canvas.widthPx`
-  - `hPx = ratio.h * canvas.heightPx`
+#### 7.1.2 engravingArea（px座標）
+- engravingArea は背景画像のキャンバスサイズ（background.canvasWidthPx/HeightPx）に対するピクセル座標
+- x,y,w,h は整数で指定する
 
-> **比率保孁E*により、封E�� canvasサイズを変えても刻印枠が崩れなぁE��E
-### 7.2 Design�E�お客様が発行したデザイン�E�E#### 7.2.1 Designレコード！EndexedDB/designs�E�E```json
+### 7.2 Design�E�お客様が発行したデザイン�E�E
+#### 7.2.1 Designレコード！EndexedDB/designs�E�E
+```json
 {
   "designId": "260109_K7M3Q9XR",
-  "templateId": "uuid-v4",
-  "templateKey": "certificate-a4-rightbottom-v1",
+  "templateKey": "certificate_cover_a4_v1",
   "createdAt": "2026-01-09T10:12:34.000+09:00",
-  "logoOriginalAssetId": "asset:logoOriginal:260109_K7M3Q9XR",
-  "logoProcessedAssetId": "asset:logoProcessed:260109_K7M3Q9XR",
-  "processParams": {
+  "logo": {
+    "fileName": "logo.png",
+    "mimeType": "image/png",
+    "sizeBytes": 123456,
     "crop": { "x": 0.12, "y": 0.08, "w": 0.76, "h": 0.81 },
-    "bgTransparent": { "enabled": true, "tolerance": 40 },
-    "mono": { "enabled": true, "threshold": 128 }
+    "transparentColor": { "r": 255, "g": 255, "b": 255 },
+    "monochrome": false
   },
-  "placementPx": {
+  "placement": {
     "x": 860,
     "y": 1260,
     "w": 180,
     "h": 90
   },
   "pdf": {
-    "typeAAssetId": "asset:pdfA:260109_K7M3Q9XR",
-    "typeBAssetId": "asset:pdfB:260109_K7M3Q9XR"
+    "confirmAssetId": "asset:pdfConfirm:260109_K7M3Q9XR",
+    "engraveAssetId": "asset:pdfEngrave:260109_K7M3Q9XR"
   }
 }
 ```
 
-### 7.3 Asset�E�Elob保管�E�E#### 7.3.1 Assetレコード！EndexedDB/assets�E�E```json
+### 7.3 Asset�E�Elob保管�E�E
+#### 7.3.1 Assetレコード！EndexedDB/assets�E�E
+```json
 {
-  "id": "asset:pdfA:260109_K7M3Q9XR",
-  "type": "pdfA",
+  "id": "asset:pdfConfirm:260109_K7M3Q9XR",
+  "type": "pdfConfirm",
   "refId": "260109_K7M3Q9XR",
   "mimeType": "application/pdf",
   "blob": "<Blob>",
@@ -156,22 +155,24 @@
 }
 ```
 
-#### 7.3.2 Assetのtype一覧�E�固定！E- `templateBg`
+#### 7.3.2 Assetのtype一覧（現仕様）
+- `templateBg`
 - `logoOriginal`
-- `logoProcessed`
-- `pdfA`�E�確認用�E�E- `pdfB`�E�刻印用�E�E- `commonLogo`�E��E通�EチE��ー用ロゴ�E�※v1.2でIndexedDBに入れる�E�EocalStorageにBase64は使わなぁE��E
-#### 7.3.3 Asset ID命名規則�E�固定！E- 背景: `asset:templateBg:{templateKey}`
-- ロゴ原本: `asset:logoOriginal:{designId}`
-- ロゴ加工渁E `asset:logoProcessed:{designId}`
-- PDF A: `asset:pdfA:{designId}`
-- PDF B: `asset:pdfB:{designId}`
-- 共通ロゴ: `asset:commonLogo:global`
+- `logoEdited`
+- `pdfConfirm`
+- `pdfEngrave`
 
+#### 7.3.3 Asset ID命名規則（現仕様）
+- 背景: `asset:templateBg:{templateKey}`
+- ロゴ原本: `asset:logoOriginal:{designId}`
+- ロゴ加工: `asset:logoEdited:{designId}`
+- PDF確認用: `asset:pdfConfirm:{designId}`
+- PDF刻印用: `asset:pdfEngrave:{designId}`
 ---
 
 ## 8. 座標系のルール�E�最重要E��E
-### 8.1 基準座標！Ex�E�E- `template.canvas.widthPx/heightPx` めE**基準座標系�E�Ex�E�E* とする
-- `engravingAreaRatio` は比率
+### 8.1 基準座標！Ex�E�E- `template.background.canvasWidthPx/HeightPx` めE**基準座標系�E�Ex�E�E* とする
+- `engravingArea（px）` は座標
 - `placementPx` は **忁E��基準座標！Ex�E�E*で保存すめE
 ### 8.2 画面表示�E�レスポンシブ！E- 表示用キャンバスは可変サイズ�E�ESS�E�E- 描画時に `viewScale` を計箁E  - `viewScale = min(viewW / canvas.widthPx, viewH / canvas.heightPx)`
 - 表示座標�E `displayPx = basePx * viewScale`
@@ -257,7 +258,7 @@
 ### 12.1 重要方針（高精度要素�E�E- UI表示キャンバスとは別に、E*PDF生�E専用のオフスクリーンCanvas**を使用する
 - これにより、UIが小さくても�E力が荒れにくい
 
-### 12.2 オフスクリーンCanvasのサイズ�E�固定！E- `template.canvas.widthPx/heightPx` を基準とする
+### 12.2 オフスクリーンCanvasのサイズ�E�固定！E- `template.background.canvasWidthPx/HeightPx` を基準とする
 - ただし、`template.dpi=300` と `template.pdf.pageSize` がA4の場合、推奨は以下（任意！E  - 縦: 3508px、横: 2480px�E�E4 300dpi�E�E- v1.2では **チE��プレ登録時に canvasサイズを指宁E*する方式とし、A4固定�E自動計算�E行わなぁE
 ### 12.3 Type A（確認用）
 1) 背景画像を表示
@@ -297,26 +298,62 @@
 
 ### 13.2 新規登録�E�E&D�E�E- ドロチE�E領域に以下を同時投�E
   - `template.json`�E�忁E��Eつ�E�E  - 背景画像（忁E��Eつ�E�E
-#### 13.2.1 template.jsonの最小仕様！E1.2固定！E```json
+#### 13.2.1 template.jsonの最小仕様！E1.2固定！E
+```json
 {
-  "key": "certificate-a4-rightbottom-v1",
-  "name": "証書カバ�EA4�E�右下刻印�E�E,
-  "dpi": 300,
-  "canvas": { "widthPx": 1200, "heightPx": 1600 },
-  "status": "draft"
+  "templateKey": "certificate_cover_a4_v1",
+  "name": "証書カバー A4 右下刻印",
+  "status": "draft",
+  "updatedAt": "2026-01-09T10:00:00.000+09:00",
+  "background": {
+    "fileName": "certificate-cover-a4.png",
+    "canvasWidthPx": 1200,
+    "canvasHeightPx": 1600
+  },
+  "engravingArea": {
+    "label": "右下刻印枠",
+    "x": 820,
+    "y": 1220,
+    "w": 280,
+    "h": 180
+  },
+  "placementRules": {
+    "allowRotate": false,
+    "keepInsideEngravingArea": true,
+    "minScale": 0.1,
+    "maxScale": 6.0
+  },
+  "logoSettings": {
+    "monochrome": false
+  },
+  "pdf": {
+    "pageSize": "A4",
+    "orientation": "portrait",
+    "dpi": 300
+  }
 }
 ```
 
-#### 13.2.2 登録ルール�E�固定！E- keyはURLに使用するため、正規表現に合�E忁E��（後述�E�E- 背景画像�E `assets` に `asset:templateBg:{key}` で保孁E- templateレコードには `baseImageAssetId` を保孁E- `engravingAreaRatio` は登録時点では `null` でもよぁE��ただし�E開には忁E��E��E
-### 13.4 バリチE�Eション�E�固定！E- `key`:
-  - 忁E��E  - `^[a-z0-9][a-z0-9_-]{2,63}$`�E�E、E4斁E��、�E頭は英小文孁E数字！E  - 重褁E��止
-- `dpi`: 72、E00�E�整数�E�E- `canvas.widthPx/heightPx`: 200、E000�E�整数�E�E- `engravingAreaRatio`�E�保存時に忁E��チェチE���E�E  - `x,y,w,h` すべて 0、E
-  - `w>0,h>0`
-  - `x+w<=1`、`y+h<=1`
+#### 13.2.2 登録ルール（現仕様）
+- templateKey はURLに使用するため英数字と _- のみ
+- background.fileName は背景画像のファイル名と一致させる
+- engravingArea と placementRules は必須
+- pdf は A4 / 縦横 / dpi を指定する
+
+### 13.4 バリデーション（現仕様）
+- templateKey: 英数字と _- の3〜64文字
+- name: 必須
+- status: draft/tested/published
+- updatedAt: 必須
+- background.fileName: 必須
+- background.canvasWidthPx/HeightPx: 200〜20000の整数
+- engravingArea.x/y/w/h: 整数、w/hは1以上、キャンバス内
+- placementRules: allowRotate/keepInsideEngravingArea/minScale/maxScale は必須
+- pdf: pageSize(A4) / orientation / dpi は必須
 
 ### 13.5 スチE�Eタス運用�E�固定！E- `draft`: 作�E中�E�お客様利用不可�E�E- `tested`: チE��ト済（お客様利用可�E�E- `published`: 公開中�E�お客様利用可�E�E- `draft` のまま `tested/published` に変更する際、以下を満たさなぁE��合�E拒否
   - 背景画像が存在
-  - engravingAreaRatioが存在
+  - engravingArea（px）が存在
 
 ### 13.6 プレビュー�E�スマ�E想定！E- 「�Eレビュー」�Eタンは `/sim/:key` を新規ウィンドウで開く
 - 目宁E `width=390,height=844`
@@ -504,6 +541,14 @@
 ### 1.5.6 仕様書冁E�E名称�E�文書上�E推奨�E�E- 斁E��上�E「デザインシミュレーター」ではなく、以下�EぁE��れかを推奨する、E  - 刻印配置確認ツール
   - 刻印前確認シミュレーター
   - ロゴ配置確定ツール
+
+
+
+
+
+
+
+
 
 
 
