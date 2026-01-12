@@ -79,7 +79,7 @@ export async function generateEngravePdf(
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const margin = 24;
   page.drawText(
-    `位置(mm): x=${formatMm(placementMm.x)} y=${formatMm(placementMm.y)} / サイズ(mm): w=${formatMm(
+    `Pos(mm): x=${formatMm(placementMm.x)} y=${formatMm(placementMm.y)} / Size(mm): w=${formatMm(
       placementMm.w
     )} h=${formatMm(placementMm.h)}`,
     {

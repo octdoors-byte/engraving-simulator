@@ -46,11 +46,13 @@ function openDb(): Promise<IDBDatabase> {
         };
         upgradeRequest.onsuccess = () => resolve(upgradeRequest.result);
         upgradeRequest.onerror = () => reject(upgradeRequest.error);
+        upgradeRequest.onblocked = () => reject(new Error("indexedDB blocked"));
         return;
       }
       resolve(db);
     };
     request.onerror = () => reject(request.error);
+    request.onblocked = () => reject(new Error("indexedDB blocked"));
   });
 }
 

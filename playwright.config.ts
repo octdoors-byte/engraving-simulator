@@ -1,11 +1,18 @@
-﻿import { defineConfig, devices } from "@playwright/test";
+﻿import path from "path";
+import { defineConfig, devices } from "@playwright/test";
+
+const tempRoot = process.env.TEMP ?? process.cwd();
+const outputDir = process.env.PLAYWRIGHT_OUTPUT_DIR ?? path.join(tempRoot, "ksim-playwright-artifacts");
 
 export default defineConfig({
   testDir: "tests/e2e",
   retries: 0,
+  outputDir,
+  preserveOutput: "always",
   use: {
     baseURL: "http://localhost:5174",
-    trace: "retain-on-failure"
+    trace: "retain-on-failure",
+    acceptDownloads: true
   },
   webServer: {
     command: "pnpm dev -- --port 5174",
@@ -20,4 +27,3 @@ export default defineConfig({
     }
   ]
 });
-

@@ -168,8 +168,27 @@ export async function seedIfEmpty(mode: "ifEmpty" | "always" = "ifEmpty"): Promi
   const hasTemplates = listTemplates().length > 0;
   const hasDesigns = listDesigns().length > 0;
   const hasSettings = Boolean(loadCommonSettings());
+  const hasUserData = hasTemplates || hasDesigns;
 
   try {
+    if (mode === "ifEmpty" && hasUserData) {
+      if (!hasSettings) {
+        saveCommonSettings({
+          headerText: "",
+          footerText: "",
+          landingTitle: "デザインシミュレーター",
+          logoAlign: "left",
+          headerTextAlign: "left",
+          footerTextAlign: "center",
+          logoSize: "md",
+          headerTextSize: "md",
+          footerTextSize: "md"
+        });
+      }
+      localStorage.setItem(SEED_KEY, "1.1.0");
+      return;
+    }
+
     if (!hasTemplates) {
       const templates = createTemplateSet();
       const response = await fetch(`/assets/${templates[0].background.fileName}`);
