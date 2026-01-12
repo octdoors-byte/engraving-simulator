@@ -22,6 +22,9 @@ export function validateTemplate(raw: unknown): { ok: boolean; errors: string[];
   if (!template.name || typeof template.name !== "string") {
     errors.push("name は必須です。");
   }
+  if (template.comment !== undefined && typeof template.comment !== "string") {
+    errors.push("comment は文字列で指定してください。");
+  }
   if (!template.status || !["draft", "tested", "published"].includes(template.status)) {
     errors.push("status は draft/tested/published のいずれかで指定してください。");
   }

@@ -21,6 +21,7 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
 type TemplateRow = {
   key: string;
   name: string;
+  comment?: string;
   status: TemplateStatus;
   updatedAt: string;
 };
@@ -47,7 +48,7 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
   return Array.from(map.entries()).map(([key, items]) => {
     const sorted = [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     const preferred = items.find((item) => item.templateKey.endsWith("_front")) ?? items[0];
-    const name = items.length > 1 ? `${preferred.name}??/??` : preferred.name;
+    const name = items.length > 1 ? `${preferred.name}（表/裏）` : preferred.name;
     const status = items.some((item) => item.status === "published")
       ? "published"
       : items.some((item) => item.status === "tested")
@@ -56,6 +57,7 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
     return {
       key,
       name,
+      comment: preferred.comment,
       status,
       updatedAt: sorted[0]?.updatedAt ?? ""
     };
@@ -268,7 +270,10 @@ export function SimLandingPage() {
                         if (col.key === "name") {
                           return (
                             <td key={col.key} className="px-6 font-medium text-slate-900" style={rowPaddingStyle}>
-                              {row.name}
+                              <div>{row.name}</div>
+                              {row.comment ? (
+                                <div className="mt-1 text-sm font-normal text-slate-500">{row.comment}</div>
+                              ) : null}
                             </td>
                           );
                         }

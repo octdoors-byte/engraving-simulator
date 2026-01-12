@@ -522,41 +522,47 @@ export function AdminTemplatesPage() {
                     </td>
                     <td className="px-6 py-4">
                       {editingKey === template.templateKey ? (
-                        <input
-                          type="text"
-                          className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                          value={editingName}
-                          onChange={(event) => setEditingName(event.target.value)}
-                          onBlur={() => commitDisplayName(template.templateKey)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                              event.preventDefault();
-                              commitDisplayName(template.templateKey);
-                            }
-                            if (event.key === "Escape") {
-                              setEditingKey(null);
-                            }
-                          }}
-                          autoFocus
-                        />
+                        <div className="space-y-1">
+                          <input
+                            type="text"
+                            className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                            value={editingName}
+                            onChange={(event) => setEditingName(event.target.value)}
+                            onBlur={() => commitDisplayName(template.templateKey)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                event.preventDefault();
+                                commitDisplayName(template.templateKey);
+                              }
+                              if (event.key === "Escape") {
+                                setEditingKey(null);
+                              }
+                            }}
+                            autoFocus
+                          />
+                          {template.comment && <div className="text-xs text-slate-400">{template.comment}</div>}
+                        </div>
                       ) : (
-                        <span
-                          role="button"
-                          tabIndex={0}
-                          className="cursor-pointer"
-                          onDoubleClick={() => {
-                            setEditingKey(template.templateKey);
-                            setEditingName(template.name);
-                          }}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
+                        <div className="space-y-1">
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            className="cursor-pointer"
+                            onDoubleClick={() => {
                               setEditingKey(template.templateKey);
                               setEditingName(template.name);
-                            }
-                          }}
-                        >
-                          {template.name}
-                        </span>
+                            }}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                setEditingKey(template.templateKey);
+                                setEditingName(template.name);
+                              }
+                            }}
+                          >
+                            {template.name}
+                          </span>
+                          {template.comment && <div className="text-xs text-slate-400">{template.comment}</div>}
+                        </div>
                       )}
                     </td>
                     <td className="px-6 py-4">{template.templateKey}</td>

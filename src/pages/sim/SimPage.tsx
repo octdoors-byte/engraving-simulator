@@ -526,7 +526,9 @@ export function SimPage() {
           </div>
         )}
         <h1 className="mt-2 text-2xl font-semibold text-slate-900">{template.name}</h1>
-        <p className="text-sm text-slate-500">ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。</p>
+        <p className="text-sm text-slate-500">
+          {template.comment?.trim() || "ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。"}
+        </p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">

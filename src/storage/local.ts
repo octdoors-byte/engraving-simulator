@@ -23,6 +23,7 @@ function updateTemplateIndex(template: Template): void {
   list.push({
     templateKey: template.templateKey,
     name: template.name,
+    comment: template.comment,
     status: template.status,
     updatedAt: template.updatedAt
   });

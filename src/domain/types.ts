@@ -34,6 +34,7 @@ export interface TemplateLogoSettings {
 export interface Template {
   templateKey: string;
   name: string;
+  comment?: string;
   status: TemplateStatus;
   updatedAt: string;
   background: TemplateBackground;
@@ -82,6 +83,7 @@ export interface DesignSummary {
 export interface TemplateSummary {
   templateKey: string;
   name: string;
+  comment?: string;
   status: TemplateStatus;
   updatedAt: string;
 }
