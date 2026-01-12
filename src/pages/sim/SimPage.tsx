@@ -525,7 +525,7 @@ export function SimPage() {
             )}
           </div>
         )}
-        <h1 className="mt-2 text-2xl font-semibold text-slate-900">デザインシミュレーター</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-slate-900">{template.name}</h1>
         <p className="text-sm text-slate-500">ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。</p>
       </header>
 
