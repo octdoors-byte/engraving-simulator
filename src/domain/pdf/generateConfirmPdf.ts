@@ -28,6 +28,14 @@ export async function generateConfirmPdf(
   placement: DesignPlacement,
   designId: string
 ): Promise<Blob> {
+  const mmPerPx = 25.4 / template.pdf.dpi;
+  const formatMm = (value: number) => `${Math.round(value * 10) / 10}mm`;
+  const placementMm = {
+    x: placement.x * mmPerPx,
+    y: placement.y * mmPerPx,
+    w: placement.w * mmPerPx,
+    h: placement.h * mmPerPx
+  };
   const pdfDoc = await PDFDocument.create();
   const { width, height } = getPageDimensions(template);
   const page = pdfDoc.addPage([width, height]);
@@ -85,9 +93,22 @@ export async function generateConfirmPdf(
   }
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const margin = 24;
+  page.drawText(
+    `位置(mm): x=${formatMm(placementMm.x)} y=${formatMm(placementMm.y)} / サイズ(mm): w=${formatMm(
+      placementMm.w
+    )} h=${formatMm(placementMm.h)}`,
+    {
+      x: margin,
+      y: margin + 12,
+      size: 8,
+      font,
+      color: rgb(0.1, 0.1, 0.1)
+    }
+  );
   page.drawText(designId, {
-    x: width - 200,
-    y: 24,
+    x: margin,
+    y: margin,
     size: 8,
     font,
     color: rgb(0.1, 0.1, 0.1)
