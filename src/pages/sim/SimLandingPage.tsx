@@ -1,6 +1,6 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import type { TemplateStatus, TemplateSummary } from "@/domain/types";
-import { listTemplates, loadCommonSettings } from "@/storage/local";
+import { listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 
 type ColumnKey = "name" | "comment" | "templateKey" | "status" | "updatedAt" | "url";
 
@@ -25,6 +25,7 @@ type TemplateRow = {
   comment?: string;
   status: TemplateStatus;
   updatedAt: string;
+  primaryTemplateKey: string;
 };
 
 function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
@@ -60,7 +61,8 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
       name,
       comment: preferred.comment,
       status,
-      updatedAt: sorted[0]?.updatedAt ?? ""
+      updatedAt: sorted[0]?.updatedAt ?? "",
+      primaryTemplateKey: preferred.templateKey
     };
   });
 }
@@ -86,6 +88,13 @@ export function SimLandingPage() {
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
   const [rowPaddingPx, setRowPaddingPx] = useState(12);
   const [draggingKey, setDraggingKey] = useState<ColumnKey | null>(null);
+
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const [editingComment, setEditingComment] = useState("");
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const commentInputRef = useRef<HTMLInputElement>(null);
+  const focusFieldRef = useRef<"name" | "comment">("name");
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -122,6 +131,39 @@ export function SimLandingPage() {
   };
 
   const rowPaddingStyle = { paddingTop: rowPaddingPx, paddingBottom: rowPaddingPx };
+
+  useEffect(() => {
+    if (!editingKey) return;
+    if (focusFieldRef.current == "comment") {
+      commentInputRef.current?.focus();
+      return;
+    }
+    nameInputRef.current?.focus();
+  }, [editingKey]);
+
+  const commitRow = (row: TemplateRow) => {
+    const nextName = editingName.trim();
+    const nextComment = editingComment.trim();
+    if (!nextName) return;
+    const all = listTemplates();
+    const targets = all.filter((item) => splitTemplateKey(item.templateKey).baseKey === row.key);
+    const base = targets.length ? targets : all.filter((item) => item.templateKey === row.primaryTemplateKey);
+    base.forEach((template) => {
+      saveTemplate({
+        ...template,
+        name: nextName,
+        comment: nextComment ? nextComment : undefined,
+        updatedAt: new Date().toISOString()
+      });
+    });
+    setEditingKey(null);
+  };
+
+  const cancelEditing = () => {
+    setEditingKey(null);
+    setEditingName("");
+    setEditingComment("");
+  };
 
   return (
     <section className="space-y-6">
@@ -269,19 +311,115 @@ export function SimLandingPage() {
                     <tr key={row.key}>
                       {visibleColumns.map((col) => {
                         if (col.key === "name") {
+                          const isEditing = editingKey === row.key;
                           return (
                             <td key={col.key} className="px-6 font-medium text-slate-900" style={rowPaddingStyle}>
-                              <div>{row.name}</div>
-                              {row.comment ? (
-                                <div className="mt-1 text-sm font-normal text-slate-500">{row.comment}</div>
-                              ) : null}
+                              {isEditing ? (
+                                <div className="space-y-2">
+                                  <input
+                                    ref={nameInputRef}
+                                    type="text"
+                                    className="w-full rounded border border-slate-200 px-2 py-1 text-sm"
+                                    value={editingName}
+                                    onChange={(event) => setEditingName(event.target.value)}
+                                    onKeyDown={(event) => {
+                                      if (event.key === "Enter") {
+                                        event.preventDefault();
+                                        commitRow(row);
+                                      }
+                                      if (event.key === "Escape") {
+                                        cancelEditing();
+                                      }
+                                    }}
+                                  />
+                                  <div className="flex gap-2">
+                                    <button
+                                      type="button"
+                                      className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600"
+                                      onClick={() => commitRow(row)}
+                                    >
+                                      保存
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-500"
+                                      onClick={cancelEditing}
+                                    >
+                                      キャンセル
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer"
+                                  onDoubleClick={() => {
+                                    setEditingKey(row.key);
+                                    setEditingName(row.name);
+                                    setEditingComment(row.comment ?? "");
+                                    focusFieldRef.current = "name";
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
+                                      setEditingKey(row.key);
+                                      setEditingName(row.name);
+                                      setEditingComment(row.comment ?? "");
+                                      focusFieldRef.current = "name";
+                                    }
+                                  }}
+                                >
+                                  {row.name}
+                                </div>
+                              )}
                             </td>
                           );
                         }
                         if (col.key === "comment") {
+                          const isEditing = editingKey === row.key;
                           return (
                             <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
-                              {row.comment || "-"}
+                              {isEditing ? (
+                                <input
+                                  ref={commentInputRef}
+                                  type="text"
+                                  className="w-full rounded border border-slate-200 px-2 py-1 text-sm"
+                                  value={editingComment}
+                                  onChange={(event) => setEditingComment(event.target.value)}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
+                                      event.preventDefault();
+                                      commitRow(row);
+                                    }
+                                    if (event.key === "Escape") {
+                                      cancelEditing();
+                                    }
+                                  }}
+                                  placeholder="コメント（任意）"
+                                />
+                              ) : (
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer"
+                                  onDoubleClick={() => {
+                                    setEditingKey(row.key);
+                                    setEditingName(row.name);
+                                    setEditingComment(row.comment ?? "");
+                                    focusFieldRef.current = "comment";
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
+                                      setEditingKey(row.key);
+                                      setEditingName(row.name);
+                                      setEditingComment(row.comment ?? "");
+                                      focusFieldRef.current = "comment";
+                                    }
+                                  }}
+                                >
+                                  {row.comment || "-"}
+                                </div>
+                              )}
                             </td>
                           );
                         }
