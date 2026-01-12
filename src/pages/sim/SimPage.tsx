@@ -525,7 +525,7 @@ export function SimPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
-        <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="order-2 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-1">
           <div className="space-y-4">
             <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-white px-4 py-4 shadow-sm">
               <div className="flex items-center gap-2">
@@ -563,7 +563,7 @@ export function SimPage() {
                     onClick={() => setTransparentColor(null)}
                     disabled={!imageBitmap}
                   >
-                    透過なし
+                    透過をリセット
                   </button>
                 </div>
                 <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-2">
@@ -579,7 +579,7 @@ export function SimPage() {
                   )}
                 </div>
                 <div className="mt-3 flex items-center gap-2 text-xs text-slate-600">
-                  <span>選択中:</span>
+                  <span>透過色:</span>
                   {transparentColor ? (
                     <>
                       <span
@@ -588,12 +588,10 @@ export function SimPage() {
                           backgroundColor: `rgb(${transparentColor.r}, ${transparentColor.g}, ${transparentColor.b})`
                         }}
                       />
-                      <span>
-                        RGB({transparentColor.r}, {transparentColor.g}, {transparentColor.b})
-                      </span>
+                      <span>RGB({transparentColor.r}, {transparentColor.g}, {transparentColor.b})</span>
                     </>
                   ) : (
-                    <span className="text-slate-400">なし</span>
+                    <span className="text-slate-400">未設定</span>
                   )}
                 </div>
               </div>
@@ -650,7 +648,7 @@ export function SimPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="order-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-2">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
