@@ -282,6 +282,13 @@ export function SimPage() {
       setToast({ message: "先に画像をアップロードしてください。", tone: "error" });
       return;
     }
+    if (placement.w > template.engravingArea.w || placement.h > template.engravingArea.h) {
+      setToast({
+        message: "ロゴのサイズが刻印枠より大きいので発行できません。",
+        tone: "error"
+      });
+      return;
+    }
     if (!isPlacementInside(placement, template.engravingArea)) {
       setToast({ message: "ロゴを刻印枠内に収めてください。", tone: "error" });
       setPhase("PLACEMENT");
