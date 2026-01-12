@@ -1,84 +1,84 @@
-﻿# 屏 鬮倡ｲｾ蠎ｦ繝ｻ繝ｭ繝ｼ繧ｫ繝ｫ螳檎ｵ仙梛 蛻ｻ蜊ｰ繝・じ繧､繝ｳ繧ｷ繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ・亥ｮ悟・迚医・譛邨ゆｻ墓ｧ俶嶌・・spec_id: engraving-simulator-local-final-v1.2  
-蟇ｾ雎｡: **繝ｭ繝ｼ繧ｫ繝ｫ迺ｰ蠅・ｼ・ite + React + TypeScript + Tailwind・峨〒遒ｺ螳溘↓蜍輔￥MVP**・医し繝ｼ繝舌・/隱ｲ驥・隱崎ｨｼ縺ｪ縺暦ｼ・ 
-譖ｴ譁ｰ譌･: 2026-01-09  
-譁ｹ驥・ **縲勲VP縺ｮ遒ｺ螳滓ｧ縲搾ｼ九悟ｾ梧綾繧翫＠縺ｫ縺上＞鬮倡ｲｾ蠎ｦ隕∫ｴ・・exie/豈皮紫蠎ｧ讓・mm螟画鋤/繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ鬮倩ｧ｣蜒丞ｺｦ・峨阪ｒ蜈医↓謗｡逕ｨ**
+﻿# 🛠 高精度・ローカル完結型 刻印チE��インシミュレーター�E�完�E版�E最終仕様書�E�Espec_id: engraving-simulator-local-final-v1.2  
+対象: **ローカル環墁E��Eite + React + TypeScript + Tailwind�E�で確実に動くMVP**�E�サーバ�E/課釁E認証なし！E 
+更新日: 2026-01-09  
+方釁E **「MVPの確実性」＋「後戻りしにくい高精度要素�E�Eexie/比率座樁Emm変換/オフスクリーン高解像度�E�」を先に採用**
 
 ---
 
-## 0. 螳溯｣・・髄縺代・邏・據・磯㍾隕・ｼ・- 譛ｬ譖ｸ縺ｫ**險倩ｼ峨＆繧後◆莉墓ｧ倥・縺ｿ**繧貞ｮ溯｣・☆繧具ｼ域耳貂ｬ縺ｮ諡｡蠑ｵ縺ｯ遖∵ｭ｢・峨・- 霑ｷ縺｣縺溘ｉ縲・*v1.2縺ｧ縺ｯ繧・ｉ縺ｪ縺・*縲阪ｒ蜆ｪ蜈医＠縲ゝODO繧ｳ繝｡繝ｳ繝医〒蟆・擂諡｡蠑ｵ蛟呵｣懊→縺励※谿九☆縲・- 繝悶Λ繧ｦ繧ｶ螳檎ｵ撰ｼ・ocalStorage / IndexedDB・峨ｆ縺医・*螳ｹ驥丈ｸ崎ｶｳ繝ｻ遐ｴ謳阪・驛ｨ蛻・､ｱ謨・*縺ｫ蟇ｾ縺吶ｋ繝上Φ繝峨Μ繝ｳ繧ｰ繧貞ｿ・医→縺吶ｋ縲・
+## 0. 実裁E��E��け�E紁E���E�重要E��E- 本書に**記載された仕様�Eみ**を実裁E��る（推測の拡張は禁止�E�、E- 迷ったら、E*v1.2ではめE��なぁE*」を優先し、TODOコメントで封E��拡張候補として残す、E- ブラウザ完結！EocalStorage / IndexedDB�E�ゆえ、E*容量不足・破損�E部刁E��敁E*に対するハンドリングを忁E��とする、E
 ---
 
-## 1. 逶ｮ逧・ｼ井ｽ輔ｒ隗｣豎ｺ縺吶ｋ繝・・繝ｫ縺具ｼ・- 縺雁ｮ｢讒倥′ **蛻ｻ蜊ｰ逕ｨ繝ｭ繧ｴ逕ｻ蜒・*繧貞叙繧願ｾｼ縺ｿ縲・  - 繝医Μ繝溘Φ繧ｰ
-  - 閭梧勹騾城℃・・olerance隱ｿ謨ｴ・・  - 繝｢繝弱け繝ｭ莠悟､蛹厄ｼ亥綾蜊ｰ蜷代￠・・  - 蛻ｻ蜊ｰ蜿ｯ閭ｽ遽・峇・域棧・牙・縺ｸ縺ｮ驟咲ｽｮ・医ラ繝ｩ繝・げ・・僑螟ｧ邵ｮ蟆擾ｼ・  - **遒ｺ隱咲畑PDF**縺ｮ逋ｺ陦・  - **繝・じ繧､繝ｳID**縺ｮ逕滓・
-  繧偵・*繝悶Λ繧ｦ繧ｶ縺縺代〒螳檎ｵ・*縺励※陦後≧縲・- 邂｡逅・・′繝・Φ繝励Ξ繝ｼ繝茨ｼ亥床邏呻ｼ峨ｒ逋ｻ骭ｲ縺励∫匱陦悟ｱ･豁ｴ繧堤｢ｺ隱阪＠縲・*蛻ｻ蜊ｰ菴懈･ｭ逕ｨPDF**繧貞・蜿門ｾ励〒縺阪ｋ縲・
+## 1. 目皁E��何を解決するチE�Eルか！E- お客様が **刻印用ロゴ画僁E*を取り込み、E  - トリミング
+  - 背景透過�E�Eolerance調整�E�E  - モノクロ二値化（刻印向け�E�E  - 刻印可能篁E���E�枠�E��Eへの配置�E�ドラチE���E�E��大縮小！E  - **確認用PDF**の発衁E  - **チE��インID**の生�E
+  を、E*ブラウザだけで完絁E*して行う、E- 管琁E��E��チE��プレート（台紙）を登録し、発行履歴を確認し、E*刻印作業用PDF**を�E取得できる、E
 ---
 
-## 2. Done Definition・域・蜉滓擅莉ｶ・・莉･荳九′縺吶∋縺ｦ謌千ｫ九＠縺溘ｉDone縲・
-### 2.1 髢狗匱/襍ｷ蜍・- `npm install` 竊・`npm run dev` 縺ｧ繝ｭ繝ｼ繧ｫ繝ｫ襍ｷ蜍輔〒縺阪ｋ
-- 繝ｫ繝ｼ繝・ぅ繝ｳ繧ｰ縺ｧ莉･荳偽RL縺瑚｡ｨ遉ｺ縺輔ｌ繧・  - `/sim/:templateKey`
+## 2. Done Definition�E��E功条件�E�E以下がすべて成立したらDone、E
+### 2.1 開発/起勁E- `npm install` ↁE`npm run dev` でローカル起動できる
+- ルーチE��ングで以下URLが表示されめE  - `/sim/:templateKey`
   - `/admin/templates`
   - `/admin/designs`
 
-### 2.2 邂｡逅・ｼ壹ユ繝ｳ繝励Ξ逋ｻ骭ｲ繝ｻ邂｡逅・- `/admin/templates` 縺ｧ `template.json` 縺ｨ閭梧勹逕ｻ蜒擾ｼ・NG/WebP/JPEG・峨ｒ **蜷梧凾D&D** 縺ｧ逋ｻ骭ｲ縺ｧ縺阪ｋ
-- 繝・Φ繝励Ξ縺ｮ繧ｹ繝・・繧ｿ繧ｹ繧・`draft/tested/published` 縺ｧ蛻・ｊ譖ｿ縺亥庄閭ｽ
-- `published` 莉･螟悶・繝・Φ繝励Ξ縺ｯ `/sim/:templateKey` 縺ｧ**蛻ｩ逕ｨ荳榊庄**・域・遒ｺ縺ｪ繧ｨ繝ｩ繝ｼ逕ｻ髱｢・・- 繝・Φ繝励Ξ閭梧勹縺ｫ蟇ｾ縺励※縲∫ｮ｡逅・判髱｢縺ｧ**蛻ｻ蜊ｰ譫・育洸蠖｢・峨ｒ繝峨Λ繝・げ謖・ｮ・*縺ｧ縺阪ｋ・域ｯ皮紫蠎ｧ讓吶〒菫晏ｭ假ｼ・
-### 2.3 縺雁ｮ｢讒假ｼ壻ｸ騾｣繝輔Ο繝ｼ・亥ｿ・茨ｼ・- `/sim/:templateKey` 縺ｧ縲∵ｬ｡縺御ｸ騾｣縺ｧ謌千ｫ九☆繧・  1) 繝ｭ繧ｴ繧｢繝・・繝ｭ繝ｼ繝会ｼ・NG/JPEG/WEBP縲・MB莉･蜀・ｼ・  2) 繝医Μ繝溘Φ繧ｰ・井ｻｻ諢冗ｯ・峇・・  3) 閭梧勹騾城℃・亥ｼｱ/荳ｭ/蠑ｷ + 騾｣邯壹せ繝ｩ繧､繝繝ｼTolerance・・  4) 繝｢繝弱け繝ｭ莠悟､蛹厄ｼ・N/OFF・・  5) 蛻ｻ蜊ｰ譫蜀・↓驟咲ｽｮ・医ラ繝ｩ繝・げ/諡｡螟ｧ邵ｮ蟆上∵棧螟紋ｸ榊庄・・  6) Design ID 逋ｺ陦・竊・**遒ｺ隱咲畑PDF・・ype A・・* 繧定・蜍疋L
+### 2.2 管琁E��テンプレ登録・管琁E- `/admin/templates` で `template.json` と背景画像！ENG/WebP/JPEG�E�を **同時D&D** で登録できる
+- チE��プレのスチE�EタスめE`draft/tested/published` で刁E��替え可能
+- `published` 以外�EチE��プレは `/sim/:templateKey` で**利用不可**�E��E確なエラー画面�E�E- チE��プレ背景に対して、管琁E��面で**刻印枠�E�矩形�E�をドラチE��持E��E*できる�E�比率座標で保存！E
+### 2.3 お客様：一連フロー�E�忁E��！E- `/sim/:templateKey` で、次が一連で成立すめE  1) ロゴアチE�Eロード！ENG/JPEG/WEBP、EMB以冁E��E  2) トリミング�E�任意篁E���E�E  3) 背景透過�E�弱/中/強 + 連続スライダーTolerance�E�E  4) モノクロ二値化！EN/OFF�E�E  5) 刻印枠冁E��配置�E�ドラチE��/拡大縮小、枠外不可�E�E  6) Design ID 発衁EↁE**確認用PDF�E�Eype A�E�E* を�E動DL
 
-### 2.4 邂｡逅・ｼ壼ｱ･豁ｴ繝ｻ蜀好L・亥ｿ・茨ｼ・- `/admin/designs` 縺ｫ逋ｺ陦悟ｱ･豁ｴ縺梧ｰｸ邯壼喧縺輔ｌ繧具ｼ医Μ繝ｭ繝ｼ繝牙ｾ後ｂ谿九ｋ・・- 螻･豁ｴ縺九ｉ **遒ｺ隱咲畑PDF・・ype A・・* 縺ｨ **蛻ｻ蜊ｰ逕ｨPDF・・ype B・・* 繧貞・繝繧ｦ繝ｳ繝ｭ繝ｼ繝峨〒縺阪ｋ
-- PDF縺栗ndexedDB縺ｫ蟄伜惠縺励↑縺・ｴ蜷医・縲√ョ繝ｼ繧ｿ縺九ｉ蜀咲函謌舌＠縺ｦ菫晏ｭ倪・DL縺ｧ縺阪ｋ
-
----
-
-## 3. 髱樒岼讓呻ｼ・1.2縺ｧ縺ｯ螳溯｣・＠縺ｪ縺・ｼ・- 隱崎ｨｼ縲∬ｪｲ驥代√し繝ｼ繝舌・菫晏ｭ倥√Γ繝ｼ繝ｫ騾∽ｿ｡
-- 螟夜ΚAPI・亥・繧頑栢縺喉I遲会ｼ・- 隍・焚逕ｻ蜒城・鄂ｮ縲√ユ繧ｭ繧ｹ繝亥綾蜊ｰ
-- 蝗櫁ｻ｢・・otation・・- 繝吶け繧ｿ蛹悶，MYK螟画鋤縲∝魂蛻ｷ謇蜷代￠迚ｹ谿願牡蟇ｾ蠢・- PWA・医が繝輔Λ繧､繝ｳ繧ｭ繝｣繝・す繝･・俄ｻ莉倬鹸縺ｧ蟆・擂蟇ｾ蠢懈｡医・縺ｿ
+### 2.4 管琁E��履歴・再DL�E�忁E��！E- `/admin/designs` に発行履歴が永続化される（リロード後も残る�E�E- 履歴から **確認用PDF�E�Eype A�E�E* と **刻印用PDF�E�Eype B�E�E* を�Eダウンロードできる
+- PDFがIndexedDBに存在しなぁE��合�E、データから再生成して保存�EDLできる
 
 ---
 
-## 4. 謚陦薙せ繧ｿ繝・け・亥崋螳夲ｼ・- React 18 + TypeScript
+## 3. 非目標！E1.2では実裁E��なぁE��E- 認証、課金、サーバ�E保存、メール送信
+- 外部API�E��Eり抜きAI等！E- 褁E��画像�E置、テキスト刻印
+- 回転�E�Eotation�E�E- ベクタ化、CMYK変換、印刷所向け特殊色対忁E- PWA�E�オフラインキャチE��ュ�E�※付録で封E��対応案�Eみ
+
+---
+
+## 4. 技術スタチE���E�固定！E- React 18 + TypeScript
 - Vite
 - Tailwind CSS
 - React Router v6
-- PDF逕滓・: `pdf-lib`
-- 逕ｻ蜒丞・逅・ Canvas API・・D・・- 豌ｸ邯壼喧:
-  - 險ｭ螳夲ｼ亥ｰ上＆縺ｪJSON・・ localStorage
-  - 逕ｻ蜒・PDF・・lob・・ IndexedDB・・*Dexie.js謗｡逕ｨ**・・- 迥ｶ諷狗ｮ｡逅・ React Context + hooks・亥､夜ΚState繝ｩ繧､繝悶Λ繝ｪ縺ｯ荳崎ｦ・ｼ・
+- PDF生�E: `pdf-lib`
+- 画像�E琁E Canvas API�E�ED�E�E- 永続化:
+  - 設定（小さなJSON�E�E localStorage
+  - 画僁EPDF�E�Elob�E�E IndexedDB�E�E*Dexie.js採用**�E�E- 状態管琁E React Context + hooks�E�外部Stateライブラリは不要E��E
 ---
 
-## 5. 逕ｻ髱｢/URL/讓ｩ髯・| 蛹ｺ蛻・| URL | 繝壹・繧ｸ | 繧｢繧ｯ繧ｻ繧ｹ |
+## 5. 画面/URL/権陁E| 区刁E| URL | ペ�Eジ | アクセス |
 |---|---|---|---|
-| 縺雁ｮ｢讒・| `/sim/:templateKey` | 繧ｷ繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ | template.status 縺・`tested` 縺ｾ縺溘・ `published` |
-| 邂｡逅・| `/admin/templates` | 繝・Φ繝励Ξ邂｡逅・| 蟶ｸ縺ｫ蜿ｯ・医Ο繝ｼ繧ｫ繝ｫ驕狗畑・・|
-| 邂｡逅・| `/admin/designs` | 繝・じ繧､繝ｳ螻･豁ｴ | 蟶ｸ縺ｫ蜿ｯ・医Ο繝ｼ繧ｫ繝ｫ驕狗畑・・|
+| お客槁E| `/sim/:templateKey` | シミュレーター | template.status ぁE`tested` また�E `published` |
+| 管琁E| `/admin/templates` | チE��プレ管琁E| 常に可�E�ローカル運用�E�E|
+| 管琁E| `/admin/designs` | チE��イン履歴 | 常に可�E�ローカル運用�E�E|
 
-> v1.2縺ｧ縺ｯ邂｡逅・判髱｢縺ｮ隱崎ｨｼ縺ｯ陦後ｏ縺ｪ縺・・
+> v1.2では管琁E��面の認証は行わなぁE��E
 ---
 
-## 6. 豌ｸ邯壼喧險ｭ險茨ｼ・ocalStorage / IndexedDB・・
-### 6.1 localStorage 繧ｭ繝ｼ・亥崋螳夲ｼ・- `ksim:appVersion` 窶ｦ `"1.2.0"`
-- `ksim:commonSettings` 窶ｦ 蜈ｱ騾壹・繝・ム繝ｼ/繝輔ャ繧ｿ繝ｼ險ｭ螳夲ｼ・SON・・- `ksim:uiSettings` 窶ｦ UI迥ｶ諷具ｼ域釜繧翫◆縺溘∩縺ｪ縺ｩ霆ｽ蠕ｮ縺ｪ繧ゅ・・・
-> 繝・Φ繝励Ξ荳隕ｧ繝ｻ繝・じ繧､繝ｳ荳隕ｧ縺ｯ **IndexedDB蛛ｴ縺ｮindex** 繧呈ｭ｣縺ｨ縺吶ｋ・・ocalStorage縺ｫ驥崎､・ｿ晏ｭ倥＠縺ｪ縺・ｼ峨・
-### 6.2 IndexedDB・・exie.js・・#### 6.2.1 DB蜷・繝舌・繧ｸ繝ｧ繝ｳ・亥崋螳夲ｼ・- DB蜷・ `ksim_db`
+## 6. 永続化設計！EocalStorage / IndexedDB�E�E
+### 6.1 localStorage キー�E�固定！E- `ksim:appVersion` … `"1.2.0"`
+- `ksim:commonSettings` … 共通�EチE��ー/フッター設定！ESON�E�E- `ksim:uiSettings` … UI状態（折りたたみなど軽微なも�E�E�E
+> チE��プレ一覧・チE��イン一覧は **IndexedDB側のindex** を正とする�E�EocalStorageに重褁E��存しなぁE��、E
+### 6.2 IndexedDB�E�Eexie.js�E�E#### 6.2.1 DB吁Eバ�Eジョン�E�固定！E- DB吁E `ksim_db`
 - version: `1`
 
-#### 6.2.2 繝・・繝悶Ν・・exie・・- `templates`
+#### 6.2.2 チE�Eブル�E�Eexie�E�E- `templates`
 - `designs`
 - `assets`
 
-#### 6.2.3 繧ｹ繧ｭ繝ｼ繝橸ｼ・exie螳夂ｾｩ・・- templates: `id, key, status, updatedAt`
+#### 6.2.3 スキーマ！Eexie定義�E�E- templates: `id, key, status, updatedAt`
 - designs: `designId, templateId, templateKey, createdAt`
 - assets: `id, type, refId, createdAt`
 
-窶ｻ陬懆ｶｳ  
-- 讀懃ｴ｢繧・ｸ隕ｧ陦ｨ遉ｺ縺ｫ蠢・ｦ√↑邏｢蠑輔□縺代ｒ雋ｼ繧具ｼ・lob閾ｪ菴薙・蜷・ユ繝ｼ繝悶Ν蜀・↓菫晄戟縺励※繧医＞縺後」1.2縺ｯ **assets縺ｫBlob繧帝寔邏・* 縺吶ｋ・峨・
+※補足  
+- 検索めE��覧表示に忁E��な索引だけを貼る！Elob自体�E吁E��ーブル冁E��保持してよいが、v1.2は **assetsにBlobを集紁E* する�E�、E
 ---
 
-## 7. 繝・・繧ｿ繝｢繝・Ν・亥宍蟇・ｼ・
-### 7.1 Template・亥床邏呻ｼ・#### 7.1.1 Template繝ｬ繧ｳ繝ｼ繝会ｼ・ndexedDB/templates・・```json
+## 7. チE�EタモチE���E�厳寁E��E
+### 7.1 Template�E�台紙！E#### 7.1.1 Templateレコード！EndexedDB/templates�E�E```json
 {
   "id": "uuid-v4",
   "key": "certificate-a4-rightbottom-v1",
-  "name": "險ｼ譖ｸ繧ｫ繝舌・A4・亥承荳句綾蜊ｰ・・,
+  "name": "証書カバ�EA4�E�右下刻印�E�E,
   "status": "draft",
   "updatedAt": "2026-01-09T10:00:00.000+09:00",
   "dpi": 300,
@@ -114,14 +114,14 @@
 }
 ```
 
-#### 7.1.2 engravingAreaRatio・域ｯ皮紫蠎ｧ讓吶・螳夂ｾｩ・・- 閭梧勹逕ｻ蜒上・**陦ｨ遉ｺ蝓ｺ貅悶く繝｣繝ｳ繝舌せ・・anvas.widthPx/heightPx・・*縺ｫ蟇ｾ縺吶ｋ豈皮紫・・.0縲・.0・・- 螳溷ｺｧ讓冪x螟画鋤:
+#### 7.1.2 engravingAreaRatio�E�比率座標�E定義�E�E- 背景画像�E**表示基準キャンバス�E�Eanvas.widthPx/heightPx�E�E*に対する比率�E�E.0、E.0�E�E- 実座標px変換:
   - `xPx = ratio.x * canvas.widthPx`
   - `yPx = ratio.y * canvas.heightPx`
   - `wPx = ratio.w * canvas.widthPx`
   - `hPx = ratio.h * canvas.heightPx`
 
-> **豈皮紫菫晏ｭ・*縺ｫ繧医ｊ縲∝ｰ・擂 canvas繧ｵ繧､繧ｺ繧貞､峨∴縺ｦ繧ょ綾蜊ｰ譫縺悟ｴｩ繧後↑縺・・
-### 7.2 Design・医♀螳｢讒倥′逋ｺ陦後＠縺溘ョ繧ｶ繧､繝ｳ・・#### 7.2.1 Design繝ｬ繧ｳ繝ｼ繝会ｼ・ndexedDB/designs・・```json
+> **比率保孁E*により、封E�� canvasサイズを変えても刻印枠が崩れなぁE��E
+### 7.2 Design�E�お客様が発行したデザイン�E�E#### 7.2.1 Designレコード！EndexedDB/designs�E�E```json
 {
   "designId": "260109_K7M3Q9XR",
   "templateId": "uuid-v4",
@@ -147,7 +147,7 @@
 }
 ```
 
-### 7.3 Asset・・lob菫晉ｮ｡・・#### 7.3.1 Asset繝ｬ繧ｳ繝ｼ繝会ｼ・ndexedDB/assets・・```json
+### 7.3 Asset�E�Elob保管�E�E#### 7.3.1 Assetレコード！EndexedDB/assets�E�E```json
 {
   "id": "asset:pdfA:260109_K7M3Q9XR",
   "type": "pdfA",
@@ -158,34 +158,34 @@
 }
 ```
 
-#### 7.3.2 Asset縺ｮtype荳隕ｧ・亥崋螳夲ｼ・- `templateBg`
+#### 7.3.2 Assetのtype一覧�E�固定！E- `templateBg`
 - `logoOriginal`
 - `logoProcessed`
-- `pdfA`・育｢ｺ隱咲畑・・- `pdfB`・亥綾蜊ｰ逕ｨ・・- `commonLogo`・亥・騾壹・繝・ム繝ｼ逕ｨ繝ｭ繧ｴ・俄ｻv1.2縺ｧIndexedDB縺ｫ蜈･繧後ｋ・・ocalStorage縺ｫBase64縺ｯ菴ｿ繧上↑縺・ｼ・
-#### 7.3.3 Asset ID蜻ｽ蜷崎ｦ丞援・亥崋螳夲ｼ・- 閭梧勹: `asset:templateBg:{templateKey}`
-- 繝ｭ繧ｴ蜴滓悽: `asset:logoOriginal:{designId}`
-- 繝ｭ繧ｴ蜉蟾･貂・ `asset:logoProcessed:{designId}`
+- `pdfA`�E�確認用�E�E- `pdfB`�E�刻印用�E�E- `commonLogo`�E��E通�EチE��ー用ロゴ�E�※v1.2でIndexedDBに入れる�E�EocalStorageにBase64は使わなぁE��E
+#### 7.3.3 Asset ID命名規則�E�固定！E- 背景: `asset:templateBg:{templateKey}`
+- ロゴ原本: `asset:logoOriginal:{designId}`
+- ロゴ加工渁E `asset:logoProcessed:{designId}`
 - PDF A: `asset:pdfA:{designId}`
 - PDF B: `asset:pdfB:{designId}`
-- 蜈ｱ騾壹Ο繧ｴ: `asset:commonLogo:global`
+- 共通ロゴ: `asset:commonLogo:global`
 
 ---
 
-## 8. 蠎ｧ讓咏ｳｻ縺ｮ繝ｫ繝ｼ繝ｫ・域怙驥崎ｦ・ｼ・
-### 8.1 蝓ｺ貅門ｺｧ讓呻ｼ・x・・- `template.canvas.widthPx/heightPx` 繧・**蝓ｺ貅門ｺｧ讓咏ｳｻ・・x・・* 縺ｨ縺吶ｋ
-- `engravingAreaRatio` 縺ｯ豈皮紫
-- `placementPx` 縺ｯ **蠢・★蝓ｺ貅門ｺｧ讓呻ｼ・x・・*縺ｧ菫晏ｭ倥☆繧・
-### 8.2 逕ｻ髱｢陦ｨ遉ｺ・医Ξ繧ｹ繝昴Φ繧ｷ繝厄ｼ・- 陦ｨ遉ｺ逕ｨ繧ｭ繝｣繝ｳ繝舌せ縺ｯ蜿ｯ螟峨し繧､繧ｺ・・SS・・- 謠冗判譎ゅ↓ `viewScale` 繧定ｨ育ｮ・  - `viewScale = min(viewW / canvas.widthPx, viewH / canvas.heightPx)`
-- 陦ｨ遉ｺ蠎ｧ讓吶・ `displayPx = basePx * viewScale`
+## 8. 座標系のルール�E�最重要E��E
+### 8.1 基準座標！Ex�E�E- `template.canvas.widthPx/heightPx` めE**基準座標系�E�Ex�E�E* とする
+- `engravingAreaRatio` は比率
+- `placementPx` は **忁E��基準座標！Ex�E�E*で保存すめE
+### 8.2 画面表示�E�レスポンシブ！E- 表示用キャンバスは可変サイズ�E�ESS�E�E- 描画時に `viewScale` を計箁E  - `viewScale = min(viewW / canvas.widthPx, viewH / canvas.heightPx)`
+- 表示座標�E `displayPx = basePx * viewScale`
 
 ---
 
-## 9. 蜈ｱ騾壹・繝・ム繝ｼ/繝輔ャ繧ｿ繝ｼ・亥・繝壹・繧ｸ・・### 9.1 險ｭ螳啅I驟咲ｽｮ
-- `/admin/templates` 縺ｮ譛荳企Κ縺ｫ縲悟・騾壹・繝・ム繝ｼ/繝輔ャ繧ｿ繝ｼ險ｭ螳壹阪ｒ陦ｨ遉ｺ
-- 莉･蠕後∝・繝壹・繧ｸ・・im/邂｡逅・ｼ峨〒蜷御ｸ陦ｨ遉ｺ
+## 9. 共通�EチE��ー/フッター�E��Eペ�Eジ�E�E### 9.1 設定UI配置
+- `/admin/templates` の最上部に「�E通�EチE��ー/フッター設定」を表示
+- 以後、�Eペ�Eジ�E�Eim/管琁E��で同一表示
 
-### 9.2 險ｭ螳夐・岼・亥崋螳夲ｼ・- `logoAssetId`・井ｻｻ諢擾ｼ・ `asset:commonLogo:global`
-- `headerText`・井ｻｻ諢擾ｼ・ 隱ｬ譏取枚・・縲・陦鯉ｼ・- `footerText`・井ｻｻ諢擾ｼ・ 繝輔ャ繧ｿ繝ｼ譁・ｨ
+### 9.2 設定頁E���E�固定！E- `logoAssetId`�E�任意！E `asset:commonLogo:global`
+- `headerText`�E�任意！E 説明文�E�E、E行！E- `footerText`�E�任意！E フッター斁E��
 - `logoAlign`: `left|center|right`
 - `headerTextAlign`: `left|center|right`
 - `footerTextAlign`: `left|center|right`
@@ -193,59 +193,59 @@
 - `headerTextSize`: `sm|md|lg`
 - `footerTextSize`: `sm|md|lg`
 
-### 9.3 菫晏ｭ倥Ν繝ｼ繝ｫ
-- 繝・く繧ｹ繝郁ｨｭ螳壹・ localStorage・・ksim:commonSettings`・・- 繝ｭ繧ｴ逕ｻ蜒上・ IndexedDB/assets 縺ｫ Blob菫晏ｭ假ｼ・ype=`commonLogo`・・- 蜈･蜉帙・繝・ヰ繧ｦ繝ｳ繧ｹ300ms縺ｧ閾ｪ蜍穂ｿ晏ｭ假ｼ井ｿ晏ｭ伜､ｱ謨玲凾縺ｯ繝医・繧ｹ繝医〒騾夂衍・・
+### 9.3 保存ルール
+- チE��スト設定�E localStorage�E�Eksim:commonSettings`�E�E- ロゴ画像�E IndexedDB/assets に Blob保存！Eype=`commonLogo`�E�E- 入力�EチE��ウンス300msで自動保存（保存失敗時はト�Eストで通知�E�E
 ---
 
-## 10. 縺雁ｮ｢讒倡判髱｢・・sim/:templateKey・芽ｩｳ邏ｰ莉墓ｧ・
-### 10.1 繝ｬ繧､繧｢繧ｦ繝・#### PC
-- 蟾ｦ・壽桃菴懊ヱ繝阪Ν・・60縲・20px・・- 蜿ｳ・壹・繝ｬ繝薙Η繝ｼ・郁レ譎ｯ+蛻ｻ蜊ｰ譫+繝ｭ繧ｴ・・- 逋ｺ陦後・繧ｿ繝ｳ縺ｯ謫堺ｽ懊ヱ繝阪Ν譛ｫ蟆ｾ縺ｫ蝗ｺ螳・
-#### 繧ｹ繝槭・
-- 1繧ｫ繝ｩ繝邵ｦ遨阪∩・井ｸ奇ｼ壹・繝ｬ繝薙Η繝ｼ / 荳具ｼ壽桃菴懶ｼ・- 繝医Μ繝溘Φ繧ｰ繝｢繝ｼ繝繝ｫ縺ｯ鬮倥＆ `max-h-[80vh]` 繧貞ｮ医ｋ
-- 荳ｻ隕∵桃菴懊・繧ｿ繝ｳ・磯←逕ｨ/謌ｻ繧具ｼ峨・蟶ｸ縺ｫ陦ｨ遉ｺ縺輔ｌ繧・
-### 10.2 繧ｹ繝・ャ繝暦ｼ医い繧ｳ繝ｼ繝・ぅ繧ｪ繝ｳ蠖｢蠑擾ｼ・- Step 1: 繝ｭ繧ｴ隱ｭ霎ｼ
-- Step 2: 蜉蟾･・医ヨ繝ｪ繝溘Φ繧ｰ / 閭梧勹騾城℃ / 莠悟､蛹厄ｼ・- Step 3: 驟咲ｽｮ隱ｿ謨ｴ
-- Step 4: 逋ｺ陦鯉ｼ育｢ｺ隱恒DF・・
-### 10.3 迥ｶ諷区ｩ滓｢ｰ・・imState・・`simState` 縺ｯ莉･荳九・縺・★繧後°・亥崋螳夲ｼ・- `EMPTY`
+## 10. お客様画面�E�Esim/:templateKey�E�詳細仕槁E
+### 10.1 レイアウチE#### PC
+- 左�E�操作パネル�E�E60、E20px�E�E- 右�E��Eレビュー�E�背景+刻印枠+ロゴ�E�E- 発行�Eタンは操作パネル末尾に固宁E
+#### スマ�E
+- 1カラム縦積み�E�上：�Eレビュー / 下：操作！E- トリミングモーダルは高さ `max-h-[80vh]` を守る
+- 主要操作�Eタン�E�適用/戻る）�E常に表示されめE
+### 10.2 スチE��プ（アコーチE��オン形式！E- Step 1: ロゴ読込
+- Step 2: 加工�E�トリミング / 背景透過 / 二値化！E- Step 3: 配置調整
+- Step 4: 発行（確認PDF�E�E
+### 10.3 状態機械�E�EimState�E�E`simState` は以下�EぁE��れか�E�固定！E- `EMPTY`
 - `UPLOADED`
 - `EDITING`
 - `PLACEMENT`
 - `READY_TO_ISSUE`
 - `ISSUING`
 - `ISSUED`
-- `ERROR`・郁・蜻ｽ逧・ょ次蜑・ｾｩ蟶ｰ荳崎・縺縺後後Μ繧ｻ繝・ヨ縲阪〒`EMPTY`縺ｸ謌ｻ縺帙ｋ・・
-驕ｷ遘ｻ・亥崋螳夲ｼ・- `EMPTY -> UPLOADED`・医ヵ繧｡繧､繝ｫ隱ｭ霎ｼ謌仙粥・・- `UPLOADED -> EDITING`・郁・蜍包ｼ・- `EDITING -> PLACEMENT`・医碁・鄂ｮ縺ｸ縲搾ｼ・- `PLACEMENT -> READY_TO_ISSUE`・医Ο繧ｴ縺梧棧蜀・↓蜿弱∪縺｣縺ｦ縺・ｋ・・- `READY_TO_ISSUE -> ISSUING`・育匱陦梧款荳具ｼ・- `ISSUING -> ISSUED`・域・蜉滂ｼ・- 螟ｱ謨玲凾縺ｯ `ERROR` 縺ｧ縺ｯ縺ｪ縺上∝庄閭ｽ縺ｪ繧臥峩蜑咲憾諷九↓謌ｻ縺励※蜀崎ｩｦ陦悟庄閭ｽ縺ｫ縺吶ｋ・・ndexedDB螳ｹ驥丈ｸ崎ｶｳ縺ｪ縺ｩ・・
-### 10.4 繝ｭ繧ｴ蜈･蜉帑ｻ墓ｧ・- 蟇ｾ蠢・ PNG/JPEG/WEBP
-- 繧ｵ繧､繧ｺ: 5MB莉･蜀・ｼ・,242,880 bytes・・- 蜿悶ｊ霎ｼ縺ｿ:
-  - `File` 繧偵◎縺ｮ縺ｾ縺ｾBlob縺ｧ IndexedDB・・ogoOriginal・峨↓菫晏ｭ倥☆繧具ｼ育匱陦梧凾・・  - 邱ｨ髮・ｸｭ縺ｯ `createImageBitmap(file)` 繧貞茜逕ｨ縺励※謠冗判縺吶ｋ
+- `ERROR`�E��E命皁E��原剁E��帰不�Eだが「リセチE��」で`EMPTY`へ戻せる�E�E
+遷移�E�固定！E- `EMPTY -> UPLOADED`�E�ファイル読込成功�E�E- `UPLOADED -> EDITING`�E��E動！E- `EDITING -> PLACEMENT`�E�「�E置へ」！E- `PLACEMENT -> READY_TO_ISSUE`�E�ロゴが枠冁E��収まってぁE���E�E- `READY_TO_ISSUE -> ISSUING`�E�発行押下！E- `ISSUING -> ISSUED`�E��E功！E- 失敗時は `ERROR` ではなく、可能なら直前状態に戻して再試行可能にする�E�EndexedDB容量不足など�E�E
+### 10.4 ロゴ入力仕槁E- 対忁E PNG/JPEG/WEBP
+- サイズ: 5MB以冁E��E,242,880 bytes�E�E- 取り込み:
+  - `File` をそのままBlobで IndexedDB�E�EogoOriginal�E�に保存する（発行時�E�E  - 編雁E��は `createImageBitmap(file)` を利用して描画する
 
-### 10.5 繝医Μ繝溘Φ繧ｰ
-- 螳溯｣・ `react-easy-crop` 謗｡逕ｨ・医Ο繝ｼ繧ｫ繝ｫ縺ｫ繝舌Φ繝峨Ν・・- 菫晏ｭ倥☆繧議rop: **豁｣隕丞喧蠎ｧ讓呻ｼ・縲・・・*
-  - `crop = {x,y,w,h}`・亥・逕ｻ蜒上↓蟇ｾ縺吶ｋ豈皮紫・・- 繝医Μ繝溘Φ繧ｰ縺ｮ蜃ｺ蜉帙・ Canvas縺ｧ蛻・ｊ蜃ｺ縺励◆Bitmap繧呈ｬ｡蟾･遞九↓貂｡縺・
-### 10.6 閭梧勹騾城℃・・olerance・・#### 10.6.1 閭梧勹濶ｲ謗ｨ螳夲ｼ亥崋螳夲ｼ・- 繝医Μ繝溘Φ繧ｰ蠕檎判蜒上・蝗幃嚆4轤ｹ繧偵し繝ｳ繝励Ν縺怜ｹｳ蝮⑲GB繧・`bgColor` 縺ｨ縺吶ｋ
+### 10.5 トリミング
+- 実裁E `react-easy-crop` 採用�E�ローカルにバンドル�E�E- 保存するcrop: **正規化座標！E、E�E�E*
+  - `crop = {x,y,w,h}`�E��E画像に対する比率�E�E- トリミングの出力�E Canvasで刁E��出したBitmapを次工程に渡ぁE
+### 10.6 背景透過�E�Eolerance�E�E#### 10.6.1 背景色推定（固定！E- トリミング後画像�E四隅4点をサンプルし平均RGBめE`bgColor` とする
 
-#### 10.6.2 騾城℃蛻､螳夲ｼ亥崋螳夲ｼ・- 蜷・ヴ繧ｯ繧ｻ繝ｫ縺ｧ霍晞屬 `d` 繧定ｨ育ｮ・  - `d = sqrt((r-bgR)^2 + (g-bgG)^2 + (b-bgB)^2)`
-- `d < tolerance` 縺ｮ蝣ｴ蜷・`alpha = 0`
+#### 10.6.2 透過判定（固定！E- 吁E��クセルで距離 `d` を計箁E  - `d = sqrt((r-bgR)^2 + (g-bgG)^2 + (b-bgB)^2)`
+- `d < tolerance` の場吁E`alpha = 0`
 
 #### 10.6.3 tolerance UI
-- 繧ｹ繝ｩ繧､繝繝ｼ: 0縲・6・域紛謨ｰ・・- 謗ｨ螂ｨ繝励Μ繧ｻ繝・ヨ・医・繧ｿ繝ｳ・・  - 蠑ｱ: 24
-  - 荳ｭ: 40
-  - 蠑ｷ: 64
+- スライダー: 0、E6�E�整数�E�E- 推奨プリセチE���E��Eタン�E�E  - 弱: 24
+  - 中: 40
+  - 強: 64
 
-#### 10.6.4 蠅・阜縺ｮ貊代ｉ縺句喧・亥崋螳夲ｼ・- `d` 縺・`tolerance縲徼olerance+12` 縺ｮ遽・峇縺ｯ邱壼ｽ｢陬憺俣縺ｧalpha繧呈ｮ九☆・医ぐ繧ｶ繧ｮ繧ｶ霆ｽ貂幢ｼ・
-### 10.7 繝｢繝弱け繝ｭ莠悟､蛹厄ｼ亥綾蜊ｰ蜷代￠・・- 譛牙柑譎ゅヽGB竊定ｼ晏ｺｦ縺ｸ螟画鋤蠕後∽ｺ悟､蛹悶☆繧・  - `Y = 0.299R + 0.587G + 0.114B`
+#### 10.6.4 墁E��の滑らか化�E�固定！E- `d` ぁE`tolerance〜tolerance+12` の篁E��は線形補間でalphaを残す�E�ギザギザ軽減！E
+### 10.7 モノクロ二値化（刻印向け�E�E- 有効時、RGB→輝度へ変換後、二値化すめE  - `Y = 0.299R + 0.587G + 0.114B`
 - threshold:
-  - 繧ｹ繝ｩ繧､繝繝ｼ: 0縲・55・域紛謨ｰ・・  - 蛻晄悄蛟､: 128
-- `Y >= threshold` 竊・逋ｽ・・55・・- `Y < threshold` 竊・鮟抵ｼ・・・- Alpha縺ｯ菫晄戟縺吶ｋ・磯城℃貂医∩鬆伜沺縺ｯ騾城℃縺ｮ縺ｾ縺ｾ・・
-### 10.8 驟咲ｽｮ・医ラ繝ｩ繝・げ・・僑螟ｧ邵ｮ蟆擾ｼ・#### 10.8.1 謫堺ｽ・- 遘ｻ蜍・ Pointer Events縺ｧ繝峨Λ繝・げ
-- 繝ｪ繧ｵ繧､繧ｺ: **蜿ｳ荳九ワ繝ｳ繝峨Ν縺ｮ縺ｿ**・・1.2蝗ｺ螳夲ｼ・- 邵ｦ讓ｪ豈泌崋螳夲ｼ医Ο繧ｴ逕ｻ蜒乗ｯ費ｼ・- 譛蟆上し繧､繧ｺ:
-  - `rules.minLogoSizePx`・亥・譛・0px・我ｻ･荳・- 蝗櫁ｻ｢縺ｯ螳溯｣・＠縺ｪ縺・
-#### 10.8.2 譫蜀・宛邏・ｼ亥崋螳夲ｼ壹け繝ｩ繝ｳ繝暦ｼ・- `keepInsideEngravingArea=true` 縺ｮ蝣ｴ蜷医√Ο繧ｴ遏ｩ蠖｢縺梧棧螟悶∈蜃ｺ縺ｪ縺・- 險育ｮ・
-  - `x` 縺ｯ `[engraveX, engraveX + engraveW - logoW]`
-  - `y` 縺ｯ `[engraveY, engraveY + engraveH - logoH]`
-- 繝ｪ繧ｵ繧､繧ｺ譎ゅｂ蜷梧ｧ倥↓繧ｯ繝ｩ繝ｳ繝・- 繧ゅ＠ `logoW > engraveW` 縺ｾ縺溘・ `logoH > engraveH` 縺ｫ縺ｪ縺｣縺溷ｴ蜷医・*閾ｪ蜍慕ｸｮ蟆上＠縺ｦ譫蜀・∈蜿弱ａ繧・*
+  - スライダー: 0、E55�E�整数�E�E  - 初期値: 128
+- `Y >= threshold` ↁE白�E�E55�E�E- `Y < threshold` ↁE黒！E�E�E- Alphaは保持する�E�透過済み領域は透過のまま�E�E
+### 10.8 配置�E�ドラチE���E�E��大縮小！E#### 10.8.1 操佁E- 移勁E Pointer EventsでドラチE��
+- リサイズ: **右下ハンドルのみ**�E�E1.2固定！E- 縦横比固定（ロゴ画像比！E- 最小サイズ:
+  - `rules.minLogoSizePx`�E��E朁E0px�E�以丁E- 回転は実裁E��なぁE
+#### 10.8.2 枠冁E��紁E��固定：クランプ！E- `keepInsideEngravingArea=true` の場合、ロゴ矩形が枠外へ出なぁE- 計箁E
+  - `x` は `[engraveX, engraveX + engraveW - logoW]`
+  - `y` は `[engraveY, engraveY + engraveH - logoH]`
+- リサイズ時も同様にクランチE- もし `logoW > engraveW` また�E `logoH > engraveH` になった場合、E*自動縮小して枠冁E��収めめE*
 
-#### 10.8.3 蛻晄悄驟咲ｽｮ・亥崋螳夲ｼ・- 邱ｨ髮・ｮ御ｺ・ｾ後∵怙蛻昴・驟咲ｽｮ縺ｯ縲梧棧縺ｮ90%縺ｫ蜿弱∪繧区怙螟ｧ繧ｵ繧､繧ｺ縲阪〒荳ｭ螟ｮ驟咲ｽｮ
+#### 10.8.3 初期配置�E�固定！E- 編雁E��亁E��、最初�E配置は「枠の90%に収まる最大サイズ」で中央配置
   - `scale = min((engraveW*0.9)/logoW, (engraveH*0.9)/logoH)`
   - `w = logoW*scale`, `h = logoH*scale`
   - `x = engraveX + (engraveW - w)/2`
@@ -253,131 +253,131 @@
 
 ---
 
-## 11. Design ID 莉墓ｧ假ｼ亥宍蟇・ｼ・
-### 11.1 繝輔か繝ｼ繝槭ャ繝・- `YYMMDD_XXXXXXXX`・井ｾ・ `260109_K7M3Q9XR`・・
-### 11.2 譁・ｭ鈴寔蜷茨ｼ亥崋螳夲ｼ・- 謨ｰ蟄・ `2 3 4 5 6 7 8 9`
-- 闍ｱ螟ｧ譁・ｭ・ `A B C D E F G H J K M N P Q R S T U V W X Y Z`
-- 髯､螟・ `0 1 I L O`・郁ｦ冶ｪ肴ｧ縺ｮ縺溘ａ・・
-### 11.3 逕滓・譁ｹ豕包ｼ亥崋螳夲ｼ・- `crypto.getRandomValues` 繧貞茜逕ｨ
-- 譌｢蟄賄esignId縺ｨ陦晉ｪ√＠縺溷ｴ蜷医・蜀咲函謌撰ｼ域怙螟ｧ10蝗槭∬ｶ・∴縺溘ｉ繧ｨ繝ｩ繝ｼ・・
+## 11. Design ID 仕様（厳寁E��E
+### 11.1 フォーマッチE- `YYMMDD_XXXXXXXX`�E�侁E `260109_K7M3Q9XR`�E�E
+### 11.2 斁E��集合（固定！E- 数孁E `2 3 4 5 6 7 8 9`
+- 英大斁E��E `A B C D E F G H J K M N P Q R S T U V W X Y Z`
+- 除夁E `0 1 I L O`�E�視認性のため�E�E
+### 11.3 生�E方法（固定！E- `crypto.getRandomValues` を利用
+- 既存designIdと衝突した場合�E再生成（最大10回、趁E��たらエラー�E�E
 ---
 
-## 12. PDF莉墓ｧ假ｼ・df-lib・・
-### 12.1 驥崎ｦ∵婿驥晢ｼ磯ｫ倡ｲｾ蠎ｦ隕∫ｴ・・- UI陦ｨ遉ｺ繧ｭ繝｣繝ｳ繝舌せ縺ｨ縺ｯ蛻･縺ｫ縲・*PDF逕滓・蟆ら畑縺ｮ繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳCanvas**繧剃ｽｿ逕ｨ縺吶ｋ
-- 縺薙ｌ縺ｫ繧医ｊ縲ゞI縺悟ｰ上＆縺上※繧ょ・蜉帙′闕偵ｌ縺ｫ縺上＞
+## 12. PDF仕様！Edf-lib�E�E
+### 12.1 重要方針（高精度要素�E�E- UI表示キャンバスとは別に、E*PDF生�E専用のオフスクリーンCanvas**を使用する
+- これにより、UIが小さくても�E力が荒れにくい
 
-### 12.2 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳCanvas縺ｮ繧ｵ繧､繧ｺ・亥崋螳夲ｼ・- `template.canvas.widthPx/heightPx` 繧貞渕貅悶→縺吶ｋ
-- 縺溘□縺励～template.dpi=300` 縺ｨ `template.pdf.pageSize` 縺窟4縺ｮ蝣ｴ蜷医∵耳螂ｨ縺ｯ莉･荳具ｼ井ｻｻ諢擾ｼ・  - 邵ｦ: 3508px縲∵ｨｪ: 2480px・・4 300dpi・・- v1.2縺ｧ縺ｯ **繝・Φ繝励Ξ逋ｻ骭ｲ譎ゅ↓ canvas繧ｵ繧､繧ｺ繧呈欠螳・*縺吶ｋ譁ｹ蠑上→縺励、4蝗ｺ螳壹・閾ｪ蜍戊ｨ育ｮ励・陦後ｏ縺ｪ縺・
-### 12.3 Type A・医♀螳｢讒倡｢ｺ隱咲畑・・蜀・ｮｹ・磯・ｼ・1) 閭梧勹逕ｻ蜒擾ｼ亥・髱｢・・2) 蛻ｻ蜊ｰ譫・医ぎ繧､繝画棧・夊｡ｨ遉ｺ・・3) 繝ｭ繧ｴ・亥刈蟾･貂・+ 驟咲ｽｮ蜿肴丐・・4) 繝倥ャ繝繝ｼ/繝輔ャ繧ｿ繝ｼ・亥・騾夊ｨｭ螳壹′縺ゅｌ縺ｰ陦ｨ遉ｺ・・5) Design ID・亥承荳九・pt逶ｸ蠖難ｼ・
-### 12.4 Type B・育ｮ｡逅・・綾蜊ｰ逕ｨ・嗄m蠎ｧ讓吶ｒ譏守｢ｺ蛹厄ｼ・蜀・ｮｹ・磯・ｼ・1) 逋ｽ閭梧勹・郁レ譎ｯ逕ｻ蜒上↑縺暦ｼ・2) 蛻ｻ蜊ｰ譫・郁埋邱壹・莉ｻ諢上」1.2縺ｧ縺ｯ陦ｨ遉ｺ縺吶ｋ・・3) 繝ｭ繧ｴ・亥刈蟾･貂・+ 驟咲ｽｮ蜿肴丐・・4) 繝｡繧ｿ諠・ｱ・・esign ID / templateKey / createdAt・・5) **蛻ｻ蜊ｰ蠎ｧ讓呻ｼ・m・・*繧定ｨ倩ｼ会ｼ亥ｿ・茨ｼ・
-#### 12.4.1 px竊知m螟画鋤・亥崋螳夲ｼ・- `mm = px * (25.4 / dpi)`
-- 螟画鋤蟇ｾ雎｡:
-  - 繝ｭ繧ｴ遏ｩ蠖｢・・,y,w,h・・  - 蛻ｻ蜊ｰ譫・・,y,w,h・・- 險倩ｼ峨☆繧砧m縺ｯ蟆乗焚隨ｬ1菴阪∪縺ｧ・亥屁謐ｨ莠泌・・・
-#### 12.4.2 mm縺ｮ蜴溽せ・亥崋螳夲ｼ・- 蜴溽せ縺ｯ **繝・Φ繝励Ξ蝓ｺ貅悶く繝｣繝ｳ繝舌せ縺ｮ蟾ｦ荳・*・・I縺ｨ蜷後§・・- PDF謠冗判縺ｯ蟾ｦ荳句次轤ｹ縺ｮ縺溘ａ縲∵緒逕ｻ譎ゅ・Y蜿崎ｻ｢縺吶ｋ・亥ｾ瑚ｿｰ・・- 陦ｨ遉ｺ繝・く繧ｹ繝医→縺励※縺ｮmm縺ｯ縲悟ｷｦ荳雁次轤ｹ縲阪〒陦ｨ險倥☆繧具ｼ井ｽ懈･ｭ閠・′逅・ｧ｣縺励ｄ縺吶＞・・
-### 12.5 PDF蠎ｧ讓吝､画鋤・亥宍蟇・ｼ・- PDF繝壹・繧ｸ・・t・峨→蝓ｺ貅悶く繝｣繝ｳ繝舌せ・・x・峨・蟇ｾ蠢・  - `scaleX = pageWidthPt / canvasWidthPx`
+### 12.2 オフスクリーンCanvasのサイズ�E�固定！E- `template.canvas.widthPx/heightPx` を基準とする
+- ただし、`template.dpi=300` と `template.pdf.pageSize` がA4の場合、推奨は以下（任意！E  - 縦: 3508px、横: 2480px�E�E4 300dpi�E�E- v1.2では **チE��プレ登録時に canvasサイズを指宁E*する方式とし、A4固定�E自動計算�E行わなぁE
+### 12.3 Type A�E�お客様確認用�E�E冁E���E�頁E��E1) 背景画像（�E面�E�E2) 刻印枠�E�ガイド枠�E�表示�E�E3) ロゴ�E�加工渁E+ 配置反映�E�E4) ヘッダー/フッター�E��E通設定があれば表示�E�E5) Design ID�E�右下、Ept相当！E
+### 12.4 Type B�E�管琁E��E��印用�E�mm座標を明確化！E冁E���E�頁E��E1) 白背景�E�背景画像なし！E2) 刻印枠�E�薄線�E任意、v1.2では表示する�E�E3) ロゴ�E�加工渁E+ 配置反映�E�E4) メタ惁E���E�Eesign ID / templateKey / createdAt�E�E5) **刻印座標！Em�E�E*を記載（忁E��！E
+#### 12.4.1 px→mm変換�E�固定！E- `mm = px * (25.4 / dpi)`
+- 変換対象:
+  - ロゴ矩形�E�E,y,w,h�E�E  - 刻印枠�E�E,y,w,h�E�E- 記載するmmは小数第1位まで�E�四捨五�E�E�E
+#### 12.4.2 mmの原点�E�固定！E- 原点は **チE��プレ基準キャンバスの左丁E*�E�EIと同じ�E�E- PDF描画は左下原点のため、描画時�EY反転する�E�後述�E�E- 表示チE��ストとしてのmmは「左上原点」で表記する（作業老E��琁E��しやすい�E�E
+### 12.5 PDF座標変換�E�厳寁E��E- PDFペ�Eジ�E�Et�E�と基準キャンバス�E�Ex�E��E対忁E  - `scaleX = pageWidthPt / canvasWidthPx`
   - `scaleY = pageHeightPt / canvasHeightPx`
-- 螟画鋤:
+- 変換:
   - `ptX = pxX * scaleX`
   - `ptY = pageHeightPt - (pxY + pxH) * scaleY`
-    - PDF縺ｯ蟾ｦ荳句次轤ｹ縺ｮ縺溘ａ縲〆繧貞渚霆｢縺励※縲檎洸蠖｢縺ｮ荳狗ｫｯ縲阪ｒ蝓ｺ貅悶↓鄂ｮ縺・- 繝ｭ繧ｴ謠冗判:
+    - PDFは左下原点のため、Yを反転して「矩形の下端」を基準に置ぁE- ロゴ描画:
   - `drawImage(img, { x: ptX, y: ptY, width: pxW*scaleX, height: pxH*scaleY })`
-- 譫謠冗判繧ょ酔讒・
-### 12.6 PDF菫晏ｭ・繝繧ｦ繝ｳ繝ｭ繝ｼ繝会ｼ亥崋螳夲ｼ・- 逕滓・縺励◆PDF縺ｯBlob蛹悶＠縲！ndexedDB/assets縺ｸ菫晏ｭ・- 逋ｺ陦檎峩蠕後・ Type A 繧定・蜍輔ム繧ｦ繝ｳ繝ｭ繝ｼ繝・- Type B 縺ｯ菫晏ｭ倥・縺ｿ・育ｮ｡逅・判髱｢縺ｧDL・・
+- 枠描画も同槁E
+### 12.6 PDF保孁Eダウンロード（固定！E- 生�EしたPDFはBlob化し、IndexedDB/assetsへ保孁E- 発行直後�E Type A を�E動ダウンローチE- Type B は保存�Eみ�E�管琁E��面でDL�E�E
 ---
 
-## 13. 邂｡逅・判髱｢・壹ユ繝ｳ繝励Ξ邂｡逅・ｼ・admin/templates・・
-### 13.1 荳隕ｧ繝・・繝悶Ν・郁｡ｨ遉ｺ蛻怜崋螳夲ｼ・- name
+## 13. 管琁E��面�E�テンプレ管琁E��Eadmin/templates�E�E
+### 13.1 一覧チE�Eブル�E�表示列固定！E- name
 - key
-- status・医ヰ繝・ず + 繧ｻ繝ｬ繧ｯ繝茨ｼ・- updatedAt
-- 謫堺ｽ・
-  - 繝励Ξ繝薙Η繝ｼ・・sim/:key 繧貞挨繧ｦ繧｣繝ｳ繝峨え縺ｧ髢九￥・・  - 邱ｨ髮・ｼ亥綾蜊ｰ譫險ｭ螳夲ｼ・  - 蜑企勁
+- status�E�バチE�� + セレクト！E- updatedAt
+- 操佁E
+  - プレビュー�E�Esim/:key を別ウィンドウで開く�E�E  - 編雁E��刻印枠設定！E  - 削除
 
-### 13.2 譁ｰ隕冗匳骭ｲ・・&D・・- 繝峨Ο繝・・鬆伜沺縺ｫ莉･荳九ｒ蜷梧凾謚募・
-  - `template.json`・亥ｿ・・縺､・・  - 閭梧勹逕ｻ蜒擾ｼ亥ｿ・・縺､・・
-#### 13.2.1 template.json縺ｮ譛蟆丈ｻ墓ｧ假ｼ・1.2蝗ｺ螳夲ｼ・```json
+### 13.2 新規登録�E�E&D�E�E- ドロチE�E領域に以下を同時投�E
+  - `template.json`�E�忁E��Eつ�E�E  - 背景画像（忁E��Eつ�E�E
+#### 13.2.1 template.jsonの最小仕様！E1.2固定！E```json
 {
   "key": "certificate-a4-rightbottom-v1",
-  "name": "險ｼ譖ｸ繧ｫ繝舌・A4・亥承荳句綾蜊ｰ・・,
+  "name": "証書カバ�EA4�E�右下刻印�E�E,
   "dpi": 300,
   "canvas": { "widthPx": 1200, "heightPx": 1600 },
   "status": "draft"
 }
 ```
 
-#### 13.2.2 逋ｻ骭ｲ繝ｫ繝ｼ繝ｫ・亥崋螳夲ｼ・- key縺ｯURL縺ｫ菴ｿ逕ｨ縺吶ｋ縺溘ａ縲∵ｭ｣隕剰｡ｨ迴ｾ縺ｫ蜷郁・蠢・茨ｼ亥ｾ瑚ｿｰ・・- 閭梧勹逕ｻ蜒上・ `assets` 縺ｫ `asset:templateBg:{key}` 縺ｧ菫晏ｭ・- template繝ｬ繧ｳ繝ｼ繝峨↓縺ｯ `baseImageAssetId` 繧剃ｿ晏ｭ・- `engravingAreaRatio` 縺ｯ逋ｻ骭ｲ譎らせ縺ｧ縺ｯ `null` 縺ｧ繧ゅｈ縺・ｼ医◆縺縺怜・髢九↓縺ｯ蠢・ｦ・ｼ・
-### 13.3 蛻ｻ蜊ｰ譫・育洸蠖｢・画欠螳壹ヤ繝ｼ繝ｫ・亥ｿ・茨ｼ・- 繝・Φ繝励Ξ邱ｨ髮・Δ繝ｼ繝繝ｫ/繝壹・繧ｸ縺ｧ縲∬レ譎ｯ逕ｻ蜒上・繝ｬ繝薙Η繝ｼ荳翫↓遏ｩ蠖｢繧偵ラ繝ｩ繝・げ菴懈・
-- 菴懈・縺励◆遏ｩ蠖｢繧堤ｧｻ蜍輔・繝ｪ繧ｵ繧､繧ｺ縺ｧ縺阪ｋ・郁ｧ偵ワ繝ｳ繝峨Ν・・- 菫晏ｭ俶凾縺ｯ **豈皮紫蠎ｧ讓・*縺ｨ縺励※ `engravingAreaRatio` 縺ｫ菫晏ｭ・- 0縲・縺ｮ遽・峇縺ｫ繧ｯ繝ｩ繝ｳ繝励＠縺ｦ菫晏ｭ倥☆繧・
-### 13.4 繝舌Μ繝・・繧ｷ繝ｧ繝ｳ・亥崋螳夲ｼ・- `key`:
-  - 蠢・・  - `^[a-z0-9][a-z0-9_-]{2,63}$`・・縲・4譁・ｭ励∝・鬆ｭ縺ｯ闍ｱ蟆乗枚蟄・謨ｰ蟄暦ｼ・  - 驥崎､・ｦ∵ｭ｢
-- `dpi`: 72縲・00・域紛謨ｰ・・- `canvas.widthPx/heightPx`: 200縲・000・域紛謨ｰ・・- `engravingAreaRatio`・井ｿ晏ｭ俶凾縺ｫ蠢・医メ繧ｧ繝・け・・  - `x,y,w,h` 縺吶∋縺ｦ 0縲・
+#### 13.2.2 登録ルール�E�固定！E- keyはURLに使用するため、正規表現に合�E忁E��（後述�E�E- 背景画像�E `assets` に `asset:templateBg:{key}` で保孁E- templateレコードには `baseImageAssetId` を保孁E- `engravingAreaRatio` は登録時点では `null` でもよぁE��ただし�E開には忁E��E��E
+### 13.3 刻印枠�E�矩形�E�指定ツール�E�忁E��！E- チE��プレ編雁E��ーダル/ペ�Eジで、背景画像�Eレビュー上に矩形をドラチE��作�E
+- 作�Eした矩形を移動�Eリサイズできる�E�角ハンドル�E�E- 保存時は **比率座樁E*として `engravingAreaRatio` に保孁E- 0、Eの篁E��にクランプして保存すめE
+### 13.4 バリチE�Eション�E�固定！E- `key`:
+  - 忁E��E  - `^[a-z0-9][a-z0-9_-]{2,63}$`�E�E、E4斁E��、�E頭は英小文孁E数字！E  - 重褁E��止
+- `dpi`: 72、E00�E�整数�E�E- `canvas.widthPx/heightPx`: 200、E000�E�整数�E�E- `engravingAreaRatio`�E�保存時に忁E��チェチE���E�E  - `x,y,w,h` すべて 0、E
   - `w>0,h>0`
-  - `x+w<=1`縲～y+h<=1`
+  - `x+w<=1`、`y+h<=1`
 
-### 13.5 繧ｹ繝・・繧ｿ繧ｹ驕狗畑・亥崋螳夲ｼ・- `draft`: 菴懈・荳ｭ・医♀螳｢讒伜茜逕ｨ荳榊庄・・- `tested`: 繝・せ繝域ｸ茨ｼ医♀螳｢讒伜茜逕ｨ蜿ｯ・・- `published`: 蜈ｬ髢倶ｸｭ・医♀螳｢讒伜茜逕ｨ蜿ｯ・・- `draft` 縺ｮ縺ｾ縺ｾ `tested/published` 縺ｫ螟画峩縺吶ｋ髫帙∽ｻ･荳九ｒ貅縺溘＆縺ｪ縺・ｴ蜷医・諡貞凄
-  - 閭梧勹逕ｻ蜒上′蟄伜惠
-  - engravingAreaRatio縺悟ｭ伜惠
+### 13.5 スチE�Eタス運用�E�固定！E- `draft`: 作�E中�E�お客様利用不可�E�E- `tested`: チE��ト済（お客様利用可�E�E- `published`: 公開中�E�お客様利用可�E�E- `draft` のまま `tested/published` に変更する際、以下を満たさなぁE��合�E拒否
+  - 背景画像が存在
+  - engravingAreaRatioが存在
 
-### 13.6 繝励Ξ繝薙Η繝ｼ・医せ繝槭・諠ｳ螳夲ｼ・- 縲後・繝ｬ繝薙Η繝ｼ縲阪・繧ｿ繝ｳ縺ｯ `/sim/:key` 繧呈眠隕上え繧｣繝ｳ繝峨え縺ｧ髢九￥
-- 逶ｮ螳・ `width=390,height=844`
+### 13.6 プレビュー�E�スマ�E想定！E- 「�Eレビュー」�Eタンは `/sim/:key` を新規ウィンドウで開く
+- 目宁E `width=390,height=844`
 
-### 13.7 蜑企勁・亥崋螳夲ｼ・- 繝・Φ繝励Ξ蜑企勁譎ゅ↓蜑企勁縺吶ｋ繧ゅ・
-  - templates繝ｬ繧ｳ繝ｼ繝・  - 閭梧勹asset・・emplateBg・・- 縺溘□縺・designs縺ｯ蜑企勁縺励↑縺・ｼ亥ｱ･豁ｴ菫晏・・・  - design荳隕ｧ縺ｧ繝・Φ繝励Ξ谺謳阪ｒ縲悟炎髯､貂医∩繝・Φ繝励Ξ縲阪→陦ｨ遉ｺ縺吶ｋ
+### 13.7 削除�E�固定！E- チE��プレ削除時に削除するも�E
+  - templatesレコーチE  - 背景asset�E�EemplateBg�E�E- ただぁEdesignsは削除しなぁE��履歴保�E�E�E  - design一覧でチE��プレ欠損を「削除済みチE��プレ」と表示する
 
 ---
 
-## 14. 邂｡逅・判髱｢・壹ョ繧ｶ繧､繝ｳ螻･豁ｴ・・admin/designs・・
-### 14.1 荳隕ｧ繝・・繝悶Ν・郁｡ｨ遉ｺ蛻怜崋螳夲ｼ・- designId
-- templateKey・域ｬ謳肴凾縺ｯ縲悟炎髯､貂医∩繝・Φ繝励Ξ縲搾ｼ・- createdAt
-- PDF・・ype A・峨ム繧ｦ繝ｳ繝ｭ繝ｼ繝・- PDF・・ype B・峨ム繧ｦ繝ｳ繝ｭ繝ｼ繝・- 謫堺ｽ懶ｼ亥炎髯､・・
-### 14.2 讀懃ｴ｢/邨槭ｊ霎ｼ縺ｿ・・1.2蝗ｺ螳夲ｼ・- designId 驛ｨ蛻・ｸ閾ｴ讀懃ｴ｢・亥叉譎ょ渚譏・・- templateKey 繧ｻ繝ｬ繧ｯ繝茨ｼ亥ｭ伜惠縺吶ｋ繝・Φ繝励Ξ縺ｮ縺ｿ・・
-### 14.3 PDF蜀咲函謌舌Ν繝ｼ繝ｫ・亥崋螳夲ｼ・- assets縺ｫPDF縺悟ｭ伜惠 竊・縺昴・Blob縺ｧDL
-- 蟄伜惠縺励↑縺・竊・莉･荳九〒蜀咲函謌舌＠菫晏ｭ倥＠縺ｦDL
-  - template・郁レ譎ｯ・会ｼ・design・・ogoProcessed + placementPx・・
-### 14.4 繝・じ繧､繝ｳ蜑企勁・亥崋螳夲ｼ・- designs繝ｬ繧ｳ繝ｼ繝牙炎髯､
-- assets蜑企勁:
+## 14. 管琁E��面�E�デザイン履歴�E�Eadmin/designs�E�E
+### 14.1 一覧チE�Eブル�E�表示列固定！E- designId
+- templateKey�E�欠損時は「削除済みチE��プレ」！E- createdAt
+- PDF�E�Eype A�E�ダウンローチE- PDF�E�Eype B�E�ダウンローチE- 操作（削除�E�E
+### 14.2 検索/絞り込み�E�E1.2固定！E- designId 部刁E��致検索�E�即時反映�E�E- templateKey セレクト（存在するチE��プレのみ�E�E
+### 14.3 PDF再生成ルール�E�固定！E- assetsにPDFが存在 ↁEそ�EBlobでDL
+- 存在しなぁEↁE以下で再生成し保存してDL
+  - template�E�背景�E�！Edesign�E�EogoProcessed + placementPx�E�E
+### 14.4 チE��イン削除�E�固定！E- designsレコード削除
+- assets削除:
   - logoOriginal / logoProcessed / pdfA / pdfB
 
 ---
 
-## 15. 逋ｺ陦悟・逅・ｼ医ヨ繝ｩ繝ｳ繧ｶ繧ｯ繧ｷ繝ｧ繝ｳ逧・焔鬆・ｼ・逋ｺ陦後・繧ｿ繝ｳ謚ｼ荳区凾縺ｫ莉･荳九ｒ鬆・↓陦後≧・亥崋螳夲ｼ峨る比ｸｭ螟ｱ謨玲凾縺ｯ繝ｭ繝ｼ繝ｫ繝舌ャ繧ｯ繧定｡後≧縲・
-1) `designId` 逕滓・  
-2) `logoOriginal` Blob 繧・assets 縺ｫ菫晏ｭ・ 
-3) 蜉蟾･貂医Ο繧ｴ・・ogoProcessed・隠lob 繧・assets 縺ｫ菫晏ｭ・ 
-4) PDF Type A 逕滓・ 竊・assets縺ｸ菫晏ｭ・ 
-5) PDF Type B 逕滓・ 竊・assets縺ｸ菫晏ｭ・ 
-6) designs 繝ｬ繧ｳ繝ｼ繝我ｿ晏ｭ假ｼ亥盾辣ｧassetId繧剃ｿ晄戟・・ 
-7) Type A 繧定・蜍輔ム繧ｦ繝ｳ繝ｭ繝ｼ繝・ 
-8) simState 繧・`ISSUED`
+## 15. 発行�E琁E��トランザクション皁E��頁E��E発行�Eタン押下時に以下を頁E��行う�E�固定）。途中失敗時はロールバックを行う、E
+1) `designId` 生�E  
+2) `logoOriginal` Blob めEassets に保孁E 
+3) 加工済ロゴ�E�EogoProcessed�E�Blob めEassets に保孁E 
+4) PDF Type A 生�E ↁEassetsへ保孁E 
+5) PDF Type B 生�E ↁEassetsへ保孁E 
+6) designs レコード保存（参照assetIdを保持�E�E 
+7) Type A を�E動ダウンローチE 
+8) simState めE`ISSUED`
 
-繝ｭ繝ｼ繝ｫ繝舌ャ繧ｯ・亥､ｱ謨玲凾・・- 菫晏ｭ俶ｸ医∩asset繧貞庄閭ｽ縺ｪ髯舌ｊ蜑企勁縺励‥esign繝ｬ繧ｳ繝ｼ繝峨・菴懊ｉ縺ｪ縺・- 繧ｨ繝ｩ繝ｼ繧偵ヨ繝ｼ繧ｹ繝郁｡ｨ遉ｺ縺励～READY_TO_ISSUE` 縺ｫ謌ｻ縺呻ｼ亥・隧ｦ陦悟庄閭ｽ・・
+ロールバック�E�失敗時�E�E- 保存済みassetを可能な限り削除し、designレコード�E作らなぁE- エラーをトースト表示し、`READY_TO_ISSUE` に戻す（�E試行可能�E�E
 ---
 
-## 16. 繧ｨ繝ｩ繝ｼ/繝｡繝・そ繝ｼ繧ｸ莉墓ｧ假ｼ亥ｿ・茨ｼ・### 16.1 陦ｨ遉ｺ繝ｫ繝ｼ繝ｫ
-- 逕ｻ髱｢荳企Κ繝医・繧ｹ繝茨ｼ域・蜉・隴ｦ蜻・螟ｱ謨暦ｼ・- 謫堺ｽ懊ヱ繝阪Ν蜀・↓繧ら洒譁・〒陬懆ｶｳ・亥ｿ・ｦ∵凾・・- 譁・擇縺ｯ縲悟次蝗 + 谺｡縺ｮ陦悟虚縲阪ｒ蜷ｫ繧
+## 16. エラー/メチE��ージ仕様（忁E��！E### 16.1 表示ルール
+- 画面上部ト�Eスト（�E劁E警呁E失敗！E- 操作パネル冁E��も短斁E��補足�E�忁E��時�E�E- 斁E��は「原因 + 次の行動」を含む
 
-### 16.2 莉｣陦ｨ繧ｨ繝ｩ繝ｼ・亥崋螳壽枚萓具ｼ・- 繝・Φ繝励Ξ譛ｪ蜈ｬ髢・
-  - 縲後％縺ｮ繝壹・繧ｸ縺ｯ迴ｾ蝨ｨ縺泌茜逕ｨ縺・◆縺縺代∪縺帙ｓ・医ユ繝ｳ繝励Ξ繝ｼ繝医′譛ｪ蜈ｬ髢九〒縺呻ｼ峨ゅ・- 逕ｻ蜒丞ｽ｢蠑・螳ｹ驥・
-  - 縲檎判蜒上・PNG/JPEG/WEBP縲・MB莉･蜀・〒縺願ｩｦ縺励￥縺縺輔＞縲ゅ・- 菫晏ｭ伜ｮｹ驥丈ｸ崎ｶｳ・・ndexedDB・・
-  - 縲御ｿ晏ｭ伜ｮｹ驥上′荳崎ｶｳ縺励※縺・∪縺吶ゆｸ崎ｦ√↑繝・じ繧､繝ｳ繧貞炎髯､縺励※縺上□縺輔＞縲ゅ・- PDF逕滓・螟ｱ謨・
-  - 縲訓DF縺ｮ逕滓・縺ｫ螟ｱ謨励＠縺ｾ縺励◆縲ら判蜒上し繧､繧ｺ繧貞ｰ上＆縺上＠縺ｦ蜀榊ｺｦ縺願ｩｦ縺励￥縺縺輔＞縲ゅ・
+### 16.2 代表エラー�E�固定文例！E- チE��プレ未公閁E
+  - 「このペ�Eジは現在ご利用ぁE��だけません�E�テンプレートが未公開です）。、E- 画像形弁E容釁E
+  - 「画像�EPNG/JPEG/WEBP、EMB以冁E��お試しください。、E- 保存容量不足�E�EndexedDB�E�E
+  - 「保存容量が不足してぁE��す。不要なチE��インを削除してください。、E- PDF生�E失敁E
+  - 「PDFの生�Eに失敗しました。画像サイズを小さくして再度お試しください。、E
 ---
 
-## 17. UI莉墓ｧ假ｼ・ailwind・・### 17.1 繝医・繝ｳ
-- 讌ｭ蜍吶ヤ繝ｼ繝ｫ蟇・ｊ縲∬｣・｣ｾ縺ｯ譛蟆・- Tailwind讓呎ｺ悶・繝九Η繝ｼ繝医Λ繝ｫ + 繧｢繧ｯ繧ｻ繝ｳ繝茨ｼ磯搨/邱・讖呻ｼ臥ｨ句ｺｦ
+## 17. UI仕様！Eailwind�E�E### 17.1 ト�Eン
+- 業務ツール寁E��、裁E��は最封E- Tailwind標準�Eニュートラル + アクセント（青/緁E橙）程度
 
-### 17.2 蠢・医さ繝ｳ繝昴・繝阪Φ繝・- Dropzone・医け繝ｪ繝・け驕ｸ謚・+ D&D縲√ヵ繧｡繧､繝ｫ蜷・繧ｵ繧､繧ｺ陦ｨ遉ｺ・・- Toast・域・蜉・隴ｦ蜻・螟ｱ謨暦ｼ・- Modal・医ヨ繝ｪ繝溘Φ繧ｰ / 繝・Φ繝励Ξ譫邱ｨ髮・ｼ・- Canvas繧ｹ繝・・繧ｸ・郁レ譎ｯ繝ｻ譫繝ｻ繝ｭ繧ｴ繝ｻ繝上Φ繝峨Ν陦ｨ遉ｺ・・- Form・・abel莉倥″・・
-### 17.3 繧｢繧ｯ繧ｻ繧ｷ繝薙Μ繝・ぅ譛菴朱剞
-- 繝懊ち繝ｳ縺ｫ `aria-label`
-- 繝｢繝ｼ繝繝ｫ縺ｯ繝輔か繝ｼ繧ｫ繧ｹ繝医Λ繝・・縲・sc縺ｧ髢峨§繧・- 荳ｻ隕√・繧ｿ繝ｳ縺ｯTab遘ｻ蜍募庄閭ｽ
+### 17.2 忁E��コンポ�EネンチE- Dropzone�E�クリチE��選抁E+ D&D、ファイル吁Eサイズ表示�E�E- Toast�E��E劁E警呁E失敗！E- Modal�E�トリミング / チE��プレ枠編雁E��E- CanvasスチE�Eジ�E�背景・枠・ロゴ・ハンドル表示�E�E- Form�E�Eabel付き�E�E
+### 17.3 アクセシビリチE��最低限
+- ボタンに `aria-label`
+- モーダルはフォーカストラチE�E、Escで閉じめE- 主要�EタンはTab移動可能
 
 ---
 
-## 18. 螳溯｣・ｨｭ險茨ｼ医ョ繧｣繝ｬ繧ｯ繝医Μ/荳ｻ隕√Δ繧ｸ繝･繝ｼ繝ｫ・・
-### 18.1 謗ｨ螂ｨ繝・ぅ繝ｬ繧ｯ繝医Μ讒区・
+## 18. 実裁E��計（ディレクトリ/主要モジュール�E�E
+### 18.1 推奨チE��レクトリ構�E
 - `src/`
   - `app/`
     - `router.tsx`
-    - `layout/AppLayout.tsx`・・eader/Footer + Outlet・・  - `pages/`
+    - `layout/AppLayout.tsx`�E�Eeader/Footer + Outlet�E�E  - `pages/`
     - `sim/SimPage.tsx`
     - `admin/AdminTemplatesPage.tsx`
     - `admin/AdminDesignsPage.tsx`
@@ -390,55 +390,55 @@
     - `sim/CropModal.tsx`
     - `sim/StepsPanel.tsx`
     - `sim/StageCanvas.tsx`
-    - `admin/TemplateEditor.tsx`・亥綾蜊ｰ譫邱ｨ髮・ｼ・  - `domain/`
+    - `admin/TemplateEditor.tsx`�E�刻印枠編雁E��E  - `domain/`
     - `types.ts`
     - `id/designId.ts`
     - `image/`
       - `crop.ts`
       - `transparent.ts`
       - `monochrome.ts`
-      - `processLogo.ts`・育ｵｱ蜷茨ｼ・    - `pdf/`
+      - `processLogo.ts`�E�統合！E    - `pdf/`
       - `generatePdfA.ts`
       - `generatePdfB.ts`
       - `coord.ts`
     - `storage/`
-      - `db.ts`・・exie蛻晄悄蛹厄ｼ・      - `assets.ts`
+      - `db.ts`�E�Eexie初期化！E      - `assets.ts`
       - `templates.ts`
       - `designs.ts`
 
-### 18.2 荳ｻ隕・未謨ｰ・亥ｿ・茨ｼ・- `validateTemplateDraft(input): { ok: boolean; errors: string[] }`
+### 18.2 主要E��数�E�忁E��！E- `validateTemplateDraft(input): { ok: boolean; errors: string[] }`
 - `saveTemplateWithBg(templateDraft, bgBlob): Promise<Template>`
 - `updateTemplateEngravingArea(key, engravingAreaRatio): Promise<void>`
 - `listTemplates(): Promise<Template[]>`
 - `generateDesignId(): string`
-- `processLogo(params): Promise<Blob>`・・rop竊帝城℃竊剃ｺ悟､蛹厄ｼ・- `clampPlacement(placementPx, engravingAreaPx): placementPx`
+- `processLogo(params): Promise<Blob>`�E�Erop→透過→二値化！E- `clampPlacement(placementPx, engravingAreaPx): placementPx`
 - `generatePdfA(args): Promise<Blob>`
 - `generatePdfB(args): Promise<Blob>`
-- `saveDesignAndAssets(args): Promise<void>`・育匱陦梧焔鬆・・邨ｱ蜷茨ｼ・- `listDesigns(): Promise<Design[]>`
+- `saveDesignAndAssets(args): Promise<void>`�E�発行手頁E�E統合！E- `listDesigns(): Promise<Design[]>`
 - `downloadBlob(blob, filename): void`
 
 ---
 
-## 19. 謇句虚繝・せ繝磯・岼・域怙菴朱剞・・
-### 19.1 繝・Φ繝励Ξ逋ｻ骭ｲ/譫邱ｨ髮・- template.json + 閭梧勹逕ｻ蜒愁&D 竊・霑ｽ蜉縺輔ｌ繧・- 譫繧偵ラ繝ｩ繝・げ菴懈・竊剃ｿ晏ｭ倪・蜀崎ｪｭ霎ｼ縺励※谿九ｋ
-- 譫縺ｪ縺励〒tested/published縺ｫ縺ｧ縺阪↑縺・
-### 19.2 縺雁ｮ｢讒倥ヵ繝ｭ繝ｼ
-- 5MB雜・〒諡貞凄縺輔ｌ繧・- tolerance/threshold縺ｧ隕九◆逶ｮ縺悟､峨ｏ繧・- 繝ｭ繧ｴ繧呈棧螟悶↓蜍輔°縺帙↑縺・ｼ亥ｸｸ縺ｫ譫蜀・∈繧ｯ繝ｩ繝ｳ繝暦ｼ・- 逋ｺ陦娯・PDF A 縺瑚・蜍疋L竊貞ｱ･豁ｴ縺ｫ谿九ｋ
+## 19. 手動チE��ト頁E���E�最低限�E�E
+### 19.1 チE��プレ登録/枠編雁E- template.json + 背景画像D&D ↁE追加されめE- 枠をドラチE��作�E→保存�E再読込して残る
+- 枠なしでtested/publishedにできなぁE
+### 19.2 お客様フロー
+- 5MB趁E��拒否されめE- tolerance/thresholdで見た目が変わめE- ロゴを枠外に動かせなぁE��常に枠冁E��クランプ！E- 発行�EPDF A が�E動DL→履歴に残る
 
-### 19.3 邂｡逅・ｱ･豁ｴ
-- PDF A/B 縺悟・DL縺ｧ縺阪ｋ
-- PDF縺梧ｬ謳阪＠縺溷ｴ蜷医∝・逕滓・縺励※DL縺ｧ縺阪ｋ
+### 19.3 管琁E��歴
+- PDF A/B が�EDLできる
+- PDFが欠損した場合、�E生�EしてDLできる
 
-### 19.4 螳ｹ驥丈ｸ崎ｶｳ
-- 螟ｧ驥丈ｿ晏ｭ倥＠縺ｦIndexedDB縺悟､ｱ謨・竊・譏守｢ｺ縺ｪ繧ｨ繝ｩ繝ｼ陦ｨ遉ｺ
-- 騾比ｸｭ螟ｱ謨励〒繧ｴ繝溘ョ繝ｼ繧ｿ・亥濠遶ｯ縺ｪdesign・峨′谿九ｉ縺ｪ縺・
+### 19.4 容量不足
+- 大量保存してIndexedDBが失敁EↁE明確なエラー表示
+- 途中失敗でゴミデータ�E�半端なdesign�E�が残らなぁE
 ---
 
-## 20. 莉倬鹸A・壹ユ繝ｳ繝励Ξ繧ｵ繝ｳ繝励Ν・磯・蟶・畑・・`template.json`
+## 20. 付録A�E�テンプレサンプル�E��E币E���E�E`template.json`
 ```json
 {
   "key": "sample-a4-rightbottom-v1",
-  "name": "繧ｵ繝ｳ繝励ΝA4・亥承荳句綾蜊ｰ・・,
+  "name": "サンプルA4�E�右下刻印�E�E,
   "dpi": 300,
   "canvas": { "widthPx": 1200, "heightPx": 1600 },
   "status": "draft"
@@ -447,57 +447,66 @@
 
 ---
 
-## 21. 莉倬鹸B・啀WA・亥ｰ・擂蟇ｾ蠢懶ｼ俄ｻv1.2縺ｧ縺ｯ螳溯｣・＠縺ｪ縺・- 逶ｮ逧・ 繧ｪ繝輔Λ繧､繝ｳ縺ｧ繧６RL繧｢繧ｯ繧ｻ繧ｹ譎ゅ↓遒ｺ螳溘↓蜍穂ｽ懊＆縺帙ｋ
-- 譁ｹ驥・
-  - 螟夜ΚCDN縺ｯ菴ｿ繧上★縲∝・萓晏ｭ倥・node_modules縺九ｉ繝舌Φ繝峨Ν
-  - Vite縺ｮPWA繝励Λ繧ｰ繧､繝ｳ縺ｧ `assets` 繧偵く繝｣繝・す繝･
-- 豕ｨ諢・
-  - IndexedDB縺ｮ繝・・繧ｿ縺昴・繧ゅ・縺ｯ繧ｭ繝｣繝・す繝･蟇ｾ雎｡縺ｧ縺ｯ縺ｪ縺・ｼ医ヶ繝ｩ繧ｦ繧ｶ鬆伜沺・・  - PWA縺ｯ縲瑚ｪｭ縺ｿ霎ｼ縺ｿ螳牙ｮ壼喧縲阪〒縺ゅｊ縲後ョ繝ｼ繧ｿ豌ｸ邯壹・菫晁ｨｼ縲阪〒縺ｯ縺ｪ縺・
+## 21. 付録B�E�PWA�E�封E��対応）※v1.2では実裁E��なぁE- 目皁E オフラインでもURLアクセス時に確実に動作させる
+- 方釁E
+  - 外部CDNは使わず、�E依存�Enode_modulesからバンドル
+  - ViteのPWAプラグインで `assets` をキャチE��ュ
+- 注愁E
+  - IndexedDBのチE�Eタそ�Eも�EはキャチE��ュ対象ではなぁE��ブラウザ領域�E�E  - PWAは「読み込み安定化」であり「データ永続�E保証」ではなぁE
 ---
 
-## 22. 螳溯｣・ヵ繧ｧ繝ｼ繧ｺ・医ち繧ｹ繧ｯ繝ｪ繧ｹ繝茨ｼ・- [ ] Phase 1: 蝓ｺ逶､讒狗ｯ会ｼ・ite + React + TS + Tailwind + Router + Dexie・・- [ ] Phase 2: 逕ｻ蜒丞刈蟾･繧ｳ繧｢・・rop + tolerance騾城℃ + 莠悟､蛹厄ｼ・- [ ] Phase 3: 驟咲ｽｮ繧ｷ繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ・域棧蜀・宛邏・+ 繝上Φ繝峨Ν・・- [ ] Phase 4: PDF繧ｨ繝ｳ繧ｸ繝ｳ・・df-lib + 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳCanvas + Type A/B・・- [ ] Phase 5: 邂｡逅・ｩ溯・・医ユ繝ｳ繝励ΞD&D + 譫謖・ｮ・+ 螻･豁ｴ/蜀好L/蜑企勁・・
+## 22. 実裁E��ェーズ�E�タスクリスト！E- [ ] Phase 1: 基盤構築！Eite + React + TS + Tailwind + Router + Dexie�E�E- [ ] Phase 2: 画像加工コア�E�Erop + tolerance透過 + 二値化！E- [ ] Phase 3: 配置シミュレーター�E�枠冁E��紁E+ ハンドル�E�E- [ ] Phase 4: PDFエンジン�E�Edf-lib + オフスクリーンCanvas + Type A/B�E�E- [ ] Phase 5: 管琁E���E�E�テンプレD&D + 枠持E��E+ 履歴/再DL/削除�E�E
 ---
 
-# 譛邨よｳｨ諢・- v1.2縺ｯ縲後Ο繧ｴ1轤ｹ縲阪梧棧蜀・・鄂ｮ縲阪訓DF2遞ｮ縲阪悟ｱ･豁ｴ邂｡逅・阪ｒ譛蟆冗｢ｺ螳溘そ繝・ヨ縺ｨ縺励※蝗ｺ螳壹☆繧九・- Fabric.js繧・屓霆｢縺ｪ縺ｩ縺ｮ諡｡蠑ｵ縺ｯ縲」1.2縺ｮ螳牙ｮ夂ｨｼ蜒榊ｾ後↓蛻･繝舌・繧ｸ繝ｧ繝ｳ縺ｧ陦後≧縲・
+# 最終注愁E- v1.2は「ロゴ1点」「枠冁E�E置」「PDF2種」「履歴管琁E��を最小確実セチE��として固定する、E- Fabric.jsめE��転などの拡張は、v1.2の安定稼働後に別バ�Eジョンで行う、E
 ---
 
-## 追記（UI更新）
-- テンプレート一覧の「表示名」はダブルクリックで変更できる
-- 共通ヘッダー / フッター設定は最下部に配置し、「＋」で開く（通常は閉じる）
-
----
-
-## 追記（設定変更）
-- シミュレーター側のモノクロ/背景透過は操作不可
-- モノクロ/背景透過はテンプレート管理で設定
-- シミュレーター起動時は背景を常時表示
+## �ǋL�iUI�X�V�j
+- �e���v���[�g�ꗗ�́u�\�����v�̓_�u���N���b�N�ŕύX�ł���
+- ���ʃw�b�_�[ / �t�b�^�[�ݒ�͍ŉ����ɔz�u���A�u�{�v�ŊJ���i�ʏ�͕���j
 
 ---
 
-## 追記（UI調整）
-- お客様画面のステップ表示をカード化し、色分けした
-- ステップ1/2/3のタイトルに色を付けて視認性を向上
+## �ǋL�i�ݒ�ύX�j
+- �V�~�����[�^�[���̃��m�N��/�w�i���߂͑���s��
+- ���m�N��/�w�i���߂̓e���v���[�g�Ǘ��Őݒ�
+- �V�~�����[�^�[�N�����͔w�i��펞�\��
 
 ---
 
-## 追記（動作調整）
-- トリミングはロゴアップロード後のみ操作可能
-- 透過の初期値は「なし」
-- 枠外のまま発行できないように制御
-- PDF生成時は縦横比を維持するよう調整
+## �ǋL�iUI�����j
+- ���q�l��ʂ̃X�e�b�v�\����J�[�h�����A�F��������
+- �X�e�b�v1/2/3�̃^�C�g���ɐF��t���Ď��F�������
 
 ---
 
-## 1.5 蛻ｻ蜊ｰ迚ｹ蛹厄ｼ育岼逧・・髱樒岼逧・・蛻ｶ邏・ｼ・### 1.5.1 菴咲ｽｮ縺･縺托ｼ・urpose / Non-Purpose・・**Purpose・域悽繝・・繝ｫ縺瑚ｧ｣豎ｺ縺吶ｋ縺薙→・・*
-- 譛ｬ繝・・繝ｫ縺ｯ縲後ョ繧ｶ繧､繝ｳ繧剃ｽ懊ｋ縲阪◆繧√〒縺ｯ縺ｪ縺上∝綾蜊ｰ蟾･遞九↓謚募・縺吶ｋ蜑阪・縲碁・鄂ｮ遒ｺ隱阪・遒ｺ螳夲ｼ亥粋諢丞ｽ｢謌撰ｼ峨阪ｒ陦後≧縲・- 縺雁ｮ｢讒倥′謾ｯ邨ｦ縺吶ｋ繝ｭ繧ｴ遲峨・譌｢蟄倥ョ繝ｼ繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ縲∝綾蜊ｰ蜿ｯ閭ｽ遽・峇蜀・〒菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ繧定ｪｿ謨ｴ縺励∫｢ｺ螳壹ョ繝ｼ繧ｿ・・NG/PDF + 菴咲ｽｮ諠・ｱ・峨ｒ逋ｺ陦後☆繧九・- 菴咲ｽｮ遒ｺ隱阪・繧ｵ繧､繧ｺ遒ｺ隱阪・遒ｺ隱咲判蜒城∽ｻ倥・蠕蠕ｩ繧呈ｸ帙ｉ縺励√Μ繝ｼ繝峨ち繧､繝遏ｭ邵ｮ縺ｨ隱崎ｭ倥ぜ繝ｬ髦ｲ豁｢繧帝＃謌舌☆繧九・
-**Non-Purpose・域悽繝・・繝ｫ縺後ｄ繧峨↑縺・％縺ｨ・・*
-- 繝・じ繧､繝ｳ逕滓・・・I逕滓・蜷ｫ繧・・- 繝・じ繧､繝ｳ謠先｡医・閾ｪ蜍輔Ξ繧､繧｢繧ｦ繝・- 濶ｲ螟画峩縲∬｣・｣ｾ・亥ｽｱ繝ｻ邵√・繝輔ぅ繝ｫ繧ｿ遲会ｼ・- 逕ｻ蜒冗ｷｨ髮・ｼ亥・繧頑栢縺阪∝粋謌舌√Ξ繧ｿ繝・メ縲√ヨ繝ｬ繝ｼ繧ｹ縲√・繧ｯ繧ｿ蛹也ｭ会ｼ・- 蜈･遞ｿ逕ｨ繝・・繧ｿ菴懈・・・llustrator蠖｢蠑丞ｿ・医・蟾･遞具ｼ・- 繧ｫ繝ｩ繝ｼ繝舌Μ繧ｨ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ蜴ｳ蟇・・迴ｾ・郁｡ｨ遉ｺ縺ｯ蜿り・ｼ・
-### 1.5.2 蜈･蜉帙ョ繝ｼ繧ｿ縺ｮ蜑肴署・・ustomer Asset First・・- 縺雁ｮ｢讒倥・譌｢縺ｫ謾ｯ邨ｦ繝・・繧ｿ・医Ο繧ｴ蜴溽ｨｿ繝ｻ險ｭ險亥峙繝ｻ逕ｻ蜒擾ｼ峨ｒ謖√▲縺ｦ縺・ｋ蜑肴署縺ｨ縺吶ｋ縲・- 譛ｬ繝・・繝ｫ縺ｯ縲梧髪邨ｦ繝・・繧ｿ繧貞綾蜊ｰ蟾･遞九〒菴ｿ縺医ｋ迥ｶ諷九↓蠖薙※縺ｯ繧√※遒ｺ螳壹☆繧九阪％縺ｨ縺悟ｽｹ蜑ｲ縺ｧ縺ゅｊ縲∵髪邨ｦ繝・・繧ｿ菴懈・縺ｯ雋ｬ蜍吝､悶→縺吶ｋ縲・
-### 1.5.3 蛻ｻ蜊ｰ蟾･遞九↓迚ｹ蛹悶＠縺溷宛邏・ｼ・anufacturing Constraints・・- 蛻ｻ蜊ｰ縺ｮ迚ｩ逅・宛邏・ｒ譛蜆ｪ蜈医☆繧九・- 蛻ｻ蜊ｰ蜿ｯ閭ｽ遽・峇・・ounding Box・峨ｒ蠢・★陦ｨ遉ｺ縺励∫ｯ・峇螟悶∈縺ｮ驟咲ｽｮ縺ｯ遖∵ｭ｢縺ｾ縺溘・譏守｢ｺ縺ｫ隴ｦ蜻翫☆繧九・- 蜃ｺ蜉帙・縲瑚ｦ九◆逶ｮ縲阪ｈ繧翫悟宛菴懈欠遉ｺ縺ｨ縺励※蜀咲樟蜿ｯ閭ｽ縲阪〒縺ゅｋ縺薙→繧貞━蜈医☆繧九・- 蛻ｻ蜊ｰ縺ｯ荳榊庄騾・〒縺ゅｋ縺溘ａ縲∵尠譏ｧ縺輔ｒ谿九＆縺ｪ縺ФI/迥ｶ諷九ｒ謗｡逕ｨ縺吶ｋ縲・- 譛邨ら｢ｺ螳壽桃菴懶ｼ・onfirm・峨ｒ蠢・医→縺励∫｢ｺ螳壼燕蠕後〒迥ｶ諷九ｒ蛻・屬縺吶ｋ縲・- 遒ｺ螳壼ｾ後・縲∽ｽ咲ｽｮ繝ｻ繧ｵ繧､繧ｺ繝ｻ蜈･蜉帙ョ繝ｼ繧ｿ縺ｮ繝上ャ繧ｷ繝･遲峨ｒ蜷ｫ繧√※霑ｽ霍｡蜿ｯ閭ｽ縺ｫ縺吶ｋ・域里蟄倅ｻ墓ｧ倥↓蜷医ｏ縺帙※ON/OFF・峨・
-### 1.5.4 陦ｨ遉ｺ縺ｮ蜿悶ｊ謇ｱ縺・ｼ・olor & Preview Disclaimer・・- 蝠・刀逕ｻ蜒上ｄ濶ｲ蜻ｳ縺ｮ蜀咲樟縺ｯ蜿り・｡ｨ遉ｺ縺ｧ縺ゅｊ縲∝宍蟇・↑濶ｲ蜀咲樟繧堤岼逧・→縺励↑縺・・- 繝励Ξ繝薙Η繝ｼ縺ｯ縲悟綾蜊ｰ菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ繝ｻ菴咏區繝舌Λ繝ｳ繧ｹ遒ｺ隱阪阪・縺溘ａ縺ｮ陦ｨ遉ｺ縺ｧ縺ゅｊ縲∫ｴ譚仙ｷｮ繝ｻ蜈画ｺ仙ｷｮ繝ｻ繝｢繝九ち蟾ｮ縺ｫ繧医ｊ螳溽黄縺ｨ蟾ｮ縺悟・繧句庄閭ｽ諤ｧ縺後≠繧九・
-### 1.5.5 謌仙粥譚｡莉ｶ・・one Definition縺ｫ霑ｽ險假ｼ・- 縺雁ｮ｢讒倥′繝・・繝ｫ荳翫〒驟咲ｽｮ繧堤｢ｺ螳壹〒縺阪∬ｿｽ蜉縺ｮ繝｡繝ｼ繝ｫ遒ｺ隱阪↑縺励〒蛻ｶ菴懷ｷ･遞九↓騾ｲ繧√ｉ繧後ｋ縺薙→縲・- 遒ｺ螳夂ｵ先棡縺ｨ縺励※縲∽ｻ･荳九′蜿門ｾ励〒縺阪ｋ縺薙→縲・  - 蜃ｺ蜉帷判蜒擾ｼ・NG・峨♀繧医・蠢・ｦ√↓蠢懊§縺ｦPDF
-  - 菴咲ｽｮ繝ｻ繧ｵ繧､繧ｺ諠・ｱ・域焚蛟､・・  - 繝・Φ繝励Ξ繝ｼ繝・D/繝・じ繧､繝ｳID遲峨・蜿ら・諠・ｱ・域里蟄倅ｻ墓ｧ倥↓貅匁侠・・
-### 1.5.6 莉墓ｧ俶嶌蜀・・蜷咲ｧｰ・域枚譖ｸ荳翫・謗ｨ螂ｨ・・- 譁・嶌荳翫・縲後ョ繧ｶ繧､繝ｳ繧ｷ繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ縲阪〒縺ｯ縺ｪ縺上∽ｻ･荳九・縺・★繧後°繧呈耳螂ｨ縺吶ｋ縲・  - 蛻ｻ蜊ｰ驟咲ｽｮ遒ｺ隱阪ヤ繝ｼ繝ｫ
-  - 蛻ｻ蜊ｰ蜑咲｢ｺ隱阪す繝溘Η繝ｬ繝ｼ繧ｿ繝ｼ
-  - 繝ｭ繧ｴ驟咲ｽｮ遒ｺ螳壹ヤ繝ｼ繝ｫ
+## �ǋL�i���쒲���j
+- �g���~���O�̓��S�A�b�v���[�h��̂ݑ���\
+- ���߂̏����l�́u�Ȃ��v
+- �g�O�̂܂ܔ��s�ł��Ȃ��悤�ɐ���
+- PDF�������͏c�����ێ�����悤����
+
+---
+
+## 1.5 刻印特化（目的・非目的・制約）
+### 1.5.1 位置づけ（Purpose / Non-Purpose）
+**Purpose（本ツールが解決すること）**
+- 本ツールは「デザインを作る」ためではなく、刻印工程に投入する前の「位置確認・確定（合意形成）」を行う
+- お客様が支給するロゴ等の既存データを読み込み、刻印可能範囲内で位置・サイズを調整し、確定データ（PNG/PDF + 位置情報）を発行する
+- 位置確認・サイズ確認・確認画像送付の往復を減らし、リードタイム短縮と認識ズレ防止を達成する
+**Non-Purpose（本ツールがやらないこと）**
+- デザイン生成（AI生成含む）
+- デザイン提案・自動レイアウト
+- 色変更、装飾（影・縁・フィルタ等）
+- 刻印前処理として最低限の画像調整は行う
+- 入稿用データ作成（Illustrator形式必須の工程）
+- カラーバリエーションの厳密再現（表示は参考）
+### 1.5.2 入力データの前提�E�Eustomer Asset First�E�E- お客様�E既に支給チE�Eタ�E�ロゴ原稿・設計図・画像）を持ってぁE��前提とする、E- 本チE�Eルは「支給チE�Eタを刻印工程で使える状態に当てはめて確定する」ことが役割であり、支給チE�Eタ作�Eは責務外とする、E
+### 1.5.3 刻印工程に特化した制紁E��Eanufacturing Constraints�E�E- 刻印の物琁E��紁E��最優先する、E- 刻印可能篁E���E�Eounding Box�E�を忁E��表示し、篁E��外への配置は禁止また�E明確に警告する、E- 出力�E「見た目」より「制作指示として再現可能」であることを優先する、E- 刻印は不可送E��あるため、曖昧さを残さないUI/状態を採用する、E- 最終確定操作！Eonfirm�E�を忁E��とし、確定前後で状態を刁E��する、E- 確定後�E、位置・サイズ・入力データのハッシュ等を含めて追跡可能にする�E�既存仕様に合わせてON/OFF�E�、E
+### 1.5.4 表示の取り扱ぁE��Eolor & Preview Disclaimer�E�E- 啁E��画像や色味の再現は参老E��示であり、厳寁E��色再現を目皁E��しなぁE��E- プレビューは「刻印位置・サイズ・余白バランス確認」�Eための表示であり、素材差・光源差・モニタ差により実物と差が�Eる可能性がある、E
+### 1.5.5 成功条件�E�Eone Definitionに追記！E- お客様がチE�Eル上で配置を確定でき、追加のメール確認なしで制作工程に進められること、E- 確定結果として、以下が取得できること、E  - 出力画像！ENG�E�およ�E忁E��に応じてPDF
+  - 位置・サイズ惁E���E�数値�E�E  - チE��プレーチED/チE��インID等�E参�E惁E���E�既存仕様に準拠�E�E
+### 1.5.6 仕様書冁E�E名称�E�文書上�E推奨�E�E- 斁E��上�E「デザインシミュレーター」ではなく、以下�EぁE��れかを推奨する、E  - 刻印配置確認ツール
+  - 刻印前確認シミュレーター
+  - ロゴ配置確定ツール
 
