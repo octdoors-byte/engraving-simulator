@@ -2,7 +2,7 @@
 import type { TemplateStatus, TemplateSummary } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
-type ColumnKey = "name" | "templateKey" | "status" | "updatedAt" | "url";
+type ColumnKey = "name" | "comment" | "templateKey" | "status" | "updatedAt" | "url";
 
 const statusLabels: Record<TemplateStatus, string> = {
   draft: "下書き",
@@ -12,6 +12,7 @@ const statusLabels: Record<TemplateStatus, string> = {
 
 const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "name", label: "表示名" },
+  { key: "comment", label: "コメント" },
   { key: "templateKey", label: "テンプレキー" },
   { key: "status", label: "状態" },
   { key: "updatedAt", label: "登録日" },
@@ -274,6 +275,13 @@ export function SimLandingPage() {
                               {row.comment ? (
                                 <div className="mt-1 text-sm font-normal text-slate-500">{row.comment}</div>
                               ) : null}
+                            </td>
+                          );
+                        }
+                        if (col.key === "comment") {
+                          return (
+                            <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
+                              {row.comment || "-"}
                             </td>
                           );
                         }
