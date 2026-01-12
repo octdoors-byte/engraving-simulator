@@ -485,6 +485,9 @@ export function SimPage() {
           <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
             お客様画面
           </span>
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            ここからお客様画面
+          </span>
           <p className="text-xs text-slate-400">管理ID: {baseKey}</p>
         </div>
         {hasSides && (
