@@ -95,6 +95,7 @@ export function AdminTemplatesPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
+  const settingsRef = useRef<CommonSettings>(settings);
 
   const reloadTemplates = useCallback(() => {
     const list = listTemplates();
@@ -162,6 +163,16 @@ export function AdminTemplatesPage() {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [settings]);
+
+  useEffect(() => {
+    settingsRef.current = settings;
+  }, [settings]);
+
+  useEffect(() => {
+    return () => {
+      saveCommonSettings(settingsRef.current);
+    };
+  }, []);
 
   const templateOptions = useMemo(
     () =>
@@ -325,7 +336,11 @@ export function AdminTemplatesPage() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        setSettings((prev) => ({ ...prev, logoImage: reader.result }));
+        setSettings((prev) => {
+          const next = { ...prev, logoImage: reader.result };
+          saveCommonSettings(next);
+          return next;
+        });
       }
     };
     reader.readAsDataURL(file);
