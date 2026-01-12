@@ -47,11 +47,22 @@ function BootstrapApp() {
         window.clearTimeout(timeoutId);
         setReady(true);
       }
+    };
+    run();
+  }, []);
+
+  useEffect(() => {
+    const handleBackup = () => {
       saveAutoBackup().catch((error) => {
         console.error("auto backup failed", error);
       });
     };
-    run();
+    window.addEventListener("pagehide", handleBackup);
+    window.addEventListener("beforeunload", handleBackup);
+    return () => {
+      window.removeEventListener("pagehide", handleBackup);
+      window.removeEventListener("beforeunload", handleBackup);
+    };
   }, []);
 
   if (!ready) {
