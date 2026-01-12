@@ -312,6 +312,13 @@ export function SimLandingPage() {
                       {visibleColumns.map((col) => {
                         if (col.key === "name") {
                           const isEditing = editingKey === row.key;
+                          const handleBlur = () => {
+                            window.setTimeout(() => {
+                              const active = document.activeElement;
+                              if (active === nameInputRef.current || active === commentInputRef.current) return;
+                              commitRow(row);
+                            }, 0);
+                          };
                           return (
                             <td key={col.key} className="px-6 font-medium text-slate-900" style={rowPaddingStyle}>
                               {isEditing ? (
@@ -322,6 +329,7 @@ export function SimLandingPage() {
                                     className="w-full rounded border border-slate-200 px-2 py-1 text-sm"
                                     value={editingName}
                                     onChange={(event) => setEditingName(event.target.value)}
+                                    onBlur={handleBlur}
                                     onKeyDown={(event) => {
                                       if (event.key === "Enter") {
                                         event.preventDefault();
@@ -332,22 +340,6 @@ export function SimLandingPage() {
                                       }
                                     }}
                                   />
-                                  <div className="flex gap-2">
-                                    <button
-                                      type="button"
-                                      className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600"
-                                      onClick={() => commitRow(row)}
-                                    >
-                                      保存
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-500"
-                                      onClick={cancelEditing}
-                                    >
-                                      キャンセル
-                                    </button>
-                                  </div>
                                 </div>
                               ) : (
                                 <div
@@ -377,6 +369,13 @@ export function SimLandingPage() {
                         }
                         if (col.key === "comment") {
                           const isEditing = editingKey === row.key;
+                          const handleBlur = () => {
+                            window.setTimeout(() => {
+                              const active = document.activeElement;
+                              if (active === nameInputRef.current || active === commentInputRef.current) return;
+                              commitRow(row);
+                            }, 0);
+                          };
                           return (
                             <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
                               {isEditing ? (
@@ -386,6 +385,7 @@ export function SimLandingPage() {
                                   className="w-full rounded border border-slate-200 px-2 py-1 text-sm"
                                   value={editingComment}
                                   onChange={(event) => setEditingComment(event.target.value)}
+                                  onBlur={handleBlur}
                                   onKeyDown={(event) => {
                                     if (event.key === "Enter") {
                                       event.preventDefault();
