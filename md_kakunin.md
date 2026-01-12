@@ -71,9 +71,9 @@
 - 検索めE��覧表示に忁E��な索引だけを貼る！Elob自体�E吁E��ーブル冁E��保持してよいが、v1.2は **assetsにBlobを集紁E* する�E�、E
 ---
 
-## 7. チE�EタモチE���E�厳寁E��E
-### 7.1 Template�E�台紙！E
-#### 7.1.1 Templateレコード！EndexedDB/templates�E�E
+## 7. データモデル
+### 7.1 Template（台紙）
+#### 7.1.1 Templateレコード（IndexedDB/templates）
 ```json
 {
   "id": "uuid-v4",
@@ -83,8 +83,8 @@
   "updatedAt": "2026-01-09T10:00:00.000+09:00",
   "background": {
     "fileName": "certificate-cover-a4.png",
-    "canvasWidthPx": 1200,
-    "canvasHeightPx": 1600
+    "background.canvasWidthPx": 1200,
+    "background.canvasHeightPx": 1600
   },
   "engravingArea": {
     "label": "右下刻印枠",
@@ -111,11 +111,11 @@
 ```
 
 #### 7.1.2 engravingArea（px座標）
-- engravingArea は背景画像のキャンバスサイズ（background.canvasWidthPx/HeightPx）に対するピクセル座標
+- engravingArea は背景画像のキャンバスサイズ（background.background.canvasWidthPx/HeightPx）に対するピクセル座標
 - x,y,w,h は整数で指定する
 
-### 7.2 Design�E�お客様が発行したデザイン�E�E
-#### 7.2.1 Designレコード！EndexedDB/designs�E�E
+### 7.2 Design（お客様が発行したデザイン）
+#### 7.2.1 Designレコード（IndexedDB/designs）
 ```json
 {
   "designId": "260109_K7M3Q9XR",
@@ -142,8 +142,8 @@
 }
 ```
 
-### 7.3 Asset�E�Elob保管�E�E
-#### 7.3.1 Assetレコード！EndexedDB/assets�E�E
+### 7.3 Asset（Blob保管）
+#### 7.3.1 Assetレコード（IndexedDB/assets）
 ```json
 {
   "id": "asset:pdfConfirm:260109_K7M3Q9XR",
@@ -170,21 +170,28 @@
 - PDF刻印用: `asset:pdfEngrave:{designId}`
 ---
 
-## 8. 座標系のルール�E�最重要E��E
-### 8.1 基準座標！Ex�E�E- `template.background.canvasWidthPx/HeightPx` めE**基準座標系�E�Ex�E�E* とする
-- `engravingArea（px）` は座標
-- `placementPx` は **忁E��基準座標！Ex�E�E*で保存すめE
-### 8.2 画面表示�E�レスポンシブ！E- 表示用キャンバスは可変サイズ�E�ESS�E�E- 描画時に `viewScale` を計箁E  - `viewScale = min(viewW / canvas.widthPx, viewH / canvas.heightPx)`
-- 表示座標�E `displayPx = basePx * viewScale`
+## 8. 座標系のルール
+### 8.1 基準座標
+- template.background.canvasWidthPx/HeightPx を基準座標系とする
+- engravingArea（px）はピクセル座標
+- placement は基準座標で保存する
 
+### 8.2 画面表示（レスポンシブ）
+- 表示用キャンバスは可変サイズ
+- 描画時に viewScale を計算する
+  - viewScale = min(viewW / background.background.canvasWidthPx, viewH / background.background.canvasHeightPx)
+- 表示座標: displayPx = basePx * viewScale
 ---
 
-## 9. 共通�EチE��ー/フッター�E��Eペ�Eジ�E�E### 9.1 設定UI配置
-- `/admin/templates` の最上部に「�E通�EチE��ー/フッター設定」を表示
-- 以後、�Eペ�Eジ�E�Eim/管琁E��で同一表示
+## 9. 共通ヘッダー/フッター
+### 9.1 設定UI配置
+- `/admin/templates` の最上部に「共通ヘッダー / フッター設定」を表示
+- 以後、sim/管理画面で同一表示
 
-### 9.2 設定頁E���E�固定！E- `logoAssetId`�E�任意！E `asset:commonLogo:global`
-- `headerText`�E�任意！E 説明文�E�E、E行！E- `footerText`�E�任意！E フッター斁E��
+### 9.2 設定項目
+- `logoAssetId`: 任意（asset:commonLogo:global）
+- `headerText`: 任意（説明文、1行）
+- `footerText`: 任意（フッター文言）
 - `logoAlign`: `left|center|right`
 - `headerTextAlign`: `left|center|right`
 - `footerTextAlign`: `left|center|right`
@@ -193,34 +200,51 @@
 - `footerTextSize`: `sm|md|lg`
 
 ### 9.3 保存ルール
-- チE��スト設定�E localStorage�E�Eksim:commonSettings`�E�E- ロゴ画像�E IndexedDB/assets に Blob保存！Eype=`commonLogo`�E�E- 入力�EチE��ウンス300msで自動保存（保存失敗時はト�Eストで通知�E�E
+- 設定は localStorage（`ksim:commonSettings`）に保存
+- ロゴ画像は localStorage に dataURL で保存
+- 入力は 300ms のデバウンスで自動保存（失敗時はトーストで通知）
 ---
 
-## 10. お客様画面�E�Esim/:templateKey�E�詳細仕槁E
-### 10.1 レイアウチE#### PC
-- 左�E�操作パネル�E�E60、E20px�E�E- 右�E��Eレビュー�E�背景+刻印枠+ロゴ�E�E- 発行�Eタンは操作パネル末尾に固宁E
-#### スマ�E
-- 1カラム縦積み�E�上：�Eレビュー / 下：操作！E- トリミングモーダルは高さ `max-h-[80vh]` を守る
-- 主要操作�Eタン�E�適用/戻る）�E常に表示されめE
-### 10.2 スチE��プ（アコーチE��オン形式！E- Step 1: ロゴ読込
-- Step 2: 加工�E�トリミング / 背景透過（色クリック指定）
-- Step 4: 発行（確認PDF�E�E
-### 10.3 状態機械�E�EimState�E�E`simState` は以下�EぁE��れか�E�固定！E- `EMPTY`
+## 10. お客様画面（/sim/:templateKey）
+### 10.1 レイアウト
+#### PC
+- 左: 操作パネル
+- 右: プレビュー（背景 + 刻印枠 + ロゴ）
+- 発行ボタンは操作パネルの下部
+
+#### スマホ
+- 1カラム（上: プレビュー / 下: 操作）
+- トリミングモーダルは `max-h-[80vh]`
+- 主要ボタン（適用/戻る）は常に表示
+
+### 10.2 ステップ（アコーディオン形式）
+- Step 1: ロゴ読込
+- Step 2: トリミング / 背景透過（色クリック指定）
+- Step 3: 配置調整
+- Step 4: 発行（確認PDF）
+
+### 10.3 状態管理（simState）
+- `EMPTY`
 - `UPLOADED`
 - `EDITING`
 - `PLACEMENT`
 - `READY_TO_ISSUE`
 - `ISSUING`
 - `ISSUED`
-- `ERROR`�E��E命皁E��原剁E��帰不�Eだが「リセチE��」で`EMPTY`へ戻せる�E�E
-遷移�E�固定！E- `EMPTY -> UPLOADED`�E�ファイル読込成功�E�E- `UPLOADED -> EDITING`�E��E動！E- `EDITING -> PLACEMENT`�E�「�E置へ」！E- `PLACEMENT -> READY_TO_ISSUE`�E�ロゴが枠冁E��収まってぁE���E�E- `READY_TO_ISSUE -> ISSUING`�E�発行押下！E- `ISSUING -> ISSUED`�E��E功！E- 失敗時は `ERROR` ではなく、可能なら直前状態に戻して再試行可能にする�E�EndexedDB容量不足など�E�E
-### 10.4 ロゴ入力仕槁E- 対忁E PNG/JPEG/WEBP
-- サイズ: 5MB以冁E��E,242,880 bytes�E�E- 取り込み:
-  - `File` をそのままBlobで IndexedDB�E�EogoOriginal�E�に保存する（発行時�E�E  - 編雁E��は `createImageBitmap(file)` を利用して描画する
+- `ERROR`
+
+### 10.4 ロゴ入力
+- 対応: PNG/JPEG/WEBP
+- サイズ: 5MB以内
+- 取り込み:
+  - File をそのまま IndexedDB に保存（logoOriginal）
+  - 表示用は createImageBitmap(file) を使う
 
 ### 10.5 トリミング
-- 実裁E `react-easy-crop` 採用�E�ローカルにバンドル�E�E- 保存するcrop: **正規化座標！E、E�E�E*
-  - `crop = {x,y,w,h}`�E��E画像に対する比率�E�E- トリミングの出力�E Canvasで刁E��出したBitmapを次工程に渡ぁE
+- 独自のトリミングUIを使用
+- crop は正規化座標（x,y,w,h を 0-1 で保存）
+- 切り出し後の画像を次工程に渡す
+
 ### 10.6 背景透過（色クリック指定）
 - 透過したい色をロゴ画像上でクリックして選択する
 - 許容範囲（閾値）は固定値で処理する（ユーザーのスライダー操作は行わない）
@@ -230,36 +254,47 @@
 - 有効/無効の切り替えはテンプレート管理でのみ設定する
 - 閾値は固定値で処理する（ユーザーのスライダー操作は行わない）
 - 透過済み領域の透明度は保持する
-### 10.8 配置�E�ドラチE���E�E��大縮小！E#### 10.8.1 操佁E- 移勁E Pointer EventsでドラチE��
-- リサイズ: **右下ハンドルのみ**�E�E1.2固定！E- 縦横比固定（ロゴ画像比！E- 最小サイズ:
-  - `rules.minLogoSizePx`�E��E朁E0px�E�以丁E- 回転は実裁E��なぁE
-  - `x` は `[engraveX, engraveX + engraveW - logoW]`
-  - `y` は `[engraveY, engraveY + engraveH - logoH]`
-- リサイズ時も同様にクランチE- もし `logoW > engraveW` また�E `logoH > engraveH` になった場合、E*枠より大きい場合は発行時にエラーで止める
 
-#### 10.8.3 初期配置�E�固定！E- 編雁E��亁E��、最初�E配置は「枠の90%に収まる最大サイズ」で中央配置
-  - `scale = min((engraveW*0.9)/logoW, (engraveH*0.9)/logoH)`
-  - `w = logoW*scale`, `h = logoH*scale`
-  - `x = engraveX + (engraveW - w)/2`
-  - `y = engraveY + (engraveH - h)/2`
+### 10.8 配置（ドラッグ/サイズ変更）
+#### 10.8.1 操作
+- 移動: ドラッグ
+- リサイズ: 右下ハンドルのみ
+- 縦横比固定
+- サイズ範囲: placementRules.minScale / maxScale
 
----
+#### 10.8.2 枠内制限
+- keepInsideEngravingArea=true の場合、枠外に出ないようにクランプ
+- 枠より大きい場合は発行時にエラーで止める
 
-## 11. Design ID 仕様（厳寁E��E
-### 11.1 フォーマッチE- `YYMMDD_XXXXXXXX`�E�侁E `260109_K7M3Q9XR`�E�E
-### 11.2 斁E��集合（固定！E- 数孁E `2 3 4 5 6 7 8 9`
-- 英大斁E��E `A B C D E F G H J K M N P Q R S T U V W X Y Z`
-- 除夁E `0 1 I L O`�E�視認性のため�E�E
-### 11.3 生�E方法（固定！E- `crypto.getRandomValues` を利用
-- 既存designIdと衝突した場合�E再生成（最大10回、趁E��たらエラー�E�E
----
+#### 10.8.3 初期配置
+- 枠の90%に収まる最大サイズで中央配置
+  - scale = min((engraveW*0.9)/logoW, (engraveH*0.9)/logoH)
+  - w = logoW*scale, h = logoH*scale
+  - x = engraveX + (engraveW - w)/2
+  - y = engraveY + (engraveH - h)/2
 
-## 12. PDF仕様！Edf-lib�E�E
-### 12.1 重要方針（高精度要素�E�E- UI表示キャンバスとは別に、E*PDF生�E専用のオフスクリーンCanvas**を使用する
-- これにより、UIが小さくても�E力が荒れにくい
+## 11. Design ID 仕様
+### 11.1 フォーマット
+- `YYMMDD_XXXXXXXX`
 
-### 12.2 オフスクリーンCanvasのサイズ�E�固定！E- `template.background.canvasWidthPx/HeightPx` を基準とする
-- ただし、`template.dpi=300` と `template.pdf.pageSize` がA4の場合、推奨は以下（任意！E  - 縦: 3508px、横: 2480px�E�E4 300dpi�E�E- v1.2では **チE��プレ登録時に canvasサイズを指宁E*する方式とし、A4固定�E自動計算�E行わなぁE
+### 11.2 文字集合
+- 数字: 2 3 4 5 6 7 8 9
+- 英大文字: A B C D E F G H J K M N P Q R S T U V W X Y Z
+- 除外: 0 1 I L O
+
+### 11.3 生成方法
+- `crypto.getRandomValues` を使用
+- 既存IDと衝突した場合は再生成（最大10回）
+
+## 12. PDF仕様
+### 12.1 重要方針
+- UI表示と同じ見え方になるように、PDF用の座標計算で描画する
+- PDFはオフスクリーンで生成する
+
+### 12.2 オフスクリーンCanvasのサイズ
+- template.background.canvasWidthPx/HeightPx を基準にする
+- template.pdf.dpi と pageSize が A4 の場合の目安: 縦3508px / 横2480px
+
 ### 12.3 Type A（確認用）
 1) 背景画像を表示
 2) 刻印枠のガイドを表示
@@ -277,18 +312,27 @@
 #### 12.4.1 px→mm変換（固定）
 - `mm = px * (25.4 / dpi)`
 - 変換対象:
-  - ロゴ矩形�E�E,y,w,h�E�E  - 刻印枠�E�E,y,w,h�E�E- 記載するmmは小数第1位まで�E�四捨五�E�E�E
-#### 12.4.2 mmの原点�E�固定！E- 原点は **チE��プレ基準キャンバスの左丁E*�E�EIと同じ�E�E- PDF描画は左下原点のため、描画時�EY反転する�E�後述�E�E- 表示チE��ストとしてのmmは「左上原点」で表記する（作業老E��琁E��しやすい�E�E
-### 12.5 PDF座標変換�E�厳寁E��E- PDFペ�Eジ�E�Et�E�と基準キャンバス�E�Ex�E��E対忁E  - `scaleX = pageWidthPt / canvasWidthPx`
-  - `scaleY = pageHeightPt / canvasHeightPx`
-- 変換:
-  - `ptX = pxX * scaleX`
-  - `ptY = pageHeightPt - (pxY + pxH) * scaleY`
-    - PDFは左下原点のため、Yを反転して「矩形の下端」を基準に置ぁE- ロゴ描画:
-  - `drawImage(img, { x: ptX, y: ptY, width: pxW*scaleX, height: pxH*scaleY })`
-- 枠描画も同槁E
-### 12.6 PDF保孁Eダウンロード（固定！E- 生�EしたPDFはBlob化し、IndexedDB/assetsへ保孁E- 発行直後�E Type A を�E動ダウンローチE- Type B は保存�Eみ�E�管琁E��面でDL�E�E
----
+  - ロゴ矩形の x,y,w,h
+  - 刻印枠の x,y,w,h
+- mm表記は小数第1位まで（四捨五入）
+
+#### 12.4.2 mmの原点
+- 原点はテンプレ基準キャンバスの左上
+- PDF描画は左下原点のため、描画時はYを反転する
+- mm表記は「左上原点」で記載する
+
+### 12.5 PDF座標変換
+- scaleX = pageWidthPt / background.canvasWidthPx
+- scaleY = pageHeightPt / background.canvasHeightPx
+- ptX = pxX * scaleX
+- ptY = pageHeightPt - (pxY + pxH) * scaleY
+- drawImage(img, { x: ptX, y: ptY, width: pxW*scaleX, height: pxH*scaleY })
+
+### 12.6 PDF保存とダウンロード
+- 生成したPDFは IndexedDB/assets に保存
+- 発行直後は Type A を自動ダウンロード
+- Type B は管理画面からダウンロード
+------
 
 ## 13. 管琁E��面�E�テンプレ管琁E��Eadmin/templates�E�E
 ### 13.1 一覧チE�Eブル�E�表示列固定！E- name
@@ -307,8 +351,8 @@
   "updatedAt": "2026-01-09T10:00:00.000+09:00",
   "background": {
     "fileName": "certificate-cover-a4.png",
-    "canvasWidthPx": 1200,
-    "canvasHeightPx": 1600
+    "background.canvasWidthPx": 1200,
+    "background.canvasHeightPx": 1600
   },
   "engravingArea": {
     "label": "右下刻印枠",
@@ -346,7 +390,7 @@
 - status: draft/tested/published
 - updatedAt: 必須
 - background.fileName: 必須
-- background.canvasWidthPx/HeightPx: 200〜20000の整数
+- background.background.canvasWidthPx/HeightPx: 200〜20000の整数
 - engravingArea.x/y/w/h: 整数、w/hは1以上、キャンバス内
 - placementRules: allowRotate/keepInsideEngravingArea/minScale/maxScale は必須
 - pdf: pageSize(A4) / orientation / dpi は必須
@@ -370,10 +414,10 @@
 ### 14.2 検索/絞り込み�E�E1.2固定！E- designId 部刁E��致検索�E�即時反映�E�E- templateKey セレクト（存在するチE��プレのみ�E�E
 ### 14.3 PDF再生成ルール�E�固定！E- assetsにPDFが存在 ↁEそ�EBlobでDL
 - 存在しなぁEↁE以下で再生成し保存してDL
-  - template�E�背景�E�！Edesign�E�EogoProcessed + placementPx�E�E
+  - template�E�背景�E�！Edesign�E�EogoProcessed + placement�E�E
 ### 14.4 チE��イン削除�E�固定！E- designsレコード削除
 - assets削除:
-  - logoOriginal / logoProcessed / pdfA / pdfB
+  - logoOriginal / logoEdited / pdfA / pdfB
 
 ---
 
@@ -446,7 +490,7 @@
 - `saveTemplateWithBg(templateDraft, bgBlob): Promise<Template>`
 - `listTemplates(): Promise<Template[]>`
 - `generateDesignId(): string`
-- `processLogo(params): Promise<Blob>`�E�Erop→透過→二値化！E- `clampPlacement(placementPx, engravingAreaPx): placementPx`
+- `processLogo(params): Promise<Blob>`�E�Erop→透過→二値化！E- `clampPlacement(placement, engravingArea): placement`
 - `generatePdfA(args): Promise<Blob>`
 - `generatePdfB(args): Promise<Blob>`
 - `saveDesignAndAssets(args): Promise<void>`�E�発行手頁E�E統合！E- `listDesigns(): Promise<Design[]>`
@@ -469,11 +513,36 @@
 ## 20. 付録A�E�テンプレサンプル�E��E币E���E�E`template.json`
 ```json
 {
-  "key": "sample-a4-rightbottom-v1",
-  "name": "サンプルA4�E�右下刻印�E�E,
-  "dpi": 300,
-  "canvas": { "widthPx": 1200, "heightPx": 1600 },
-  "status": "draft"
+  "templateKey": "sample_a4_rightbottom_v1",
+  "name": "サンプルA4 右下刻印",
+  "status": "draft",
+  "updatedAt": "2026-01-09T10:00:00.000+09:00",
+  "background": {
+    "fileName": "certificate-cover-a4.png",
+    "background.canvasWidthPx": 1200,
+    "background.canvasHeightPx": 1600
+  },
+  "engravingArea": {
+    "label": "右下刻印枠",
+    "x": 820,
+    "y": 1220,
+    "w": 280,
+    "h": 180
+  },
+  "placementRules": {
+    "allowRotate": false,
+    "keepInsideEngravingArea": true,
+    "minScale": 0.1,
+    "maxScale": 6.0
+  },
+  "logoSettings": {
+    "monochrome": false
+  },
+  "pdf": {
+    "pageSize": "A4",
+    "orientation": "portrait",
+    "dpi": 300
+  }
 }
 ```
 
@@ -541,6 +610,16 @@
 ### 1.5.6 仕様書冁E�E名称�E�文書上�E推奨�E�E- 斁E��上�E「デザインシミュレーター」ではなく、以下�EぁE��れかを推奨する、E  - 刻印配置確認ツール
   - 刻印前確認シミュレーター
   - ロゴ配置確定ツール
+
+
+
+
+
+
+
+
+
+
 
 
 
