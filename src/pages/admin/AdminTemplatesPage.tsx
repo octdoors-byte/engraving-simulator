@@ -466,14 +466,14 @@ export function AdminTemplatesPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-slate-900">テンプレート一覧</h2>
           </div>
-          <div className="mt-3 text-xs text-slate-500">
-            <p>✅ 表示名はダブルクリックで変更</p>
-            <p>✅ テスト/スマホ/PCで表示確認</p>
-            <p>✅ 状態は下書き/テスト済み/公開中で切り替え</p>
-            <p>✅ 登録後はシミュレーターとPDFで見た目を必ず確認</p>
-            <p>✅ 「template.json」と背景画像をいっしょに置く</p>
-            <p>✅ 画像の名前は JSON に書いた名前と同じ</p>
-            <p>✅ JSON と画像はブラウザに保存される</p>
+          <div className="mt-4 space-y-1 text-base leading-relaxed text-slate-600">
+            <p>・表示名はダブルクリックで変更</p>
+            <p>・テスト／スマホ／PCで表示確認</p>
+            <p>・状態は「下書き・テスト済み・公開中」から選ぶ</p>
+            <p>・登録後はシミュレーターとPDFで見た目を確認</p>
+            <p>・template.json と背景画像を一緒に置く</p>
+            <p>・画像の名前は JSON に書いた名前と同じ</p>
+            <p>・JSON と画像はブラウザに保存される</p>
           </div>
           <div className="mt-3">
             <button
@@ -692,20 +692,6 @@ export function AdminTemplatesPage() {
               value={settings.landingTitle ?? "デザインシミュレーター"}
               onChange={(event) => setSettings((prev) => ({ ...prev, landingTitle: event.target.value }))}
             />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ロゴ配置</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.logoAlign ?? "left"}
-              onChange={(event) =>
-                setSettings((prev) => ({ ...prev, logoAlign: event.target.value as CommonSettings["logoAlign"] }))
-              }
-            >
-              <option value="left">左</option>
-              <option value="center">中央</option>
-              <option value="right">右</option>
-            </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600">ヘッダーテキスト</label>
