@@ -47,6 +47,28 @@ export function saveTemplate(template: Template): void {
   updateTemplateIndex(template);
 }
 
+function normalizeEngravingArea(template: Template): Template {
+  if (template.engravingArea) {
+    const label = template.engravingArea.label || "刻印枠";
+    if (label !== template.engravingArea.label) {
+      return { ...template, engravingArea: { ...template.engravingArea, label } };
+    }
+    return template;
+  }
+  const width = template.background?.canvasWidthPx ?? 0;
+  const height = template.background?.canvasHeightPx ?? 0;
+  return {
+    ...template,
+    engravingArea: {
+      label: "刻印枠",
+      x: 0,
+      y: 0,
+      w: width > 0 ? width : 1,
+      h: height > 0 ? height : 1
+    }
+  };
+}
+
 export function ensureAppVersion(): string {
   localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
   return APP_VERSION;
@@ -61,7 +83,8 @@ export function listTemplates(): TemplateSummary[] {
 }
 
 export function getTemplate(templateKey: string): Template | null {
-  return readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
+  const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
+  return template ? normalizeEngravingArea(template) : null;
 }
 
 export function deleteTemplate(templateKey: string): void {
@@ -133,13 +156,14 @@ export function migrateLegacyText(): void {
   templates.forEach((summary) => {
     const template = getTemplate(summary.templateKey);
     if (!template) return;
-    const nextName = fixGarbledText(template.name);
-    const nextLabel = fixGarbledText(template.engravingArea.label);
-    if (nextName !== template.name || nextLabel !== template.engravingArea.label) {
+    const normalized = normalizeEngravingArea(template);
+    const nextName = fixGarbledText(normalized.name);
+    const nextLabel = fixGarbledText(normalized.engravingArea.label);
+    if (nextName !== normalized.name || nextLabel !== normalized.engravingArea.label || normalized !== template) {
       saveTemplate({
-        ...template,
+        ...normalized,
         name: nextName,
-        engravingArea: { ...template.engravingArea, label: nextLabel }
+        engravingArea: { ...normalized.engravingArea, label: nextLabel }
       });
     }
   });
