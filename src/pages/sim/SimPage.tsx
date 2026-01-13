@@ -661,7 +661,26 @@ export function SimPage() {
               <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
               <p className="text-xs text-slate-500">背景とロゴの見え方を確認できます。</p>
             </div>
-            <span className="text-xs font-semibold text-slate-500">状態: {phase === "READY_TO_ISSUE" ? "発行可能" : phase}</span>
+            <span className="text-xs font-semibold text-slate-500">
+              状態:{" "}
+              {phase === "READY_TO_ISSUE"
+                ? "発行可能"
+                : phase === "EMPTY"
+                  ? "ロゴ未選択"
+                  : phase === "UPLOADED"
+                    ? "読込済み"
+                    : phase === "EDITING"
+                      ? "調整中"
+                      : phase === "PLACEMENT"
+                        ? "配置中"
+                        : phase === "ISSUING"
+                          ? "発行中"
+                          : phase === "ISSUED"
+                            ? "発行済み"
+                            : phase === "ERROR"
+                              ? "エラー"
+                              : phase}
+            </span>
           </div>
           <div className="mt-4">
             <StageCanvas
