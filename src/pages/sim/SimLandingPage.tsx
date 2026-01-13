@@ -1,6 +1,7 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Template, TemplateStatus, TemplateSummary } from "@/domain/types";
-import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
+import { deleteTemplate, getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
+import { deleteAsset } from "@/storage/idb";
 
 type ColumnKey = "name" | "comment" | "paper" | "templateKey" | "status" | "updatedAt" | "url";
 
@@ -95,7 +96,7 @@ function formatDateTime(value: string) {
 }
 
 export function SimLandingPage() {
-  const templates = groupTemplates(listTemplates());
+  const [templates, setTemplates] = useState<TemplateRow[]>(() => groupTemplates(listTemplates()));
   const settings = loadCommonSettings();
   const landingTitle = settings?.landingTitle?.trim() || "デザインシミュレーター";
   const [sortKey, setSortKey] = useState<"updatedAtDesc" | "updatedAtAsc" | "nameAsc">("updatedAtDesc");
@@ -158,6 +159,14 @@ export function SimLandingPage() {
 
   const rowPaddingStyle = { paddingTop: rowPaddingPx, paddingBottom: rowPaddingPx };
 
+  const refreshTemplates = () => {
+    setTemplates(groupTemplates(listTemplates()));
+  };
+
+  useEffect(() => {
+    refreshTemplates();
+  }, []);
+
   useEffect(() => {
     if (!editingKey) return;
     if (focusFieldRef.current == "comment") {
@@ -183,6 +192,7 @@ export function SimLandingPage() {
       });
     });
     setEditingKey(null);
+    refreshTemplates();
   };
 
   const cancelEditing = () => {
@@ -198,8 +208,12 @@ export function SimLandingPage() {
     const keys = targets.length ? targets.map((item) => item.templateKey) : [row.primaryTemplateKey];
     keys.forEach((key) => {
       deleteTemplate(key);
+      deleteAsset(`asset:templateBg:${key}`).catch((error) => {
+        console.error(error);
+      });
     });
     setEditingKey(null);
+    refreshTemplates();
   };
 
   useEffect(() => {
