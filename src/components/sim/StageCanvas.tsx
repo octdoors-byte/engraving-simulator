@@ -27,6 +27,11 @@ function getPageDimensions(template: Template) {
   return { width: A4_SIZE.height, height: A4_SIZE.width };
 }
 
+function formatPaperMm(template: Template): string {
+  const orientation = template.pdf.orientation;
+  return orientation === "landscape" ? "297×210 mm" : "210×297 mm";
+}
+
 export function StageCanvas({
   template,
   backgroundUrl,
@@ -116,6 +121,9 @@ export function StageCanvas({
   return (
     <div ref={containerRef} className="relative w-full rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
       <div style={{ height: pageHeight }} />
+      <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-white/90 px-3 py-1 text-xs text-slate-600 shadow">
+        用紙: {formatPaperMm(template)}
+      </div>
       {backgroundUrl && (
         <img
           src={backgroundUrl}
