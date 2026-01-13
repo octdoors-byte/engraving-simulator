@@ -83,6 +83,20 @@ function normalizePdfSettings(template: Template): Template {
   };
 }
 
+function normalizeBackground(template: Template): Template {
+  if (template.background) {
+    return template;
+  }
+  return {
+    ...template,
+    background: {
+      fileName: "",
+      canvasWidthPx: 1,
+      canvasHeightPx: 1
+    }
+  };
+}
+
 export function ensureAppVersion(): string {
   localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
   return APP_VERSION;
@@ -99,7 +113,7 @@ export function listTemplates(): TemplateSummary[] {
 export function getTemplate(templateKey: string): Template | null {
   const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
   if (!template) return null;
-  return normalizePdfSettings(normalizeEngravingArea(template));
+  return normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template)));
 }
 
 export function deleteTemplate(templateKey: string): void {
