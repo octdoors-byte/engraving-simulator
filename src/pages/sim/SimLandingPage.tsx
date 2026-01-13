@@ -265,7 +265,7 @@ export function SimLandingPage() {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">テンプレート一覧</h2>
+        <h2 className="text-xl font-semibold text-slate-900">公開テンプレート一覧</h2>
         <p className="mt-2 text-sm text-slate-500">
           ここから使いたいテンプレートを選びます。公開中のテンプレートだけ利用できます。
         </p>
