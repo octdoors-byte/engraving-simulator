@@ -69,6 +69,20 @@ function normalizeEngravingArea(template: Template): Template {
   };
 }
 
+function normalizePdfSettings(template: Template): Template {
+  if (template.pdf) {
+    return template;
+  }
+  return {
+    ...template,
+    pdf: {
+      pageSize: "A4",
+      orientation: "portrait",
+      dpi: 300
+    }
+  };
+}
+
 export function ensureAppVersion(): string {
   localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
   return APP_VERSION;
@@ -84,7 +98,8 @@ export function listTemplates(): TemplateSummary[] {
 
 export function getTemplate(templateKey: string): Template | null {
   const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
-  return template ? normalizeEngravingArea(template) : null;
+  if (!template) return null;
+  return normalizePdfSettings(normalizeEngravingArea(template));
 }
 
 export function deleteTemplate(templateKey: string): void {
