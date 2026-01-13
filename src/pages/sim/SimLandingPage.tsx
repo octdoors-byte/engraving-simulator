@@ -104,6 +104,16 @@ export function SimLandingPage() {
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
   const [rowPaddingPx, setRowPaddingPx] = useState(12);
   const [draggingKey, setDraggingKey] = useState<ColumnKey | null>(null);
+  const [columnWidths, setColumnWidths] = useState<Record<ColumnKey, number | undefined>>({
+    name: 220,
+    comment: 220,
+    paper: 120,
+    templateKey: 220,
+    status: 120,
+    updatedAt: 160,
+    url: 220
+  });
+  const resizingRef = useRef<{ key: ColumnKey; startX: number; startWidth: number } | null>(null);
 
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
@@ -179,6 +189,30 @@ export function SimLandingPage() {
     setEditingKey(null);
     setEditingName("");
     setEditingComment("");
+  };
+
+  useEffect(() => {
+    const handleMove = (event: MouseEvent) => {
+      if (!resizingRef.current) return;
+      const { key, startX, startWidth } = resizingRef.current;
+      const nextWidth = Math.max(80, startWidth + (event.clientX - startX));
+      setColumnWidths((prev) => ({ ...prev, [key]: nextWidth }));
+    };
+    const handleUp = () => {
+      resizingRef.current = null;
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, []);
+
+  const handleResizeStart = (event: React.MouseEvent<HTMLSpanElement>, key: ColumnKey) => {
+    event.preventDefault();
+    const startWidth = columnWidths[key] ?? (event.currentTarget.parentElement?.clientWidth ?? 120);
+    resizingRef.current = { key, startX: event.clientX, startWidth };
   };
 
   return (
@@ -305,6 +339,7 @@ export function SimLandingPage() {
                       key={col.key}
                       className={`px-6 py-4 text-left ${draggingKey === col.key ? "bg-slate-100" : ""}`}
                       draggable
+                      style={{ width: columnWidths[col.key], minWidth: 80 }}
                       onDragStart={() => setDraggingKey(col.key)}
                       onDragEnd={() => setDraggingKey(null)}
                       onDragOver={(event) => event.preventDefault()}
@@ -315,7 +350,15 @@ export function SimLandingPage() {
                         setDraggingKey(null);
                       }}
                     >
-                      <span className="cursor-move">{col.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="cursor-move">{col.label}</span>
+                        <span
+                          role="separator"
+                          aria-label="列幅を調整"
+                          className="ml-auto h-4 w-1 cursor-col-resize rounded bg-slate-200"
+                          onMouseDown={(event) => handleResizeStart(event, col.key)}
+                        />
+                      </div>
                     </th>
                   ))}
                 </tr>
