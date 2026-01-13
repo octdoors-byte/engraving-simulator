@@ -658,7 +658,7 @@ export function SimPage() {
         <div className="order-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-2">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
+              <h2 className="text-lg font-semibold text-slate-900">配置プレビュー</h2>
               <p className="text-xs text-slate-500">
                 右側でロゴの位置と大きさを調整できます。枠内に収まるように配置してください。
               </p>
