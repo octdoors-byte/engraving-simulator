@@ -75,7 +75,7 @@ async function waitForReady(page) {
 }
 
 async function waitForIssued(page) {
-  const issued = page.getByText("状態: ISSUED");
+  const issued = page.locator('[data-testid="sim-status"][data-state="ISSUED"]');
   const errorToast = page.locator(".rounded-xl").filter({ hasText: /エラー|失敗/ }).first();
   const result = await Promise.race([
     issued.waitFor({ state: "visible", timeout: longTimeout }).then(() => "issued"),
