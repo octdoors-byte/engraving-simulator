@@ -27,6 +27,11 @@ export interface TemplatePdfSettings {
   dpi: number;
 }
 
+export interface TemplatePaper {
+  width: number;
+  height: number;
+}
+
 export interface TemplateLogoSettings {
   monochrome: boolean;
 }
@@ -41,6 +46,7 @@ export interface Template {
   engravingArea: EngravingArea;
   placementRules: PlacementRules;
   pdf: TemplatePdfSettings;
+  paper?: TemplatePaper;
   logoSettings?: TemplateLogoSettings;
 }
 

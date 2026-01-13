@@ -42,7 +42,11 @@ function splitTemplateKey(templateKey: string): { baseKey: string; side: "front"
 }
 
 function formatPaperLabel(template: Template | null): string {
-  if (!template?.pdf) return "-";
+  if (!template) return "-";
+  if (template.paper?.width && template.paper?.height) {
+    return `${template.paper.width}×${template.paper.height}`;
+  }
+  if (!template.pdf) return "-";
   const pageSize = template.pdf.pageSize ?? "A4";
   if (pageSize !== "A4") return pageSize;
   const isLandscape = template.pdf.orientation === "landscape";

@@ -465,6 +465,12 @@ export function SimPage() {
   );
 
   const paperLabel = (() => {
+    const paper = template?.paper;
+    if (paper?.width && paper?.height) {
+      const isLandscape = paper.width >= paper.height;
+      const size = `${paper.width}×${paper.height} mm`;
+      return isLandscape ? `${size}（横）` : `${size}（縦）`;
+    }
     const pageSize = template?.pdf?.pageSize ?? "A4";
     const orientation = template?.pdf?.orientation ?? "portrait";
     if (pageSize !== "A4") return pageSize;
