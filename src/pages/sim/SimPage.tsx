@@ -659,7 +659,9 @@ export function SimPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">見た目の確認</h2>
-              <p className="text-xs text-slate-500">背景とロゴの見え方を確認できます。</p>
+              <p className="text-xs text-slate-500">
+                右側でロゴの位置と大きさを調整できます。枠内に収まるように配置してください。
+              </p>
             </div>
             <span className="text-xs font-semibold text-slate-500">
               状態:{" "}
