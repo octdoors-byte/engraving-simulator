@@ -52,5 +52,21 @@ describe("validateTemplate", () => {
     expect(result.ok).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
   });
+
+  it("rejects canvas size below minimum", () => {
+    const result = validateTemplate({
+      ...baseTemplate,
+      background: { ...baseTemplate.background, canvasHeightPx: 100 }
+    });
+    expect(result.ok).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it("rejects missing pdf settings", () => {
+    const { pdf, ...rest } = baseTemplate;
+    const result = validateTemplate(rest as typeof baseTemplate);
+    expect(result.ok).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
 });
 
