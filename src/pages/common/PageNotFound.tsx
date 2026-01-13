@@ -1,6 +1,9 @@
-﻿import { Link } from "react-router-dom";
+﻿import { Link, useRouteError } from "react-router-dom";
 
 export function PageNotFound() {
+  const error = useRouteError() as Error | null;
+  const message = error?.message ? String(error.message) : null;
+
   return (
     <div className="rounded-xl border border-red-200 bg-white p-8 text-center shadow">
       <h1 className="text-3xl font-semibold text-slate-900">ページが見つかりません</h1>
