@@ -1,8 +1,8 @@
 ﻿import { useEffect, useRef, useState } from "react";
-import type { TemplateStatus, TemplateSummary } from "@/domain/types";
-import { listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
+import type { Template, TemplateStatus, TemplateSummary } from "@/domain/types";
+import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 
-type ColumnKey = "name" | "comment" | "templateKey" | "status" | "updatedAt" | "url";
+type ColumnKey = "name" | "comment" | "paper" | "templateKey" | "status" | "updatedAt" | "url";
 
 const statusLabels: Record<TemplateStatus, string> = {
   draft: "下書き",
@@ -13,6 +13,7 @@ const statusLabels: Record<TemplateStatus, string> = {
 const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "name", label: "表示名" },
   { key: "comment", label: "コメント" },
+  { key: "paper", label: "用紙" },
   { key: "templateKey", label: "テンプレキー" },
   { key: "status", label: "状態" },
   { key: "updatedAt", label: "登録日" },
@@ -23,6 +24,7 @@ type TemplateRow = {
   key: string;
   name: string;
   comment?: string;
+  paper: string;
   status: TemplateStatus;
   updatedAt: string;
   primaryTemplateKey: string;
@@ -36,6 +38,17 @@ function splitTemplateKey(templateKey: string): { baseKey: string; side: "front"
     return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
   }
   return { baseKey: templateKey, side: null };
+}
+
+function formatPaperLabel(template: Template | null): string {
+  if (!template?.pdf) return "-";
+  const size = template.pdf.pageSize ?? "A4";
+  const orientation = template.pdf.orientation === "landscape" ? "横" : "縦";
+  return `${size}（${orientation}）`;
+}
+
+function getTemplateForRow(primaryTemplateKey: string): Template | null {
+  return getTemplate(primaryTemplateKey);
 }
 
 function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
@@ -56,10 +69,12 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
       : items.some((item) => item.status === "tested")
         ? "tested"
         : "draft";
+    const template = getTemplateForRow(preferred.templateKey);
     return {
       key,
       name,
       comment: preferred.comment,
+      paper: formatPaperLabel(template),
       status,
       updatedAt: sorted[0]?.updatedAt ?? "",
       primaryTemplateKey: preferred.templateKey
@@ -420,6 +435,13 @@ export function SimLandingPage() {
                                   {row.comment || "-"}
                                 </div>
                               )}
+                            </td>
+                          );
+                        }
+                        if (col.key === "paper") {
+                          return (
+                            <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
+                              {row.paper}
                             </td>
                           );
                         }
