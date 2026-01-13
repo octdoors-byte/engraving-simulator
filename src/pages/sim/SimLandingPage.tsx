@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Template, TemplateStatus, TemplateSummary } from "@/domain/types";
-import { deleteTemplate, getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
-import { deleteAsset } from "@/storage/idb";
+import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 
 type ColumnKey = "name" | "comment" | "paper" | "templateKey" | "status" | "updatedAt" | "url";
 
@@ -203,21 +202,6 @@ export function SimLandingPage() {
     setEditingKey(null);
     setEditingName("");
     setEditingComment("");
-  };
-
-  const handleDelete = (row: TemplateRow) => {
-    const confirmed = window.confirm(`テンプレート「${row.name}」を削除しますか？`);
-    if (!confirmed) return;
-    const targets = listTemplates().filter((item) => splitTemplateKey(item.templateKey).baseKey === row.key);
-    const keys = targets.length ? targets.map((item) => item.templateKey) : [row.primaryTemplateKey];
-    keys.forEach((key) => {
-      deleteTemplate(key);
-      deleteAsset(`asset:templateBg:${key}`).catch((error) => {
-        console.error(error);
-      });
-    });
-    setEditingKey(null);
-    refreshTemplates();
   };
 
   useEffect(() => {
@@ -554,15 +538,6 @@ export function SimLandingPage() {
                             >
                               {simPath}
                             </a>
-                            <div className="mt-2">
-                              <button
-                                type="button"
-                                className="rounded border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
-                                onClick={() => handleDelete(row)}
-                              >
-                                削除
-                              </button>
-                            </div>
                           </td>
                         );
                       })}
