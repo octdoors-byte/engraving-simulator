@@ -464,6 +464,13 @@ export function SimPage() {
     [imageBitmap]
   );
 
+  const paperLabel = (() => {
+    const pageSize = template?.pdf?.pageSize ?? "A4";
+    const orientation = template?.pdf?.orientation ?? "portrait";
+    if (pageSize !== "A4") return pageSize;
+    return orientation === "landscape" ? "297×210 mm（横）" : "210×297 mm（縦）";
+  })();
+
   if (errorMessage) {
     return (
       <section className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-800">
@@ -663,26 +670,29 @@ export function SimPage() {
                 右側でロゴの位置と大きさを調整できます。枠内に収まるように配置してください。
               </p>
             </div>
-            <span className="text-xs font-semibold text-slate-500">
-              状態:{" "}
-              {phase === "READY_TO_ISSUE"
-                ? "発行可能"
-                : phase === "EMPTY"
-                  ? "ロゴ未選択"
-                  : phase === "UPLOADED"
-                    ? "読込済み"
-                    : phase === "EDITING"
-                      ? "調整中"
-                      : phase === "PLACEMENT"
-                        ? "配置中"
-                        : phase === "ISSUING"
-                          ? "発行中"
-                          : phase === "ISSUED"
-                            ? "発行済み"
-                            : phase === "ERROR"
-                              ? "エラー"
-                              : phase}
-            </span>
+            <div className="flex flex-col items-end gap-1 text-xs font-semibold text-slate-500">
+              <span>用紙: {paperLabel}</span>
+              <span>
+                状態:{" "}
+                {phase === "READY_TO_ISSUE"
+                  ? "発行可能"
+                  : phase === "EMPTY"
+                    ? "ロゴ未選択"
+                    : phase === "UPLOADED"
+                      ? "読込済み"
+                      : phase === "EDITING"
+                        ? "調整中"
+                        : phase === "PLACEMENT"
+                          ? "配置中"
+                          : phase === "ISSUING"
+                            ? "発行中"
+                            : phase === "ISSUED"
+                              ? "発行済み"
+                              : phase === "ERROR"
+                                ? "エラー"
+                                : phase}
+              </span>
+            </div>
           </div>
           <div className="mt-4">
             <StageCanvas
