@@ -134,8 +134,9 @@ test("TC-E2E-03 お客様：正常フロー", async ({ page }) => {
   await uploadLogo(page, logoOk);
   await waitForReady(page);
 
-  const issueButton = page.getByRole("button", { name: "デザインIDを発行する" });
+  const issueButton = page.getByRole("button", { name: "PDFプレビュー" });
   await issueButton.click();
+  await page.getByRole("button", { name: "IDを発行する" }).click();
   await waitForIssued(page);
 
   const issuedText = await page.locator("div", { hasText: /\d{6}_[A-Z2-9]{8}/ }).first().textContent();
@@ -164,8 +165,9 @@ test("TC-E2E-04 管理：履歴に残りPDF再取得", async ({ page }) => {
   await uploadLogo(page, logoOk);
   await waitForReady(page);
 
-  const issueButton = page.getByRole("button", { name: "デザインIDを発行する" });
+  const issueButton = page.getByRole("button", { name: "PDFプレビュー" });
   await issueButton.click();
+  await page.getByRole("button", { name: "IDを発行する" }).click();
   await waitForIssued(page);
 
   const issuedText = await page.locator("div", { hasText: /\d{6}_[A-Z2-9]{8}/ }).first().textContent();

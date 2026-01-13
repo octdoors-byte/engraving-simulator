@@ -5,6 +5,7 @@ import { Dropzone } from "@/components/sim/Dropzone";
 import { CropModal } from "@/components/sim/CropModal";
 import { StageCanvas } from "@/components/sim/StageCanvas";
 import { Toast } from "@/components/common/Toast";
+import { Modal } from "@/components/common/Modal";
 import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
@@ -105,6 +106,11 @@ export function SimPage() {
   const [placement, setPlacement] = useState<DesignPlacement | null>(null);
   const [isIssuing, setIsIssuing] = useState(false);
   const [issuedDesignId, setIssuedDesignId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewPdfBlob, setPreviewPdfBlob] = useState<Blob | null>(null);
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [pendingDesignId, setPendingDesignId] = useState<string | null>(null);
+  const [pendingCreatedAt, setPendingCreatedAt] = useState<string | null>(null);
   const [cropOpen, setCropOpen] = useState(false);
   const placementInitialized = useRef(false);
   const colorCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -244,6 +250,11 @@ export function SimPage() {
   }, [processedLogoUrl]);
 
   useEffect(() => {
+    if (!previewPdfUrl) return;
+    return () => URL.revokeObjectURL(previewPdfUrl);
+  }, [previewPdfUrl]);
+
+  useEffect(() => {
     if (!imageBitmap || !template) {
       setProcessedLogoBlob(null);
       return;
@@ -356,6 +367,17 @@ export function SimPage() {
     [template, isIssuing]
   );
 
+  const resetPreview = useCallback(() => {
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+    }
+    setPreviewPdfUrl(null);
+    setPreviewPdfBlob(null);
+    setPendingDesignId(null);
+    setPendingCreatedAt(null);
+    setPreviewOpen(false);
+  }, [previewPdfUrl]);
+
   const handleIssue = useCallback(async () => {
     if (!template || !imageBitmap || !uploadedFile || !processedLogoBlob || !placement) {
       setToast({ message: "先に画像をアップロードしてください。", tone: "error" });
@@ -373,37 +395,58 @@ export function SimPage() {
       setPhase("PLACEMENT");
       return;
     }
+    const createdAt = new Date().toISOString();
+    const existingIds = new Set(listDesigns().map((entry) => entry.designId));
+    const designId = generateDesignId(existingIds);
+    try {
+      const confirmPdf = await generateConfirmPdf(template, backgroundBlob, processedLogoBlob, placement, designId);
+      const url = URL.createObjectURL(confirmPdf);
+      setPreviewPdfBlob(confirmPdf);
+      setPreviewPdfUrl(url);
+      setPendingDesignId(designId);
+      setPendingCreatedAt(createdAt);
+      setPreviewOpen(true);
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "プレビューの生成に失敗しました。", tone: "error" });
+    }
+  }, [template, imageBitmap, uploadedFile, processedLogoBlob, placement, backgroundBlob]);
+
+  const finalizeIssue = useCallback(async () => {
+    if (!template || !imageBitmap || !uploadedFile || !processedLogoBlob || !placement) {
+      setToast({ message: "先に画像をアップロードしてください。", tone: "error" });
+      return;
+    }
+    if (!pendingDesignId || !pendingCreatedAt || !previewPdfBlob) {
+      setToast({ message: "プレビューがありません。", tone: "error" });
+      return;
+    }
     setIsIssuing(true);
     setPhase("ISSUING");
-    const createdAt = new Date().toISOString();
-    let designId = "";
     try {
-      const existingIds = new Set(listDesigns().map((entry) => entry.designId));
-      designId = generateDesignId(existingIds);
       const logoSettings = template.logoSettings ?? { monochrome: false };
-      const confirmPdf = await generateConfirmPdf(template, backgroundBlob, processedLogoBlob, placement, designId);
       const engravePdf = await generateEngravePdf(template, processedLogoBlob, placement, {
-        designId,
-        createdAt
+        designId: pendingDesignId,
+        createdAt: pendingCreatedAt
       });
       const assets = [
-        { id: `asset:logoOriginal:${designId}`, type: "logoOriginal" as AssetType, blob: uploadedFile },
-        { id: `asset:logoEdited:${designId}`, type: "logoEdited" as AssetType, blob: processedLogoBlob },
-        { id: `asset:pdfConfirm:${designId}`, type: "pdfConfirm" as AssetType, blob: confirmPdf },
-        { id: `asset:pdfEngrave:${designId}`, type: "pdfEngrave" as AssetType, blob: engravePdf }
+        { id: `asset:logoOriginal:${pendingDesignId}`, type: "logoOriginal" as AssetType, blob: uploadedFile },
+        { id: `asset:logoEdited:${pendingDesignId}`, type: "logoEdited" as AssetType, blob: processedLogoBlob },
+        { id: `asset:pdfConfirm:${pendingDesignId}`, type: "pdfConfirm" as AssetType, blob: previewPdfBlob },
+        { id: `asset:pdfEngrave:${pendingDesignId}`, type: "pdfEngrave" as AssetType, blob: engravePdf }
       ];
       await Promise.all(
         assets.map((asset) =>
           saveAsset({
             ...asset,
-            createdAt
+            createdAt: pendingCreatedAt
           })
         )
       );
       saveDesign({
-        designId,
+        designId: pendingDesignId,
         templateKey: template.templateKey,
-        createdAt,
+        createdAt: pendingCreatedAt,
         logo: {
           fileName: uploadedFile.name,
           mimeType: uploadedFile.type,
@@ -414,24 +457,25 @@ export function SimPage() {
         },
         placement,
         pdf: {
-          confirmAssetId: `asset:pdfConfirm:${designId}`,
-          engraveAssetId: `asset:pdfEngrave:${designId}`
+          confirmAssetId: `asset:pdfConfirm:${pendingDesignId}`,
+          engraveAssetId: `asset:pdfEngrave:${pendingDesignId}`
         }
       });
-      downloadBlob(confirmPdf, `${designId}-confirm.pdf`);
-      setIssuedDesignId(designId);
+      downloadBlob(previewPdfBlob, `${pendingDesignId}-confirm.pdf`);
+      setIssuedDesignId(pendingDesignId);
       setToast({ message: "PDF確認用をダウンロードしました。", tone: "success" });
       setPhase("ISSUED");
+      resetPreview();
     } catch (error) {
       console.error(error);
       setToast({ message: "発行中にエラーが発生しました。", tone: "error" });
       setPhase("READY_TO_ISSUE");
-      if (designId) {
+      if (pendingDesignId) {
         await deleteAssets([
-          `asset:logoOriginal:${designId}`,
-          `asset:logoEdited:${designId}`,
-          `asset:pdfConfirm:${designId}`,
-          `asset:pdfEngrave:${designId}`
+          `asset:logoOriginal:${pendingDesignId}`,
+          `asset:logoEdited:${pendingDesignId}`,
+          `asset:pdfConfirm:${pendingDesignId}`,
+          `asset:pdfEngrave:${pendingDesignId}`
         ]);
       }
     } finally {
@@ -445,7 +489,10 @@ export function SimPage() {
     placement,
     crop,
     transparentColor,
-    backgroundBlob
+    pendingDesignId,
+    pendingCreatedAt,
+    previewPdfBlob,
+    resetPreview
   ]);
 
   const handlePickTransparent = useCallback(
@@ -636,7 +683,7 @@ export function SimPage() {
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
-              {isIssuing ? "発行中..." : "デザインIDを発行する"}
+              {isIssuing ? "発行中..." : "PDFプレビュー"}
             </button>
             <div className="rounded-xl border border-amber-400/60 bg-slate-800 px-4 py-3 text-left shadow">
               <p className="text-xs font-semibold text-amber-300">デザインID</p>
@@ -676,7 +723,11 @@ export function SimPage() {
                 右側でロゴの位置と大きさを調整できます。枠内に収まるように配置してください。
               </p>
             </div>
-            <div className="flex flex-col items-end gap-1 text-xs font-semibold text-slate-500">
+            <div
+              className="flex flex-col items-end gap-1 text-xs font-semibold text-slate-500"
+              data-testid="sim-status"
+              data-state={phase}
+            >
               <span>用紙: {paperLabel}</span>
               <span>
                 状態:{" "}
@@ -720,6 +771,36 @@ export function SimPage() {
           </div>
         </div>
       </div>
+
+      <Modal title="確認PDFプレビュー" open={previewOpen} onClose={resetPreview}>
+        <div className="space-y-4">
+          <div className="rounded-lg border border-slate-200 bg-slate-50">
+            {previewPdfUrl ? (
+              <iframe title="確認PDF" src={previewPdfUrl} className="h-[70vh] w-full rounded-lg" />
+            ) : (
+              <div className="p-6 text-center text-sm text-slate-500">プレビューを作成中です。</div>
+            )}
+          </div>
+          <div className="flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600"
+              onClick={resetPreview}
+              disabled={isIssuing}
+            >
+              戻って再作成
+            </button>
+            <button
+              type="button"
+              className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900"
+              onClick={finalizeIssue}
+              disabled={isIssuing}
+            >
+              IDを発行する
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       <CropModal
         open={cropOpen}
