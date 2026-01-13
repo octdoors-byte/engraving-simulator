@@ -191,6 +191,17 @@ export function SimLandingPage() {
     setEditingComment("");
   };
 
+  const handleDelete = (row: TemplateRow) => {
+    const confirmed = window.confirm(`テンプレート「${row.name}」を削除しますか？`);
+    if (!confirmed) return;
+    const targets = listTemplates().filter((item) => splitTemplateKey(item.templateKey).baseKey === row.key);
+    const keys = targets.length ? targets.map((item) => item.templateKey) : [row.primaryTemplateKey];
+    keys.forEach((key) => {
+      deleteTemplate(key);
+    });
+    setEditingKey(null);
+  };
+
   useEffect(() => {
     const handleMove = (event: MouseEvent) => {
       if (!resizingRef.current) return;
@@ -525,6 +536,15 @@ export function SimLandingPage() {
                             >
                               {simPath}
                             </a>
+                            <div className="mt-2">
+                              <button
+                                type="button"
+                                className="rounded border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                                onClick={() => handleDelete(row)}
+                              >
+                                削除
+                              </button>
+                            </div>
                           </td>
                         );
                       })}
