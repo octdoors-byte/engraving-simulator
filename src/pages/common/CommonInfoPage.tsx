@@ -104,7 +104,6 @@ export function CommonInfoPage() {
               対象
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-semibold uppercase tracking-wide text-amber-700">この商品のご案内</span>
               <span className="text-2xl font-semibold leading-tight text-amber-900">{targetTemplate.name}</span>
             </div>
           </div>
