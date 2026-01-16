@@ -118,6 +118,38 @@
       }
       ul { padding-left: 20px; margin: 6px 0; }
       li { margin: 4px 0; color: #334155; }
+      .points {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .point-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px;
+        background: #fafafa;
+      }
+      .point-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #f97316;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 4px 10px rgba(249, 115, 22, 0.18);
+      }
+      .point-icon svg {
+        width: 18px;
+        height: 18px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 1.8;
+      }
       .tip {
         background: #fff7ed;
         border: 1px solid #fed7aa;
@@ -232,12 +264,32 @@
           <span class="pill">デザイン保存: ブラウザに一時保存</span>
           <span class="pill">ロゴ画像: 2MB 以内推奨</span>
         </div>
-        <ul>
-          <li>公開URLは商品専用です。届いたものだけ開いてください。</li>
-          <li>透明PNGがおすすめ。余白はトリミングでカットして枠内に収めます。</li>
-          <li>途中のデザインはブラウザに一時保存。別端末ではやり直しになります。</li>
-          <li>重いときは他のタブを閉じるかブラウザを再起動してください。</li>
-        </ul>
+        <div class="points">
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7" /></svg>
+            </div>
+            <div>公開URLは商品専用です。届いたものだけ開いてください。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#10b981; box-shadow:0 4px 10px rgba(16,185,129,0.18);">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16v12H4z" /><path d="M4 10h16" /></svg>
+            </div>
+            <div>透明PNGがおすすめ。余白はトリミングでカットして枠内に収めます。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#6366f1; box-shadow:0 4px 10px rgba(99,102,241,0.18);">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z" /><path d="M8 3v4M16 3v4" /></svg>
+            </div>
+            <div>途中のデザインはブラウザに一時保存。別端末ではやり直しになります。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#0ea5e9; box-shadow:0 4px 10px rgba(14,165,233,0.18);">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+            </div>
+            <div>重いときは他のタブを閉じるかブラウザを再起動してください。</div>
+          </div>
+        </div>
         <div class="quick-check">
           <div class="check-item">✔ ロゴは透明PNGがおすすめ（白背景だと枠が出ることあり）</div>
           <div class="check-item">✔ 余白はトリミングでカットしてから配置</div>
