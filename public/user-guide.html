@@ -120,35 +120,37 @@
       li { margin: 4px 0; color: #334155; }
       .points {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 10px;
-        margin-top: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
       }
       .point-card {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 10px;
+        gap: 12px;
         align-items: center;
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 10px;
-        background: #fafafa;
+        border-radius: 14px;
+        padding: 14px;
+        background: #fff;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
       }
       .point-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: #f97316;
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: #fff7ed;
         display: grid;
         place-items: center;
-        box-shadow: 0 4px 10px rgba(249, 115, 22, 0.18);
+        box-shadow: 0 6px 14px rgba(249, 115, 22, 0.18);
+        border: 1px solid #fed7aa;
       }
       .point-icon svg {
-        width: 18px;
-        height: 18px;
-        stroke: #fff;
+        width: 26px;
+        height: 26px;
+        stroke: #c2410c;
         fill: none;
-        stroke-width: 1.8;
+        stroke-width: 2;
       }
       .tip {
         background: #fff7ed;
@@ -267,27 +269,27 @@
         <div class="points">
           <div class="point-card">
             <div class="point-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 12h16M13 6l7 6-7 6" /></svg>
+              <svg viewBox="0 0 24 24"><path d="M4 12h13" /><path d="M13 6l7 6-7 6" /></svg>
             </div>
-            <div>公開URLは商品専用です。届いたものだけ開いてください。</div>
+            <div>公開URLは商品専用。届いたURLだけ開けばOKです。</div>
           </div>
           <div class="point-card">
-            <div class="point-icon" aria-hidden="true" style="background:#10b981; box-shadow:0 4px 10px rgba(16,185,129,0.18);">
-              <svg viewBox="0 0 24 24"><path d="M4 4l7 7M4 11l7-7M20 4l-7 7M20 11l-7-7" /><path d="M4 20l7-7M4 13l7 7M20 20l-7-7M20 13l-7 7" /></svg>
+            <div class="point-icon" aria-hidden="true" style="background:#10b981; box-shadow:0 6px 14px rgba(16,185,129,0.18); border-color:#a7f3d0;">
+              <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20l16-16" /></svg>
             </div>
-            <div>透明PNGがおすすめ。余白はトリミングでカットして枠内に収めます。</div>
+            <div>透明PNG＋トリミングで余白カット。枠に収まるよう調整します。</div>
           </div>
           <div class="point-card">
-            <div class="point-icon" aria-hidden="true" style="background:#6366f1; box-shadow:0 4px 10px rgba(99,102,241,0.18);">
-              <svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z" /><path d="M10 3v4M14 3v4" /><path d="M9 9h6" /></svg>
+            <div class="point-icon" aria-hidden="true" style="background:#6366f1; box-shadow:0 6px 14px rgba(99,102,241,0.18); border-color:#c7d2fe;">
+              <svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z" /><path d="M10 3v4M14 3v4" /><path d="M9 10h6" /></svg>
             </div>
-            <div>途中のデザインはブラウザに一時保存。別端末ではやり直しになります。</div>
+            <div>途中のデザインはブラウザに一時保存。同じ端末なら続きができます。</div>
           </div>
           <div class="point-card">
-            <div class="point-icon" aria-hidden="true" style="background:#0ea5e9; box-shadow:0 4px 10px rgba(14,165,233,0.18);">
-              <svg viewBox="0 0 24 24"><path d="M12 4v5M12 15v5M9 8l3 3 3-3M9 16l3-3 3 3" /></svg>
+            <div class="point-icon" aria-hidden="true" style="background:#0ea5e9; box-shadow:0 6px 14px rgba(14,165,233,0.18); border-color:#bae6fd;">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
             </div>
-            <div>重いときは他のタブを閉じるかブラウザを再起動してください。</div>
+            <div>動きが重いときはタブを閉じるかブラウザ再起動で軽くなります。</div>
           </div>
         </div>
         <div class="quick-check">
