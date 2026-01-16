@@ -91,14 +91,33 @@ export function AdminTemplatesPage() {
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [editingComment, setEditingComment] = useState("");
+  const [editingCategory, setEditingCategory] = useState("");
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
-  const commentInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
   const settingsRef = useRef<CommonSettings>(settings);
-  const focusCommentRef = useRef(false);
+
+  const statusLabels: Record<TemplateStatus, string> = {
+    draft: "下書き",
+    tested: "テスト済み",
+    published: "公開中",
+    archive: "アーカイブ"
+  };
+
+  const statusOptions: Array<{ value: TemplateStatus; label: string }> = [
+    { value: "draft", label: statusLabels.draft },
+    { value: "tested", label: statusLabels.tested },
+    { value: "published", label: statusLabels.published },
+    { value: "archive", label: statusLabels.archive }
+  ];
+
+  const allowedTransitions: Record<TemplateStatus, TemplateStatus[]> = {
+    draft: ["draft", "tested", "archive"],
+    tested: ["tested", "published", "archive"],
+    published: ["published", "archive"],
+    archive: ["archive"]
+  };
 
   const reloadTemplates = useCallback(() => {
     const list = listTemplates();
@@ -177,14 +196,6 @@ export function AdminTemplatesPage() {
     };
   }, []);
 
-  const templateOptions = useMemo(
-    () =>
-      (["draft", "tested", "published"] as TemplateStatus[]).map((status) => ({
-        value: status,
-        label: status === "draft" ? "下書き" : status === "tested" ? "テスト済み" : "公開中"
-      })),
-    []
-  );
 
   const handleTemplateFiles = useCallback(
     async (files: FileList | null) => {
@@ -266,22 +277,32 @@ export function AdminTemplatesPage() {
     (templateKey: string, status: TemplateStatus) => {
       const template = getTemplate(templateKey);
       if (!template) return;
-      if (template.status === "published" && status === "draft") {
-        const confirmed = window.confirm("公開中から下書きへ戻します。続行しますか？");
-        if (!confirmed) return;
+      if (template.status === "archive") {
+        setToast({ message: "アーカイブは変更できません。", tone: "error" });
+        return;
+      }
+      if (status === template.status) return;
+      const allowed = allowedTransitions[template.status] ?? [template.status];
+      if (!allowed.includes(status)) {
+        setToast({ message: "この状態には変更できません。", tone: "error" });
+        return;
       }
       const next: Template = { ...template, status, updatedAt: new Date().toISOString() };
       saveTemplate(next);
       reloadTemplates();
       setToast({ message: "状態を更新しました。", tone: "success" });
     },
-    [reloadTemplates]
+    [allowedTransitions, reloadTemplates]
   );
 
   const handleLogoSettingsChange = useCallback(
     (templateKey: string, updates: Partial<Template["logoSettings"]>) => {
       const template = getTemplate(templateKey);
       if (!template) return;
+      if (template.status === "archive") {
+        setToast({ message: "アーカイブは編集できません。", tone: "error" });
+        return;
+      }
       const current = template.logoSettings ?? { monochrome: false };
       const next: Template = {
         ...template,
@@ -299,8 +320,12 @@ export function AdminTemplatesPage() {
     (templateKey: string) => {
       const template = getTemplate(templateKey);
       if (!template) return;
+      if (template.status === "archive") {
+        setToast({ message: "アーカイブは編集できません。", tone: "error" });
+        return;
+      }
       const nextName = editingName.trim();
-      const nextComment = editingComment.trim();
+      const nextCategory = editingCategory.trim();
       if (!nextName) {
         setToast({ message: "表示名は必須です。", tone: "error" });
         return;
@@ -308,37 +333,31 @@ export function AdminTemplatesPage() {
       const next: Template = {
         ...template,
         name: nextName,
-        comment: nextComment ? nextComment : undefined,
+        category: nextCategory ? nextCategory : template.category,
         updatedAt: new Date().toISOString()
       };
       saveTemplate(next);
       reloadTemplates();
       setEditingKey(null);
-      setToast({ message: "表示名とコメントを更新しました。", tone: "success" });
+      setToast({ message: "表示名とカテゴリを更新しました。", tone: "success" });
     },
-    [editingName, editingComment, reloadTemplates]
+    [editingName, editingCategory, reloadTemplates]
   );
 
   const cancelEditing = useCallback(() => {
     setEditingKey(null);
     setEditingName("");
-    setEditingComment("");
+    setEditingCategory("");
   }, []);
-
-  useEffect(() => {
-    if (!focusCommentRef.current) return;
-    focusCommentRef.current = false;
-    commentInputRef.current?.focus();
-  }, [editingKey]);
 
   const handleDelete = useCallback(
     async (templateKey: string) => {
       const hasDesigns = listDesigns().some((design) => design.templateKey === templateKey);
-      const confirmed = window.confirm(
-        hasDesigns
-          ? "このテンプレートを参照するデザインがあります。削除を続けますか？"
-          : "テンプレートを削除しますか？"
-      );
+      if (hasDesigns) {
+        setToast({ message: "デザインが紐づいているため削除できません。アーカイブにしてください。", tone: "error" });
+        return;
+      }
+      const confirmed = window.confirm("テンプレートを削除しますか？");
       if (!confirmed) return;
       deleteTemplate(templateKey);
       await deleteAsset(`asset:templateBg:${templateKey}`);
@@ -490,7 +509,7 @@ export function AdminTemplatesPage() {
           <div className="mt-4 space-y-1 text-base leading-relaxed text-slate-600">
             <p>・表示名はダブルクリックで変更</p>
             <p>・テスト／スマホ／PCで表示確認</p>
-            <p>・状態は「下書き・テスト済み・公開中」から選ぶ</p>
+            <p>・状態は「下書き・テスト済み・公開中・アーカイブ」から選ぶ</p>
             <p>・登録後はシミュレーターとPDFで見た目を確認</p>
             <p>・template.json と背景画像を一緒に置く</p>
             <p>・画像の名前は JSON に書いた名前と同じ</p>
@@ -563,10 +582,9 @@ export function AdminTemplatesPage() {
                           <input
                             type="text"
                             className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                            value={editingComment}
-                            onChange={(event) => setEditingComment(event.target.value)}
-                            placeholder="コメント（任意）"
-                            ref={commentInputRef}
+                            value={editingCategory}
+                            onChange={(event) => setEditingCategory(event.target.value)}
+                            placeholder="カテゴリ（任意）"
                             onKeyDown={(event) => {
                               if (event.key === "Enter") {
                                 event.preventDefault();
@@ -599,45 +617,37 @@ export function AdminTemplatesPage() {
                           <span
                             role="button"
                             tabIndex={0}
-                            className="cursor-pointer"
+                            className={
+                              template.status === "archive"
+                                ? "text-slate-400"
+                                : "inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-amber-800 hover:border-amber-300 hover:bg-amber-100 cursor-pointer"
+                            }
                             onDoubleClick={() => {
+                              if (template.status === "archive") {
+                                setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                                return;
+                              }
                               setEditingKey(template.templateKey);
                               setEditingName(template.name);
-                              setEditingComment(template.comment ?? "");
+                              setEditingCategory(template.category ?? "");
                             }}
                             onKeyDown={(event) => {
                               if (event.key === "Enter") {
+                                if (template.status === "archive") {
+                                  setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                                  return;
+                                }
                                 setEditingKey(template.templateKey);
                                 setEditingName(template.name);
-                                setEditingComment(template.comment ?? "");
+                                setEditingCategory(template.category ?? "");
                               }
                             }}
                           >
                             {template.name}
                           </span>
-                          {template.comment && (
-                            <span
-                              role="button"
-                              tabIndex={0}
-                              className="text-xs font-normal text-slate-400"
-                              onDoubleClick={() => {
-                                setEditingKey(template.templateKey);
-                                setEditingName(template.name);
-                                setEditingComment(template.comment ?? "");
-                                focusCommentRef.current = true;
-                              }}
-                              onKeyDown={(event) => {
-                                if (event.key === "Enter") {
-                                  setEditingKey(template.templateKey);
-                                  setEditingName(template.name);
-                                  setEditingComment(template.comment ?? "");
-                                  focusCommentRef.current = true;
-                                }
-                              }}
-                            >
-                              （{template.comment}）
-                            </span>
-                          )}
+                        <span className="text-xs font-normal text-slate-500">
+                          ［{template.category && template.category.trim() ? template.category : "カテゴリ未設定"}］
+                        </span>
                         </div>
                       )}
                     </td>
@@ -648,20 +658,25 @@ export function AdminTemplatesPage() {
                         <select
                           className="rounded border border-slate-200 px-2 py-1 text-xs"
                           value={template.status}
+                          disabled={template.status === "archive"}
                           onChange={(event) =>
                             handleStatusChange(template.templateKey, event.target.value as TemplateStatus)
                           }
                         >
-                          {templateOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
+                          {statusOptions.map((option) => {
+                            const allowed = allowedTransitions[template.status]?.includes(option.value);
+                            return (
+                              <option key={option.value} value={option.value} disabled={!allowed}>
+                                {option.label}
+                              </option>
+                            );
+                          })}
                         </select>
                         <label className="flex items-center gap-1 text-xs text-slate-600">
                           <input
                             type="checkbox"
                             checked={getTemplate(template.templateKey)?.logoSettings?.monochrome ?? false}
+                            disabled={template.status === "archive"}
                             onChange={(event) =>
                               handleLogoSettingsChange(template.templateKey, {
                                 monochrome: event.target.checked
@@ -677,8 +692,11 @@ export function AdminTemplatesPage() {
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-slate-600"
+                        disabled={template.status === "archive"}
                         onClick={() => {
-                          handleStatusChange(template.templateKey, "tested");
+                          if (template.status === "draft") {
+                            handleStatusChange(template.templateKey, "tested");
+                          }
                           window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844");
                         }}
                       >
@@ -718,165 +736,6 @@ export function AdminTemplatesPage() {
         </div>
       </div>
 
-      <details className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-700">＋ 共通ヘッダー / フッター設定</summary>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
-            <p className="text-xs font-semibold text-slate-600">バックアップ</p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
-                onClick={handleBackupExport}
-              >
-                バックアップを保存
-              </button>
-              <button
-                type="button"
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
-                onClick={() => restoreInputRef.current?.click()}
-              >
-                バックアップを読み込み
-              </button>
-              <button
-                type="button"
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
-                onClick={handleAutoBackupRestore}
-              >
-                自動バックアップから復元
-              </button>
-              <input
-                ref={restoreInputRef}
-                type="file"
-                accept="application/json"
-                className="hidden"
-                onChange={(event) => handleBackupRestore(event.target.files?.[0] ?? null)}
-              />
-            </div>
-            <p className="text-xs text-slate-500">
-              ※ 読み込みは現在のデータを上書きします。自動バックアップは起動時に保存されます。
-            </p>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ロゴ画像</label>
-            <input
-              type="file"
-              accept="image/*"
-              className="mt-1 w-full text-xs"
-              onChange={(event) => handleLogoChange(event.target.files?.[0] ?? null)}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">トップのタイトル</label>
-            <input
-              type="text"
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.landingTitle ?? "デザインシミュレーター"}
-              onChange={(event) => setSettings((prev) => ({ ...prev, landingTitle: event.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ヘッダーテキスト</label>
-            <textarea
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              rows={2}
-              value={settings.headerText ?? ""}
-              onChange={(event) => setSettings((prev) => ({ ...prev, headerText: event.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">フッターテキスト</label>
-            <textarea
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              rows={2}
-              value={settings.footerText ?? ""}
-              onChange={(event) => setSettings((prev) => ({ ...prev, footerText: event.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ヘッダー配置</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.headerTextAlign ?? "left"}
-              onChange={(event) =>
-                setSettings((prev) => ({
-                  ...prev,
-                  headerTextAlign: event.target.value as CommonSettings["headerTextAlign"]
-                }))
-              }
-            >
-              <option value="left">左</option>
-              <option value="center">中央</option>
-              <option value="right">右</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">フッター配置</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.footerTextAlign ?? "center"}
-              onChange={(event) =>
-                setSettings((prev) => ({
-                  ...prev,
-                  footerTextAlign: event.target.value as CommonSettings["footerTextAlign"]
-                }))
-              }
-            >
-              <option value="left">左</option>
-              <option value="center">中央</option>
-              <option value="right">右</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ロゴサイズ</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.logoSize ?? "md"}
-              onChange={(event) =>
-                setSettings((prev) => ({ ...prev, logoSize: event.target.value as CommonSettings["logoSize"] }))
-              }
-            >
-              <option value="sm">小</option>
-              <option value="md">中</option>
-              <option value="lg">大</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">ヘッダー文字サイズ</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.headerTextSize ?? "md"}
-              onChange={(event) =>
-                setSettings((prev) => ({
-                  ...prev,
-                  headerTextSize: event.target.value as CommonSettings["headerTextSize"]
-                }))
-              }
-            >
-              <option value="sm">小</option>
-              <option value="md">中</option>
-              <option value="lg">大</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">フッター文字サイズ</label>
-            <select
-              className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-              value={settings.footerTextSize ?? "md"}
-              onChange={(event) =>
-                setSettings((prev) => ({
-                  ...prev,
-                  footerTextSize: event.target.value as CommonSettings["footerTextSize"]
-                }))
-              }
-            >
-              <option value="sm">小</option>
-              <option value="md">中</option>
-              <option value="lg">大</option>
-            </select>
-          </div>
-        </div>
-      </details>
     </section>
   );
 }
