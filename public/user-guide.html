@@ -61,6 +61,11 @@
         align-items: center;
         gap: 10px;
       }
+      p.lead {
+        margin: 6px 0 0;
+        color: #475569;
+        line-height: 1.6;
+      }
       .pill {
         display: inline-flex;
         align-items: center;
@@ -145,6 +150,44 @@
         background: #f8fafc;
         font-size: 14px;
       }
+      .feature {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #f8fafc, #ffffff);
+      }
+      .feature img {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+      }
+      .feature h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      .feature p {
+        margin: 0 0 6px;
+        color: #475569;
+        line-height: 1.6;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #0ea5e9;
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 6px 12px rgba(14, 165, 233, 0.25);
+        margin-right: 8px;
+      }
       .footer-note {
         text-align: center;
         color: #475569;
@@ -165,87 +208,31 @@
 
     <main>
       <section class="card">
-        <h2>基本の流れ <span class="pill">お客様操作のみ</span></h2>
-        <div class="steps" style="margin-bottom:12px">
-          <div class="step" style="grid-template-columns: 1fr 1fr; gap: 16px; padding: 12px 14px;">
-            <div style="display:flex; flex-direction:column; gap:4px;">
-              <strong style="font-size:15px; display:block; margin-bottom:6px;">画面イメージ</strong>
-              <p style="margin:0; font-size:13px; color:#475569;">最初に共通説明→ロゴ配置→PDF発行の順に進みます。イメージは下のサンプルをご覧ください。</p>
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:10px;">
-              <img src="/guide-shots/common-consent.png" alt="共通説明ページの例" style="width:100%; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 6px 14px rgba(15,23,42,0.08);" />
-              <img src="/guide-shots/sim-upload.png" alt="ロゴアップロードの例" style="width:100%; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 6px 14px rgba(15,23,42,0.08);" />
-              <img src="/guide-shots/sim-pdf.png" alt="PDF発行ボタンの例" style="width:100%; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 6px 14px rgba(15,23,42,0.08);" />
-            </div>
+        <h2>3ステップで完了 <span class="pill">初めてでも簡単</span></h2>
+        <p class="lead">大まかな流れは「URLを開く → ロゴを置く → PDFを送る」の3つだけ。画面のイメージとセットで確認できます。</p>
+        <div class="feature" style="margin-top:16px;">
+          <div>
+            <div class="badge">1</div><strong>まずはURLを開く</strong>
+            <p>ショップから届いた公開URLをクリックするだけで、対象商品の説明ページが開きます。</p>
+            <p>商品名と説明をざっと読んで、チェックを入れて「編集を開始する」を押します。</p>
           </div>
+          <img src="/guide-shots/common-consent.png" alt="共通説明ページの例" />
         </div>
-        <div class="steps">
-          <div class="step">
-            <div class="badge-num">1</div>
-            <div>
-              <strong>テンプレートを開く</strong>
-              <ul>
-                <li>ショップから届いた「公開URL」を開くだけ。</li>
-                <li>表示されたテンプレートが商品と合っているかだけ確認します。</li>
-              </ul>
-            </div>
-            <div class="icon-bubble" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4 6h16M4 12h10M4 18h6" />
-                <circle cx="18" cy="12" r="2.5" />
-              </svg>
-            </div>
+        <div class="feature">
+          <div>
+            <div class="badge">2</div><strong>ロゴを置く</strong>
+            <p>「画像をアップロード」からロゴを選択（2MB以内推奨）。背景が透明ならそのままOK、余白はトリミングでカット。</p>
+            <p>ガイド枠からはみ出さないように、位置と大きさだけ合わせれば完了です。</p>
           </div>
-          <div class="step">
-            <div class="badge-num">2</div>
-            <div>
-              <strong>共通説明を読む</strong>
-              <ul>
-                <li>最初に注意事項が出ます。ざっと読んでチェックを入れます。</li>
-                <li>「編集を開始する」でシミュレーターへ進みます。</li>
-              </ul>
-            </div>
-            <div class="icon-bubble" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M5 5h14v12H8l-3 3V5z" />
-                <path d="M9 9h6M9 12h4" />
-              </svg>
-            </div>
+          <img src="/guide-shots/sim-upload.png" alt="ロゴアップロードの例" />
+        </div>
+        <div class="feature">
+          <div>
+            <div class="badge">3</div><strong>見た目を確認してPDF</strong>
+            <p>プレビューで仕上がりを確認し、「PDFを発行」を押します。PDFをショップに送れば手続き完了です。</p>
+            <p>PDFに記載のデザインIDも合わせて伝えると、対応が早くなります。</p>
           </div>
-          <div class="step">
-            <div class="badge-num">3</div>
-            <div>
-              <strong>ロゴをアップロード</strong>
-              <ul>
-                <li>「画像をアップロード」からロゴを選ぶだけ（2MB 以内推奨）。</li>
-                <li>背景が透明ならそのままOK。余白はトリミングでカットできます。</li>
-                <li>印刷枠からはみ出さないよう位置と大きさを合わせます。</li>
-              </ul>
-            </div>
-            <div class="icon-bubble" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 5v10" />
-                <path d="m8 9 4-4 4 4" />
-                <rect x="5" y="14" width="14" height="5" rx="1" />
-              </svg>
-            </div>
-          </div>
-          <div class="step">
-            <div class="badge-num">4</div>
-            <div>
-              <strong>仕上がりを確認</strong>
-              <ul>
-                <li>プレビューで見た目を確認し、「PDFを発行」します。</li>
-                <li>PDFをショップへ送れば注文は完了です。</li>
-              </ul>
-            </div>
-            <div class="icon-bubble" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <rect x="5" y="3" width="14" height="18" rx="2" />
-                <path d="M9 7h3M9 11h6M9 15h6" />
-              </svg>
-            </div>
-          </div>
+          <img src="/guide-shots/sim-pdf.png" alt="PDF発行ボタンの例" />
         </div>
       </section>
 
@@ -258,10 +245,9 @@
         </div>
         <ul>
           <li>公開URLは商品専用です。届いたものだけ開いてください。</li>
-          <li>ロゴは印刷枠に収まるように。透明PNGだと仕上がりがきれいです。</li>
-          <li>余白が気になればトリミングで切り取ってから配置すると楽です。</li>
-          <li>途中のデザインはブラウザに一時保存されます。別端末ではやり直しになります。</li>
-          <li>動作が重いときは他のタブを閉じるかブラウザを再起動してください。</li>
+          <li>透明PNGがおすすめ。余白はトリミングでカットして枠内に収めます。</li>
+          <li>途中のデザインはブラウザに一時保存。別端末ではやり直しになります。</li>
+          <li>重いときは他のタブを閉じるかブラウザを再起動してください。</li>
         </ul>
         <div class="quick-check">
           <div class="check-item">✔ ロゴは透明PNGがおすすめ（白背景だと枠が出ることあり）</div>
