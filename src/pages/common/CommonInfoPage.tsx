@@ -190,7 +190,7 @@ export function CommonInfoPage() {
             disabled={!agreed}
             onClick={() => navigate(nextHref)}
           >
-            開始する
+            編集を開始する
           </button>
         </div>
       </div>
