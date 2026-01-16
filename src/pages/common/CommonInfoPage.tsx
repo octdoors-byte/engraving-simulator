@@ -198,15 +198,32 @@ export function CommonInfoPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-3">
         <h2 className="text-2xl font-semibold text-slate-900">よくある質問</h2>
         <div className="space-y-3 text-sm leading-relaxed text-slate-800">
-          {faqBlocks.map((lines, idx) => (
-            <div key={idx}>
-              {lines.map((line, i) => (
-                <p key={i} className={line.startsWith("Q.") ? "font-semibold text-slate-900" : ""}>
-                  {line}
-                </p>
-              ))}
-            </div>
-          ))}
+          {faqBlocks.map((lines, idx) => {
+            const [question, ...rest] = lines;
+            const answers = rest.filter((line) => line.trim().length > 0);
+            return (
+              <div
+                key={idx}
+                className="rounded-xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition hover:border-amber-200 hover:bg-amber-50/60"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-800">
+                    Q
+                  </span>
+                  <div className="space-y-2">
+                    <p className="text-base font-semibold text-slate-900">{question}</p>
+                    {answers.length > 0 && (
+                      <div className="space-y-1 text-sm leading-relaxed text-slate-800">
+                        {answers.map((line, i) => (
+                          <p key={i}>{line}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
