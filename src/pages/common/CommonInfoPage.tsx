@@ -99,7 +99,7 @@ export function CommonInfoPage() {
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       {targetTemplate && (
         <div className="mb-4 space-y-1 rounded-xl bg-slate-900 px-4 py-3 text-white shadow-sm">
-          <p className="text-xs uppercase tracking-wide text-slate-300">対象テンプレート</p>
+          <p className="text-xs uppercase tracking-wide text-slate-300">この商品のご案内</p>
           <p className="text-2xl font-semibold leading-tight">{targetTemplate.name}</p>
         </div>
       )}
