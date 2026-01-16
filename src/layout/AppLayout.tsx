@@ -79,7 +79,7 @@ export function AppLayout() {
             )}
             <div>
               <Link to="/top" className="text-2xl font-semibold text-slate-900">
-                デザインシミュレーター
+                {settings?.landingTitle?.trim() || "デザインシミュレーター"}
               </Link>
               <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
                 {settings?.headerText ?? ""}
