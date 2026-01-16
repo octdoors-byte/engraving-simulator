@@ -49,6 +49,12 @@ const alignClass: Record<"left" | "center" | "right", string> = {
   right: "text-right"
 };
 
+const alignItemsClass: Record<"left" | "center" | "right", string> = {
+  left: "items-start",
+  center: "items-center",
+  right: "items-end"
+};
+
 export function AppLayout() {
   const [settings, setSettings] = useState<CommonSettings | null>(null);
   const location = useLocation();
@@ -64,6 +70,7 @@ export function AppLayout() {
   const logoAlign = alignClass[settings?.logoAlign ?? "left"];
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
   const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
+  const footerItemsAlign = alignItemsClass[settings?.footerTextAlign ?? "center"];
   const logoHeight = settings?.logoSize === "lg" ? "h-16 md:h-20" : settings?.logoSize === "md" ? "h-12" : "h-9";
   const hideNav =
     new URLSearchParams(location.search).get("hideNav") === "1" ||
@@ -118,7 +125,9 @@ export function AppLayout() {
         </ErrorBoundary>
       </main>
       <footer className="border-t bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-4 text-xs text-slate-500">
+        <div
+          className={`mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs text-slate-500 ${footerItemsAlign}`}
+        >
           {settings?.footerText && (
             <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)}`}>{settings.footerText}</p>
           )}
