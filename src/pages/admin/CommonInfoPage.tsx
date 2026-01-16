@@ -354,14 +354,23 @@ export function CommonInfoPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">よくある質問（編集できます）</label>
+          <div className="flex items-center justify-between gap-2">
+            <label className="text-sm font-semibold text-slate-700">よくある質問（カード表示）</label>
+            <span className="text-[11px] text-slate-500">1行目: 質問 / 2行目以降: 回答 / 空行で次のカード</span>
+          </div>
           <textarea
-            className="w-full rounded border border-slate-200 px-3 py-2 text-sm font-mono"
-            rows={18}
+            className="w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono leading-relaxed"
+            rows={16}
             value={settings.commonInfoFaq ?? DEFAULT_FAQ}
             onChange={(event) => handleChange("commonInfoFaq", event.target.value)}
+            placeholder={`Q. サンプルの質問を書きます。\n回答はこの行から書きます。\nさらに補足を書くときは改行を続けます。\n\nQ. 2つ目の質問は空行を挟んで追加します。\n回答は同じカードに収まります。`}
           />
-          <p className="text-xs text-slate-500">Q. と A. を改行で区切ってください。</p>
+          <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+            <p className="font-semibold text-slate-800">表示イメージ</p>
+            <p className="mt-1">・カード1 = 質問行 + 回答行（空行なし）</p>
+            <p>・カード同士は空行で区切ります</p>
+            <p>・「Q.」は質問行の先頭に付けてください</p>
+          </div>
         </div>
 
 
