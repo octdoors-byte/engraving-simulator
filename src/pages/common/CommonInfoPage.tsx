@@ -101,7 +101,6 @@ export function CommonInfoPage() {
         <div className="mb-4 space-y-1 rounded-xl bg-slate-900 px-4 py-3 text-white shadow-sm">
           <p className="text-xs uppercase tracking-wide text-slate-300">対象テンプレート</p>
           <p className="text-2xl font-semibold leading-tight">{targetTemplate.name}</p>
-          <p className="text-[11px] text-slate-300 break-words">{targetTemplate.templateKey}</p>
         </div>
       )}
       <h1 className="text-3xl font-semibold text-slate-900">{title}</h1>
