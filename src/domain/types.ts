@@ -1,4 +1,4 @@
-export type TemplateStatus = "draft" | "tested" | "published";
+export type TemplateStatus = "draft" | "tested" | "published" | "archive";
 
 export interface TemplateBackground {
   fileName: string;
@@ -39,7 +39,10 @@ export interface TemplateLogoSettings {
 export interface Template {
   templateKey: string;
   name: string;
+  category?: string;
   comment?: string;
+  logoMinWidthMm?: number;
+  logoMinHeightMm?: number;
   status: TemplateStatus;
   updatedAt: string;
   background: TemplateBackground;
@@ -64,6 +67,7 @@ export interface DesignPlacement {
   y: number;
   w: number;
   h: number;
+  rotationDeg?: 0 | 90 | 180 | 270;
 }
 
 export interface DesignPdfAssets {
@@ -89,6 +93,7 @@ export interface DesignSummary {
 export interface TemplateSummary {
   templateKey: string;
   name: string;
+  category?: string;
   comment?: string;
   status: TemplateStatus;
   updatedAt: string;
@@ -105,4 +110,11 @@ export interface CommonSettings {
   logoSize?: "sm" | "md" | "lg";
   headerTextSize?: "sm" | "md" | "lg";
   footerTextSize?: "sm" | "md" | "lg";
+  commonInfoTitle?: string;
+  commonInfoBody?: string;
+  commonInfoImage?: string;
+  commonInfoImages?: string[];
+  commonInfoLayout?: "imageTop" | "imageBottom" | "imageLeft" | "imageRight";
+  commonInfoPdf?: { name: string; dataUrl: string };
+  commonInfoFaq?: string;
 }

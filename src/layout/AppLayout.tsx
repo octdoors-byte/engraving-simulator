@@ -1,13 +1,41 @@
 ﻿import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 const navItems = [
-  { to: "/top", label: "トップ" },
-  { to: "/admin/templates", label: "テンプレート管理" },
-  { to: "/admin/designs", label: "デザイン発行履歴" }
-];
+  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" },
+  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" },
+  { to: "/admin/designs", label: "デザイン発行履歴", tone: "indigo" },
+  { to: "/admin/common", label: "基本設定", tone: "rose" }
+] as const;
+
+const navToneClass: Record<
+  typeof navItems[number]["tone"],
+  { active: string; inactive: string }
+> = {
+  emerald: {
+    active: "bg-emerald-600 text-white shadow-sm",
+    inactive: "border border-emerald-200 text-emerald-700 bg-white hover:bg-emerald-50"
+  },
+  sky: {
+    active: "bg-sky-600 text-white shadow-sm",
+    inactive: "border border-sky-200 text-sky-700 bg-white hover:bg-sky-50"
+  },
+  amber: {
+    active: "bg-amber-500 text-white shadow-sm",
+    inactive: "border border-amber-200 text-amber-700 bg-white hover:bg-amber-50"
+  },
+  indigo: {
+    active: "bg-indigo-600 text-white shadow-sm",
+    inactive: "border border-indigo-200 text-indigo-700 bg-white hover:bg-indigo-50"
+  },
+  rose: {
+    active: "bg-rose-500 text-white shadow-sm",
+    inactive: "border border-rose-200 text-rose-700 bg-white hover:bg-rose-50"
+  }
+};
 
 function sizeClass(size?: "sm" | "md" | "lg") {
   if (size === "lg") return "text-base";
@@ -23,6 +51,7 @@ const alignClass: Record<"left" | "center" | "right", string> = {
 
 export function AppLayout() {
   const [settings, setSettings] = useState<CommonSettings | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     ensureAppVersion();
@@ -36,6 +65,9 @@ export function AppLayout() {
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
   const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
   const logoHeight = settings?.logoSize === "lg" ? "h-12" : settings?.logoSize === "md" ? "h-10" : "h-8";
+  const hideNav =
+    new URLSearchParams(location.search).get("hideNav") === "1" ||
+    location.pathname.startsWith("/sim/");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -54,27 +86,36 @@ export function AppLayout() {
               </p>
             </div>
           </div>
-          <nav className="flex flex-wrap items-center gap-2 text-sm">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === "/top"}
-                className={({ isActive }) =>
-                  [
-                    "rounded-full px-3 py-1 transition",
-                    isActive ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"
-                  ].join(" ")
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          {!hideNav && (
+            <nav className="flex flex-wrap items-center gap-2 text-sm">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === "/top"}
+                  className={({ isActive }) =>
+                    [
+                      "rounded-full px-3 py-1 transition border",
+                      isActive ? navToneClass[item.tone].active : navToneClass[item.tone].inactive
+                    ].join(" ")
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          )}
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <Outlet />
+        <ErrorBoundary
+          title="表示中にエラーが発生しました。"
+          description="自動で再読み込みを試みます。"
+          autoReload
+          reloadDelayMs={2000}
+        >
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <footer className="border-t bg-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-4 text-xs text-slate-500">

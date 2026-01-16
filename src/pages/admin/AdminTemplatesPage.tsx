@@ -613,7 +613,20 @@ export function AdminTemplatesPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div
+                          className={`flex flex-wrap items-center gap-2 ${
+                            template.status === "archive" ? "" : "cursor-pointer"
+                          }`}
+                          onDoubleClick={() => {
+                            if (template.status === "archive") {
+                              setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                              return;
+                            }
+                            setEditingKey(template.templateKey);
+                            setEditingName(template.name);
+                            setEditingCategory(template.category ?? "");
+                          }}
+                        >
                           <span
                             role="button"
                             tabIndex={0}
@@ -645,9 +658,38 @@ export function AdminTemplatesPage() {
                           >
                             {template.name}
                           </span>
-                        <span className="text-xs font-normal text-slate-500">
-                          ［{template.category && template.category.trim() ? template.category : "カテゴリ未設定"}］
-                        </span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            className={
+                              template.status === "archive"
+                                ? "text-xs font-normal text-slate-500"
+                                : "text-xs font-normal text-slate-500 underline decoration-dotted underline-offset-4"
+                            }
+                            onDoubleClick={(event) => {
+                              event.stopPropagation();
+                              if (template.status === "archive") {
+                                setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                                return;
+                              }
+                              setEditingKey(template.templateKey);
+                              setEditingName(template.name);
+                              setEditingCategory(template.category ?? "");
+                            }}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                if (template.status === "archive") {
+                                  setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                                  return;
+                                }
+                                setEditingKey(template.templateKey);
+                                setEditingName(template.name);
+                                setEditingCategory(template.category ?? "");
+                              }
+                            }}
+                          >
+                            ［{template.category && template.category.trim() ? template.category : "カテゴリ未設定"}］
+                          </span>
                         </div>
                       )}
                     </td>

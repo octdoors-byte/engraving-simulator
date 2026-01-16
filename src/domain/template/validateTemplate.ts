@@ -10,6 +10,10 @@ function isPositiveInteger(value: unknown): value is number {
   return Number.isInteger(value) && value > 0;
 }
 
+function isPositiveNumber(value: unknown): value is number {
+  return isFiniteNumber(value) && value > 0;
+}
+
 export function validateTemplate(raw: unknown): { ok: boolean; errors: string[]; template?: Template } {
   const errors: string[] = [];
   if (!raw || typeof raw !== "object") {
@@ -25,8 +29,14 @@ export function validateTemplate(raw: unknown): { ok: boolean; errors: string[];
   if (template.comment !== undefined && typeof template.comment !== "string") {
     errors.push("comment は文字列で指定してください。");
   }
-  if (!template.status || !["draft", "tested", "published"].includes(template.status)) {
-    errors.push("status は draft/tested/published のいずれかで指定してください。");
+  if (template.logoMinWidthMm !== undefined && !isPositiveNumber(template.logoMinWidthMm)) {
+    errors.push("logoMinWidthMm は 0 より大きい数値で指定してください。");
+  }
+  if (template.logoMinHeightMm !== undefined && !isPositiveNumber(template.logoMinHeightMm)) {
+    errors.push("logoMinHeightMm は 0 より大きい数値で指定してください。");
+  }
+  if (!template.status || !["draft", "tested", "published", "archive"].includes(template.status)) {
+    errors.push("status は draft/tested/published/archive のいずれかで指定してください。");
   }
   if (!template.updatedAt || typeof template.updatedAt !== "string") {
     errors.push("updatedAt は必須です。");

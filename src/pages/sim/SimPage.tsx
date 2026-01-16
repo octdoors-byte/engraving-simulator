@@ -8,6 +8,7 @@ import { Toast } from "@/components/common/Toast";
 import { Modal } from "@/components/common/Modal";
 import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
+import { prepareEngraveLogoBlob } from "@/domain/image/prepareEngraveLogo";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
 import { clampPlacement } from "@/domain/placement/clampPlacement";
@@ -58,6 +59,31 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(id);
 }
 
+async function hasVisiblePixels(blob: Blob): Promise<boolean> {
+  const bitmap = await createImageBitmap(blob);
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    if ("close" in bitmap) {
+      bitmap.close();
+    }
+    return true;
+  }
+  ctx.drawImage(bitmap, 0, 0);
+  if ("close" in bitmap) {
+    bitmap.close();
+  }
+  const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function initialPlacement(template: Template, logoSize: LogoBaseSize): DesignPlacement {
   const area = template.engravingArea;
   const scale = Math.min((area.w * 0.9) / logoSize.width, (area.h * 0.9) / logoSize.height);
@@ -104,6 +130,7 @@ export function SimPage() {
   const [processedLogoUrl, setProcessedLogoUrl] = useState<string | null>(null);
   const [logoBaseSize, setLogoBaseSize] = useState<LogoBaseSize | null>(null);
   const [placement, setPlacement] = useState<DesignPlacement | null>(null);
+  const [rotationDeg, setRotationDeg] = useState<0 | 90 | 180 | 270>(0);
   const [isIssuing, setIsIssuing] = useState(false);
   const [issuedDesignId, setIssuedDesignId] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -182,6 +209,7 @@ export function SimPage() {
     if (!template) return;
     placementInitialized.current = false;
     setPlacement(null);
+    setRotationDeg(0);
     if (processedLogoBlob) {
       setPhase("PLACEMENT");
     }
@@ -346,6 +374,7 @@ export function SimPage() {
       setTransparentColor(null);
       setPlacement(null);
       placementInitialized.current = false;
+      setRotationDeg(0);
       setImageUrl(URL.createObjectURL(file));
       setPhase("EDITING");
     } catch (error) {
@@ -399,7 +428,8 @@ export function SimPage() {
     const existingIds = new Set(listDesigns().map((entry) => entry.designId));
     const designId = generateDesignId(existingIds);
     try {
-      const confirmPdf = await generateConfirmPdf(template, backgroundBlob, processedLogoBlob, placement, designId);
+      const confirmPlacement = { ...placement, rotationDeg };
+      const confirmPdf = await generateConfirmPdf(template, backgroundBlob, processedLogoBlob, confirmPlacement, designId);
       const url = URL.createObjectURL(confirmPdf);
       setPreviewPdfBlob(confirmPdf);
       setPreviewPdfUrl(url);
@@ -410,7 +440,7 @@ export function SimPage() {
       console.error(error);
       setToast({ message: "プレビューの生成に失敗しました。", tone: "error" });
     }
-  }, [template, imageBitmap, uploadedFile, processedLogoBlob, placement, backgroundBlob]);
+  }, [template, imageBitmap, uploadedFile, processedLogoBlob, placement, backgroundBlob, rotationDeg]);
 
   const finalizeIssue = useCallback(async () => {
     if (!template || !imageBitmap || !uploadedFile || !processedLogoBlob || !placement) {
@@ -425,7 +455,26 @@ export function SimPage() {
     setPhase("ISSUING");
     try {
       const logoSettings = template.logoSettings ?? { monochrome: false };
-      const engravePdf = await generateEngravePdf(template, processedLogoBlob, placement, {
+      let engraveSourceBlob = processedLogoBlob;
+      if (!(await hasVisiblePixels(engraveSourceBlob)) && uploadedFile) {
+        try {
+          const bitmap = await createImageBitmap(uploadedFile);
+          engraveSourceBlob = await processLogo(bitmap, {
+            crop: { x: 0, y: 0, w: 1, h: 1 },
+            transparentColor: null,
+            monochrome: logoSettings.monochrome,
+            maxOutputWidth: 1024,
+            maxOutputHeight: 1024
+          });
+          if ("close" in bitmap) {
+            bitmap.close();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      const engraveLogoBlob = await prepareEngraveLogoBlob(engraveSourceBlob);
+      const engravePdf = await generateEngravePdf(template, engraveLogoBlob, { ...placement, rotationDeg }, {
         designId: pendingDesignId,
         createdAt: pendingCreatedAt
       });
@@ -455,7 +504,7 @@ export function SimPage() {
           transparentColor,
           monochrome: logoSettings.monochrome
         },
-        placement,
+        placement: { ...placement, rotationDeg },
         pdf: {
           confirmAssetId: `asset:pdfConfirm:${pendingDesignId}`,
           engraveAssetId: `asset:pdfEngrave:${pendingDesignId}`
@@ -492,7 +541,8 @@ export function SimPage() {
     pendingDesignId,
     pendingCreatedAt,
     previewPdfBlob,
-    resetPreview
+    resetPreview,
+    rotationDeg
   ]);
 
   const handlePickTransparent = useCallback(
@@ -524,6 +574,45 @@ export function SimPage() {
     return orientation === "landscape" ? "297×210 mm（横）" : "210×297 mm（縦）";
   })();
 
+  const sizeCheck = (() => {
+    if (!template || !placement) return null;
+    const dpi = template.pdf?.dpi ?? 300;
+    if (!Number.isFinite(dpi) || dpi <= 0) return null;
+    const wMm = (placement.w * 25.4) / dpi;
+    const hMm = (placement.h * 25.4) / dpi;
+    const minW = template.logoMinWidthMm ?? 5;
+    const minH = template.logoMinHeightMm ?? 5;
+    const isBelowMin = wMm < minW || hMm < minH;
+    return {
+      wMm,
+      hMm,
+      minW,
+      minH,
+      isBelowMin
+    };
+  })();
+
+  const dpiCheck = (() => {
+    if (!template || !placement || !logoBaseSize) return null;
+    const dpi = template.pdf?.dpi ?? 300;
+    if (!Number.isFinite(dpi) || dpi <= 0) return null;
+    const wMm = (placement.w * 25.4) / dpi;
+    const hMm = (placement.h * 25.4) / dpi;
+    if (wMm <= 0 || hMm <= 0) return null;
+    const widthIn = wMm / 25.4;
+    const heightIn = hMm / 25.4;
+    const dpiX = logoBaseSize.width / widthIn;
+    const dpiY = logoBaseSize.height / heightIn;
+    const effectiveDpi = Math.min(dpiX, dpiY);
+    if (!Number.isFinite(effectiveDpi)) return null;
+    const level =
+      effectiveDpi < 150 ? "strong" : effectiveDpi < 300 ? "warn" : "ok";
+    return {
+      effectiveDpi,
+      level
+    };
+  })();
+
   if (errorMessage) {
     return (
       <section className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-800">
@@ -541,17 +630,7 @@ export function SimPage() {
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
       <header className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-            お客様画面
-          </span>
-          <p className="text-xs text-slate-400">管理ID: {baseKey}</p>
-        </div>
-        <div className="mt-3 border-t border-emerald-200 pt-3">
-          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-            ここからお客様画面
-          </span>
-        </div>
+        <div className="flex flex-wrap items-center gap-3" />
         {hasSides && (
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
             <span className="text-slate-400">表示面</span>
@@ -586,14 +665,18 @@ export function SimPage() {
           </div>
         )}
         <h1 className="mt-2 text-2xl font-semibold text-slate-900">{template.name}</h1>
-        <p className="text-sm text-slate-500">
-          {template.comment?.trim() || "ロゴを読み込んで、切り取りを調整し、デザインIDを発行します。"}
-        </p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
         <div className="order-2 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-1">
           <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <p className="text-center font-semibold text-slate-700">使い方の流れ</p>
+              <p>1. ロゴをアップロード。</p>
+              <p>2. 余白を調整したい場合は、トリミングを使う。</p>
+              <p>3. 背景を消したい場合は、透過で背景色を削除。</p>
+              <p>4. 枠内の位置と大きさを調整して、PDFを発行。</p>
+            </div>
             <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-white px-4 py-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white">
@@ -670,31 +753,88 @@ export function SimPage() {
                 </span>
                 <p className="text-sm font-semibold text-amber-700">配置して発行</p>
               </div>
-              <p className="mt-2 text-xs text-slate-500">右側のプレビューで配置を調整してください。</p>
-              <p className="mt-1 text-xs text-slate-500">カラー/モノクロはテンプレート管理の設定が反映されます。</p>
+              <p className="mt-2 text-xs text-slate-500">枠線内で大きさを調整してください。</p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 shadow-sm"
+                  disabled={!processedLogoBlob || !placement}
+                  onClick={() => {
+                    if (!placement) return;
+                    const nextRotation = (((rotationDeg ?? 0) + 90) % 360) as 0 | 90 | 180 | 270;
+                    const centerX = placement.x + placement.w / 2;
+                    const centerY = placement.y + placement.h / 2;
+                    const swap = nextRotation === 90 || nextRotation === 270;
+                    const nextW = swap ? placement.h : placement.w;
+                    const nextH = swap ? placement.w : placement.h;
+                    const nextPlacement = {
+                      ...placement,
+                      x: centerX - nextW / 2,
+                      y: centerY - nextH / 2,
+                      w: nextW,
+                      h: nextH
+                    };
+                    setRotationDeg(nextRotation);
+                    handlePlacementChange(nextPlacement);
+                  }}
+                >
+                  90°回転
+                </button>
+                <span className="text-xs text-slate-500">現在: {rotationDeg}°</span>
+              </div>
+              <div className="mt-3 text-sm font-semibold text-sky-600">
+                ↓ ここでデザインIDを発行
+              </div>
             </div>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-900 px-4 py-4 text-center text-white">
+          <div className="space-y-3 rounded-2xl border border-sky-200 bg-sky-100 px-4 py-4 text-center text-slate-900 shadow-sm">
             <p className="text-sm font-semibold">デザインID発行（PDF保存）</p>
+            <p className="text-xs text-slate-600">
+              修正は新しいデザインIDで作り直し。旧デザインは参照用に残ります。
+            </p>
             <button
               type="button"
-              className="w-full rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow"
+              className="w-full rounded-full bg-sky-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow"
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
               {isIssuing ? "発行中..." : "PDFプレビュー"}
             </button>
-            <div className="rounded-xl border border-amber-400/60 bg-slate-800 px-4 py-3 text-left shadow">
-              <p className="text-xs font-semibold text-amber-300">デザインID</p>
+            {sizeCheck && sizeCheck.isBelowMin && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-left text-xs text-amber-800">
+                <p className="font-semibold">サイズが小さめです</p>
+                <p>設定されたサイズが推奨の最小値を下回っています。仕上がりが見えにくくなる可能性があります。</p>
+                <p>必要に応じてサイズを大きくしてご確認ください。</p>
+                <p className="mt-1 text-[11px] text-amber-700">
+                  推奨最小: W {sizeCheck.minW}mm / H {sizeCheck.minH}mm
+                </p>
+              </div>
+            )}
+            {sizeCheck && !sizeCheck.isBelowMin && (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-left text-xs text-emerald-700">
+                サイズ: OK（W {sizeCheck.wMm.toFixed(1)}mm / H {sizeCheck.hMm.toFixed(1)}mm）
+              </div>
+            )}
+            {dpiCheck && dpiCheck.level !== "ok" && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-left text-xs text-rose-700">
+                <p className="font-semibold">ロゴ画像の解像度が低い可能性があります</p>
+                <p>仕上がりが粗く見える場合があります。必要に応じて高解像度のロゴをご用意ください。</p>
+                <p className="mt-1 text-[11px] text-rose-600">
+                  目安: {Math.round(dpiCheck.effectiveDpi)} dpi
+                </p>
+              </div>
+            )}
+            <div className="rounded-xl border border-sky-300 bg-white px-4 py-3 text-left shadow-md">
+              <p className="text-xs font-semibold text-sky-800">デザインID</p>
               {issuedDesignId ? (
                 <div className="mt-2 space-y-2">
-                  <div className="rounded-lg border border-amber-400/40 bg-slate-900 px-3 py-3 text-center text-lg font-semibold tracking-widest text-amber-100">
+                  <div className="rounded-lg border border-sky-300 bg-sky-100 px-3 py-3 text-center text-lg font-semibold tracking-widest text-slate-900">
                     {issuedDesignId}
                   </div>
                   <button
                     type="button"
-                    className="w-full rounded-full border border-amber-300 bg-amber-200 px-3 py-2 text-xs font-semibold text-slate-900"
+                    className="w-full rounded-full border border-sky-300 bg-sky-200 px-3 py-2 text-xs font-semibold text-slate-900"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(issuedDesignId);
@@ -756,6 +896,7 @@ export function SimPage() {
               template={template}
               backgroundUrl={backgroundUrl}
               logoUrl={processedLogoUrl}
+              rotationDeg={rotationDeg}
               placement={
                 placement ?? {
                   x: template.engravingArea.x,
@@ -767,7 +908,11 @@ export function SimPage() {
               logoBaseSize={logoBaseSize}
               onPlacementChange={handlePlacementChange}
             />
-            {!imageBitmap && <div className="mt-2 text-xs text-slate-400">ロゴをアップロードすると配置できます。</div>}
+            {!imageBitmap && (
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm font-semibold text-slate-700">
+                {template.comment?.trim() || "ロゴをアップロードすると配置できます。"}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -782,6 +927,9 @@ export function SimPage() {
             )}
           </div>
           <div className="flex flex-wrap justify-end gap-2">
+            <p className="mr-auto text-xs text-slate-500">
+              修正は新しいデザインIDで作り直し。旧デザインは参照用に残ります。
+            </p>
             <button
               type="button"
               className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600"

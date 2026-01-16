@@ -1,5 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import type { Template, DesignPlacement } from "../types";
+import { rotateImage90 } from "@/domain/image/rotateImage90";
 
 function getPageDimensions(template: Template) {
   const { pageSize, orientation } = template.pdf;
@@ -19,6 +20,15 @@ async function embedImage(pdfDoc: PDFDocument, blob: Blob | null) {
   } catch {
     return await pdfDoc.embedJpg(buffer);
   }
+}
+
+async function rotateLogoByDegrees(blob: Blob, rotation: number): Promise<Blob> {
+  const steps = rotation === 90 ? 1 : rotation === 180 ? 2 : rotation === 270 ? 3 : 0;
+  let next = blob;
+  for (let i = 0; i < steps; i += 1) {
+    next = await rotateImage90(next);
+  }
+  return next;
 }
 
 export async function generateEngravePdf(
@@ -65,7 +75,9 @@ export async function generateEngravePdf(
   });
 
   if (logoBlob) {
-    const logoImage = await embedImage(pdfDoc, logoBlob);
+    const rotation = placement.rotationDeg ?? 0;
+    const sourceBlob = rotation ? await rotateLogoByDegrees(logoBlob, rotation) : logoBlob;
+    const logoImage = await embedImage(pdfDoc, sourceBlob);
     if (logoImage) {
       page.drawImage(logoImage, {
         x: offsetX + placement.x * scale,

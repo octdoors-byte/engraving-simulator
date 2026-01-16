@@ -23,6 +23,7 @@ function updateTemplateIndex(template: Template): void {
   list.push({
     templateKey: template.templateKey,
     name: template.name,
+    category: template.category,
     comment: template.comment,
     status: template.status,
     updatedAt: template.updatedAt
@@ -97,6 +98,21 @@ function normalizeBackground(template: Template): Template {
   };
 }
 
+function normalizePlacementRules(template: Template): Template {
+  if (template.placementRules) {
+    return template;
+  }
+  return {
+    ...template,
+    placementRules: {
+      allowRotate: false,
+      keepInsideEngravingArea: true,
+      minScale: 0.1,
+      maxScale: 6
+    }
+  };
+}
+
 export function ensureAppVersion(): string {
   localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
   return APP_VERSION;
@@ -113,7 +129,7 @@ export function listTemplates(): TemplateSummary[] {
 export function getTemplate(templateKey: string): Template | null {
   const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
   if (!template) return null;
-  return normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template)));
+  return normalizePlacementRules(normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template))));
 }
 
 export function deleteTemplate(templateKey: string): void {

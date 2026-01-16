@@ -6,9 +6,17 @@ export function clampPlacement(
 ): DesignPlacement {
   const maxX = engravingArea.x + engravingArea.w - placement.w;
   const maxY = engravingArea.y + engravingArea.h - placement.h;
+  const nextX =
+    maxX < engravingArea.x
+      ? engravingArea.x
+      : Math.min(Math.max(placement.x, engravingArea.x), maxX);
+  const nextY =
+    maxY < engravingArea.y
+      ? engravingArea.y
+      : Math.min(Math.max(placement.y, engravingArea.y), maxY);
   return {
-    x: Math.min(Math.max(placement.x, engravingArea.x), maxX),
-    y: Math.min(Math.max(placement.y, engravingArea.y), maxY),
+    x: nextX,
+    y: nextY,
     w: placement.w,
     h: placement.h
   };

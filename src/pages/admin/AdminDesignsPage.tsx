@@ -2,8 +2,8 @@
 import { Toast } from "@/components/common/Toast";
 import type { Design, TemplateSummary } from "@/domain/types";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
-import { generateEngravePdf } from "@/domain/pdf/generateEngravePdf";
-import { deleteDesign, getDesign, getTemplate, listDesigns, listTemplates } from "@/storage/local";
+import { processLogo } from "@/domain/image/processLogo";
+import { deleteDesign, getDesign, getTemplate, listDesigns, listTemplates, loadTemplateBgFallback } from "@/storage/local";
 import { deleteAssets, getAssetById, saveAsset } from "@/storage/idb";
 
 function downloadBlob(blob: Blob, fileName: string) {
@@ -17,6 +17,64 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
+async function normalizeLogoBlob(blob: Blob): Promise<Blob> {
+  if (blob.type === "image/png" || blob.type === "image/jpeg") {
+    return blob;
+  }
+  const bitmap = await createImageBitmap(blob);
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    if ("close" in bitmap) {
+      bitmap.close();
+    }
+    return blob;
+  }
+  ctx.drawImage(bitmap, 0, 0);
+  if ("close" in bitmap) {
+    bitmap.close();
+  }
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (converted) => {
+        if (converted) {
+          resolve(converted);
+        } else {
+          reject(new Error("logo conversion failed"));
+        }
+      },
+      "image/png",
+      0.95
+    );
+  });
+}
+
+async function createLogoFromOriginal(
+  blob: Blob,
+  params: {
+    crop: { x: number; y: number; w: number; h: number };
+    transparentColor: { r: number; g: number; b: number } | null;
+    monochrome: boolean;
+  }
+): Promise<Blob> {
+  const bitmap = await createImageBitmap(blob);
+  try {
+    return await processLogo(bitmap, {
+      crop: params.crop,
+      transparentColor: params.transparentColor,
+      monochrome: params.monochrome,
+      maxOutputWidth: 1024,
+      maxOutputHeight: 1024
+    });
+  } finally {
+    if ("close" in bitmap) {
+      bitmap.close();
+    }
+  }
+}
+
 export function AdminDesignsPage() {
   const [designs, setDesigns] = useState<Design[]>([]);
   const [toast, setToast] = useState<{ message: string; tone?: "info" | "success" | "error" } | null>(null);
@@ -27,7 +85,7 @@ export function AdminDesignsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
-  const [previewInfo, setPreviewInfo] = useState<{ designId: string; kind: "confirm" | "engrave" } | null>(null);
+  const [previewInfo, setPreviewInfo] = useState<{ designId: string; kind: "confirm" } | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const reload = useCallback(() => {
@@ -94,34 +152,91 @@ export function AdminDesignsPage() {
     return filteredDesigns.every((design) => selectedIds.has(design.designId));
   }, [filteredDesigns, selectedIds]);
 
-  const getPdfBlob = useCallback(async (design: Design, kind: "confirm" | "engrave") => {
+  const getPdfBlob = useCallback(async (design: Design, kind: "confirm") => {
     try {
-      const assetId = kind === "confirm" ? design.pdf.confirmAssetId : design.pdf.engraveAssetId;
-      const asset = await getAssetById(assetId);
-      if (asset) {
-        return asset.blob;
+      const confirmAssetId = design.pdf?.confirmAssetId ?? `asset:pdfConfirm:${design.designId}`;
+      const confirmAsset = await getAssetById(confirmAssetId);
+      if (confirmAsset?.blob && confirmAsset.blob.size > 0) {
+        if (confirmAsset.blob.size < 5000) {
+          console.warn("Confirm PDF seems too small, regenerating.");
+        } else {
+          return confirmAsset.blob;
+        }
       }
+      const assetId = confirmAssetId;
       const template = getTemplate(design.templateKey);
       if (!template) {
         setToast({ message: "テンプレートが見つかりません。", tone: "error" });
         return null;
       }
-      const bgAsset = await getAssetById(`asset:templateBg:${design.templateKey}`);
-      const logoAsset = await getAssetById(`asset:logoEdited:${design.designId}`);
-      if (!logoAsset) {
+      let backgroundBlob: Blob | null = null;
+      if (kind === "confirm") {
+        const bgAsset = await getAssetById(`asset:templateBg:${design.templateKey}`);
+        backgroundBlob = bgAsset?.blob ?? null;
+        if (!backgroundBlob) {
+          const fallback = loadTemplateBgFallback(design.templateKey);
+          if (fallback) {
+            try {
+              const response = await fetch(fallback);
+              backgroundBlob = await response.blob();
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+        if (!backgroundBlob && template.background.fileName) {
+          try {
+            const response = await fetch(`/assets/${template.background.fileName}`);
+            if (response.ok) {
+              backgroundBlob = await response.blob();
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+      const editedAsset = await getAssetById(`asset:logoEdited:${design.designId}`);
+      const originalAsset = await getAssetById(`asset:logoOriginal:${design.designId}`);
+      let logoBlob = editedAsset?.blob ?? null;
+      if (!logoBlob && originalAsset?.blob) {
+        try {
+          logoBlob = await createLogoFromOriginal(originalAsset.blob, {
+            crop: design.logo.crop,
+            transparentColor: design.logo.transparentColor,
+            monochrome: design.logo.monochrome
+          });
+          await saveAsset({
+            id: `asset:logoEdited:${design.designId}`,
+            type: "logoEdited",
+            blob: logoBlob,
+            createdAt: design.createdAt
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      if (!logoBlob && originalAsset?.blob) {
+        logoBlob = originalAsset.blob;
+      }
+      if (!logoBlob) {
         setToast({ message: "ロゴ画像が見つかりません。", tone: "error" });
         return null;
       }
-      const pdfBlob =
-        kind === "confirm"
-          ? await generateConfirmPdf(template, bgAsset?.blob ?? null, logoAsset.blob, design.placement, design.designId)
-          : await generateEngravePdf(template, logoAsset.blob, design.placement, {
-              designId: design.designId,
-              createdAt: design.createdAt
-            });
+      try {
+        logoBlob = await normalizeLogoBlob(logoBlob);
+      } catch (error) {
+        console.error(error);
+      }
+      const pdfBlob = await generateConfirmPdf(
+        template,
+        backgroundBlob ?? null,
+        logoBlob,
+        design.placement,
+        design.designId
+      );
       await saveAsset({
         id: assetId,
-        type: kind === "confirm" ? "pdfConfirm" : "pdfEngrave",
+        type: "pdfConfirm",
         blob: pdfBlob,
         createdAt: new Date().toISOString()
       });
@@ -134,7 +249,7 @@ export function AdminDesignsPage() {
   }, []);
 
   const handlePreview = useCallback(
-    async (design: Design, kind: "confirm" | "engrave") => {
+    async (design: Design, kind: "confirm") => {
       setIsPreviewLoading(true);
       const blob = await getPdfBlob(design, kind);
       setIsPreviewLoading(false);
@@ -301,20 +416,13 @@ export function AdminDesignsPage() {
                       {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
                     </td>
                     <td className="px-6 py-4">{design.createdAt}</td>
-                    <td className="px-6 py-4 space-x-2">
+                    <td className="px-6 py-4">
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
                         onClick={() => handlePreview(design, "confirm")}
                       >
                         確認用プレビュー
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                        onClick={() => handlePreview(design, "engrave")}
-                      >
-                        刻印用プレビュー
                       </button>
                     </td>
                   </tr>
@@ -329,7 +437,7 @@ export function AdminDesignsPage() {
           <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
               <span>
-                {previewInfo.designId} / {previewInfo.kind === "confirm" ? "確認用" : "刻印用"}
+                {previewInfo.designId} / 確認用
               </span>
               <button
                 type="button"
@@ -354,7 +462,7 @@ export function AdminDesignsPage() {
                 disabled={!previewBlob}
                 onClick={() => {
                   if (!previewBlob || !previewInfo) return;
-                  downloadBlob(previewBlob, `${previewInfo.designId}-${previewInfo.kind}.pdf`);
+                  downloadBlob(previewBlob, `${previewInfo.designId}-confirm.pdf`);
                 }}
               >
                 ダウンロード
