@@ -5,73 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>名入れ刻印シミュレーター ご利用ガイド</title>
     <style>
-      :root {
-        color-scheme: light;
-      }
-      * {
-        box-sizing: border-box;
-      }
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
       body {
         margin: 0;
         font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f8fafc;
+        background: radial-gradient(circle at 20% 20%, #eef2ff 0, #f8fafc 40%, #ffffff 70%);
         color: #0f172a;
       }
       header {
-        background: linear-gradient(135deg, #0ea5e9, #22c55e);
+        background: linear-gradient(120deg, #0ea5e9, #22c55e);
         color: #fff;
-        padding: 28px 20px;
+        padding: 32px 20px 40px;
         text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      header::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.18), transparent 40%);
       }
       header h1 {
-        margin: 0 0 8px;
-        font-size: 26px;
-        letter-spacing: 0.02em;
+        margin: 0 0 10px;
+        font-size: 28px;
+        letter-spacing: 0.04em;
+        position: relative;
+        z-index: 1;
       }
       header p {
         margin: 0;
-        font-size: 14px;
+        font-size: 15px;
         opacity: 0.95;
+        position: relative;
+        z-index: 1;
       }
       main {
-        max-width: 960px;
-        margin: 24px auto 48px;
-        padding: 0 16px;
+        max-width: 1040px;
+        margin: -32px auto 56px;
+        padding: 0 18px;
       }
       .card {
         background: #fff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
-        margin-bottom: 18px;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+        margin-bottom: 20px;
       }
       h2 {
-        margin: 0 0 12px;
+        margin: 0 0 14px;
         font-size: 20px;
-      }
-      .steps {
-        display: grid;
-        gap: 12px;
-      }
-      .step {
-        display: grid;
-        gap: 6px;
-        padding: 14px;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        background: #f8fafc;
-      }
-      .step strong {
-        color: #0f172a;
-      }
-      .tags {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 8px 0 0;
+        align-items: center;
+        gap: 10px;
       }
-      .tag {
+      .pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -79,22 +69,64 @@
         border-radius: 999px;
         font-size: 12px;
         background: #ecfeff;
-        color: #0ea5e9;
+        color: #0284c7;
         border: 1px solid #bae6fd;
       }
-      ul {
-        padding-left: 20px;
-        margin: 6px 0;
+      .steps {
+        display: grid;
+        gap: 14px;
       }
-      li {
-        margin: 4px 0;
+      .step {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #f8fafc, #ffffff);
+        align-items: flex-start;
       }
+      .badge-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: #0ea5e9;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.25);
+      }
+      .step strong { color: #0f172a; font-size: 16px; }
+      .step ul { margin: 6px 0 0; padding-left: 18px; }
+      .step li { margin: 4px 0; font-size: 14px; color: #334155; }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 8px 0 0;
+      }
+      ul { padding-left: 20px; margin: 6px 0; }
+      li { margin: 4px 0; color: #334155; }
       .tip {
         background: #fff7ed;
         border: 1px solid #fed7aa;
         color: #9a3412;
         padding: 14px;
         border-radius: 12px;
+        font-size: 14px;
+      }
+      .quick-check {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .check-item {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 12px;
+        background: #f8fafc;
         font-size: 14px;
       }
       .footer-note {
@@ -104,52 +136,60 @@
         margin-top: 12px;
       }
       @media (min-width: 768px) {
-        header h1 {
-          font-size: 30px;
-        }
-        .steps {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
+        header h1 { font-size: 32px; }
+        .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
     </style>
   </head>
   <body>
     <header>
       <h1>名入れ刻印シミュレーター ご利用ガイド</h1>
-      <p>テンプレートを選び、ロゴを配置して、確認用PDFを発行するまでの手順をまとめました。</p>
+      <p>お客様が実施する操作だけをまとめました。公開URLを開いてからPDF送付までの流れです。</p>
     </header>
 
     <main>
       <section class="card">
-        <h2>基本の流れ</h2>
+        <h2>基本の流れ <span class="pill">お客様操作のみ</span></h2>
         <div class="steps">
           <div class="step">
-            <strong>1. テンプレートを選ぶ</strong>
-            <ul>
-              <li>ショップが案内する「公開URL」を開き、対象商品のテンプレートを表示します。</li>
-              <li>商品と違うテンプレートを開かないよう、URLを再確認してください。</li>
-            </ul>
+            <div class="badge-num">1</div>
+            <div>
+              <strong>テンプレートを開く</strong>
+              <ul>
+                <li>ショップが案内する「公開URL」を開き、対象商品のテンプレートを表示します。</li>
+                <li>商品と違うテンプレートを開かないよう、URLを再確認してください。</li>
+              </ul>
+            </div>
           </div>
           <div class="step">
-            <strong>2. 共通説明を確認する</strong>
-            <ul>
-              <li>先に共通説明ページが表示されます。対象商品の注意事項を必ずお読みください。</li>
-              <li>内容を読んでチェックを入れ、「編集を開始する」でシミュレーターへ進みます。</li>
-            </ul>
+            <div class="badge-num">2</div>
+            <div>
+              <strong>共通説明を読む</strong>
+              <ul>
+                <li>先に共通説明ページが表示されます。対象商品の注意事項を必ずお読みください。</li>
+                <li>内容を読んでチェックを入れ、「編集を開始する」でシミュレーターへ進みます。</li>
+              </ul>
+            </div>
           </div>
           <div class="step">
-            <strong>3. ロゴをアップロードする</strong>
-            <ul>
-              <li>「画像をアップロード」ボタンからロゴ画像を選択します（2MB 以内推奨）。</li>
-              <li>刻印エリアの枠からはみ出さないように位置とサイズを調整します。</li>
-            </ul>
+            <div class="badge-num">3</div>
+            <div>
+              <strong>ロゴをアップロード</strong>
+              <ul>
+                <li>「画像をアップロード」ボタンからロゴ画像を選択します（2MB 以内推奨）。</li>
+                <li>刻印エリアの枠からはみ出さないように位置とサイズを調整します。</li>
+              </ul>
+            </div>
           </div>
           <div class="step">
-            <strong>4. 配置を確認する</strong>
-            <ul>
-              <li>プレビューで仕上がりを確認し、問題なければ「PDFを発行」します。</li>
-              <li>PDFは刻印イメージの確認用です。ショップへ送付してご注文を進めてください。</li>
-            </ul>
+            <div class="badge-num">4</div>
+            <div>
+              <strong>仕上がりを確認</strong>
+              <ul>
+                <li>プレビューで仕上がりを確認し、問題なければ「PDFを発行」します。</li>
+                <li>PDFは刻印イメージの確認用です。ショップへ送付してご注文を進めてください。</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -157,9 +197,9 @@
       <section class="card">
         <h2>操作のポイント</h2>
         <div class="tags">
-          <span class="tag">推奨環境: 最新 Edge / Chrome / Firefox / Safari</span>
-          <span class="tag">デザイン保存: ブラウザに一時保存</span>
-          <span class="tag">ロゴ画像: 2MB 以内推奨</span>
+          <span class="pill">推奨環境: 最新 Edge / Chrome / Firefox / Safari</span>
+          <span class="pill">デザイン保存: ブラウザに一時保存</span>
+          <span class="pill">ロゴ画像: 2MB 以内推奨</span>
         </div>
         <ul>
           <li>テンプレートは商品専用です。案内された公開URL以外は使わないでください。</li>
@@ -167,6 +207,11 @@
           <li>作業途中のデザインはブラウザに一時保存されます。別端末では再度デザインが必要です。</li>
           <li>動作が重い場合は、他のタブを閉じるかブラウザを再起動してお試しください。</li>
         </ul>
+        <div class="quick-check">
+          <div class="check-item">✔ ロゴは透過PNGがおすすめ（白背景だと枠が出る場合あり）</div>
+          <div class="check-item">✔ 刻印エリア外に余白が出ないかプレビューで再確認</div>
+          <div class="check-item">✔ PDFに記載のデザインIDをショップへ伝えると対応がスムーズ</div>
+        </div>
       </section>
 
       <section class="card">
