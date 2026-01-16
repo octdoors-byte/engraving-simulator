@@ -64,7 +64,7 @@ export function AppLayout() {
   const logoAlign = alignClass[settings?.logoAlign ?? "left"];
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
   const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
-  const logoHeight = settings?.logoSize === "lg" ? "h-12" : settings?.logoSize === "md" ? "h-10" : "h-8";
+  const logoHeight = settings?.logoSize === "lg" ? "h-16 md:h-20" : settings?.logoSize === "md" ? "h-12" : "h-9";
   const hideNav =
     new URLSearchParams(location.search).get("hideNav") === "1" ||
     location.pathname.startsWith("/sim/");
