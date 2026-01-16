@@ -152,6 +152,55 @@
         fill: none;
         stroke-width: 2;
       }
+      .mini-icons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .mini-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+        font-size: 12px;
+        color: #475569;
+      }
+      .mini-icon svg {
+        width: 20px;
+        height: 20px;
+        stroke: #0f172a;
+        fill: none;
+        stroke-width: 1.8;
+      }
+      .illus-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .illus-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+      }
+      .illus-card svg {
+        width: 100%;
+        height: 120px;
+        display: block;
+      }
+      .illus-caption {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #475569;
+        text-align: center;
+      }
       .tip {
         background: #fff7ed;
         border: 1px solid #fed7aa;
@@ -226,17 +275,66 @@
   <body>
     <header>
       <h1>名入れ刻印シミュレーター ご利用ガイド</h1>
-      <p>公開URLを開いて、ロゴを置いて、PDFを送るだけ。初めてでもすぐ終わります。</p>
+      <p>リンクを開いて、画像を置いて、保存用のファイルを送るだけ。初めてでもすぐ終わります。</p>
     </header>
 
     <main>
       <section class="card">
         <h2>3ステップで完了 <span class="pill">初めてでも簡単</span></h2>
-        <p class="lead">大まかな流れは「URLを開く → ロゴを置く → PDFを送る」の3つだけ。画面のイメージとセットで確認できます。</p>
+        <p class="lead">大まかな流れは「リンクを開く → 画像を置く → 保存用のファイルを送る」の3つだけ。画面のイメージとセットで確認できます。</p>
+        <div class="mini-icons">
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h13" /><path d="M13 6l7 6-7 6" /></svg>
+            URLを開く
+          </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20l16-16" /></svg>
+            余白をカット
+          </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><rect x="6" y="5" width="12" height="14" rx="2" /><path d="M9 10h6" /></svg>
+            PDFを発行
+          </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+            位置調整
+          </div>
+        </div>
+        <div class="illus-row">
+          <div class="illus-card">
+            <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="14" width="300" height="100" rx="12" fill="#f8fafc" stroke="#e2e8f0" />
+              <rect x="26" y="30" width="120" height="12" rx="6" fill="#f97316" />
+              <rect x="26" y="52" width="200" height="8" rx="4" fill="#cbd5f5" />
+              <rect x="26" y="70" width="160" height="8" rx="4" fill="#cbd5f5" />
+              <circle cx="258" cy="64" r="18" fill="#fee2e2" stroke="#fecaca" />
+            </svg>
+            <div class="illus-caption">説明を読んでチェック</div>
+          </div>
+          <div class="illus-card">
+            <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="14" width="300" height="100" rx="12" fill="#f8fafc" stroke="#e2e8f0" />
+              <rect x="22" y="26" width="90" height="68" rx="8" fill="#e0f2fe" stroke="#bae6fd" />
+              <rect x="126" y="26" width="160" height="68" rx="8" fill="#fff7ed" stroke="#fed7aa" />
+              <rect x="136" y="36" width="90" height="10" rx="5" fill="#f97316" />
+              <rect x="136" y="56" width="120" height="10" rx="5" fill="#fdba74" />
+            </svg>
+            <div class="illus-caption">ロゴをアップロードして位置合わせ</div>
+          </div>
+          <div class="illus-card">
+            <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="14" width="300" height="100" rx="12" fill="#f8fafc" stroke="#e2e8f0" />
+              <rect x="26" y="26" width="86" height="86" rx="8" fill="#eef2ff" stroke="#c7d2fe" />
+              <rect x="126" y="44" width="140" height="12" rx="6" fill="#22c55e" />
+              <rect x="126" y="64" width="100" height="8" rx="4" fill="#a7f3d0" />
+            </svg>
+            <div class="illus-caption">PDFを発行して送る</div>
+          </div>
+        </div>
         <div class="feature" style="margin-top:16px;">
           <div>
             <div class="badge">1</div><strong>まずはURLを開く</strong>
-            <p>ショップから届いた公開URLをクリックするだけで、対象商品の説明ページが開きます。</p>
+            <p>お店から届いたリンクを開くだけで、説明ページが表示されます。</p>
             <p>商品名と説明をざっと読んで、チェックを入れて「編集を開始する」を押します。</p>
           </div>
           <img src="/guide-shots/common-consent.png?v=20260116d" alt="共通説明ページの例" />
@@ -244,16 +342,16 @@
         <div class="feature">
           <div>
             <div class="badge">2</div><strong>ロゴを置く</strong>
-            <p>「画像をアップロード」からロゴを選択（2MB以内推奨）。背景が透明ならそのままOK、余白はトリミングでカット。</p>
-            <p>ガイド枠からはみ出さないように、位置と大きさだけ合わせれば完了です。</p>
+            <p>「画像を追加」から画像を選ぶだけ。背景が透けている画像はそのままOKです。</p>
+            <p>枠からはみ出さないように、位置と大きさだけ合わせれば完了です。</p>
           </div>
           <img src="/guide-shots/sim-upload-card.png?v=20260116d" alt="ロゴアップロードの例" />
         </div>
         <div class="feature">
           <div>
             <div class="badge">3</div><strong>見た目を確認してPDF</strong>
-            <p>プレビューで仕上がりを確認し、「PDFを発行」を押します。PDFをショップに送れば手続き完了です。</p>
-            <p>PDFに記載のデザインIDも合わせて伝えると、対応が早くなります。</p>
+            <p>仕上がりを確認して「保存用のファイルを作る」を押します。作ったファイルをお店に送れば完了です。</p>
+            <p>ファイルに書かれている番号も一緒に伝えると早いです。</p>
           </div>
           <img src="/guide-shots/sim-pdf-card.png?v=20260116d" alt="PDF発行ボタンの例" />
         </div>
@@ -262,9 +360,9 @@
       <section class="card">
         <h2>操作のポイント</h2>
         <div class="tags">
-          <span class="pill">推奨環境: 最新 Edge / Chrome / Firefox / Safari</span>
-          <span class="pill">デザイン保存: ブラウザに一時保存</span>
-          <span class="pill">ロゴ画像: 2MB 以内推奨</span>
+          <span class="pill">推奨環境: 最新のブラウザ</span>
+          <span class="pill">途中の保存: この画面の中だけ</span>
+          <span class="pill">画像サイズ: 2MB くらいまで</span>
         </div>
         <div class="points">
           <div class="point-card">
@@ -274,18 +372,32 @@
                 <path d="M13 7l6 5-6 5" />
               </svg>
             </div>
-            <div>公開URLは商品専用。届いたURLだけ開けばOKです。</div>
+            <div>リンクは商品専用。届いたリンクだけ開けばOKです。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#fff; box-shadow:0 6px 14px rgba(15,23,42,0.06); border-color:#e5e7eb;">
+              <svg viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id="alphaGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#111827" />
+                    <stop offset="1" stop-color="#ffffff" />
+                  </linearGradient>
+                </defs>
+                <rect x="5" y="5" width="14" height="14" rx="3" fill="url(#alphaGrad)" stroke="#cbd5e1" />
+              </svg>
+            </div>
+            <div>背景が透けている画像だと仕上がりがきれいです。</div>
           </div>
           <div class="point-card">
             <div class="point-icon" aria-hidden="true" style="background:#10b981; box-shadow:0 6px 14px rgba(16,185,129,0.18); border-color:#a7f3d0;">
               <svg viewBox="0 0 24 24">
-                <path d="M4 4l16 16" />
-                <path d="M4 20l16-16" />
-                <circle cx="8.5" cy="8.5" r="1.4" />
-                <circle cx="15.5" cy="15.5" r="1.4" />
+                <circle cx="6.5" cy="6.5" r="2.2" />
+                <circle cx="6.5" cy="17.5" r="2.2" />
+                <path d="M9 8l11 11" />
+                <path d="M9 16l6-6" />
               </svg>
             </div>
-            <div>透明PNG＋トリミングで余白カット。枠に収まるよう調整します。</div>
+            <div>はみ出る余白はカット。枠に収まる大きさにします。</div>
           </div>
           <div class="point-card">
             <div class="point-icon" aria-hidden="true" style="background:#6366f1; box-shadow:0 6px 14px rgba(99,102,241,0.18); border-color:#c7d2fe;">
@@ -295,7 +407,7 @@
                 <path d="M8.5 10.5h7" />
               </svg>
             </div>
-            <div>途中のデザインはブラウザに一時保存。同じ端末なら続きができます。</div>
+            <div>途中の内容はこの画面に残ります。同じ端末なら続きができます。</div>
           </div>
           <div class="point-card">
             <div class="point-icon" aria-hidden="true" style="background:#0ea5e9; box-shadow:0 6px 14px rgba(14,165,233,0.18); border-color:#bae6fd;">
@@ -306,14 +418,14 @@
                 <path d="M9 15l3 3 3-3" />
               </svg>
             </div>
-            <div>動きが重いときはタブを閉じるかブラウザ再起動で軽くなります。</div>
+            <div>動きが重いときはタブを閉じるか、ブラウザを開き直してください。</div>
           </div>
         </div>
         <div class="quick-check">
-          <div class="check-item">✔ ロゴは透明PNGがおすすめ（白背景だと枠が出ることあり）</div>
-          <div class="check-item">✔ 余白はトリミングでカットしてから配置</div>
-          <div class="check-item">✔ 印刷枠からはみ出していないかプレビューで確認</div>
-          <div class="check-item">✔ PDFのデザインIDをショップへ伝えると対応が早いです</div>
+          <div class="check-item">✔ 背景が透けている画像だときれいに見えます</div>
+          <div class="check-item">✔ 余白はカットしてから配置</div>
+          <div class="check-item">✔ 枠からはみ出していないか確認</div>
+          <div class="check-item">✔ ファイル内の番号をお店に伝えると早いです</div>
         </div>
       </section>
 
