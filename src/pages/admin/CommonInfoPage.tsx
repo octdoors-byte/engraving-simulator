@@ -8,6 +8,14 @@ type ToastState = { message: string; tone?: "info" | "success" | "error" } | nul
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const MAX_PDF_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGES = 5;
+const FAQ_TEMPLATE = `Q. ご利用前に準備するものは？
+お好きなブラウザと安定したネット環境をご用意ください。
+
+Q. 推奨ブラウザは？
+最新の Edge / Chrome / Firefox / Safari でご利用ください。
+
+Q. 作ったデザインは保存できますか？
+ブラウザに保存されます。別の端末では再度デザインしてください。`;
 const DEFAULT_FAQ = [
   "Q.スマホでもデザインエディタを使えますか？",
   "スマートフォンでもご利用いただけます。PCと操作方法は変わりません。",
@@ -125,6 +133,16 @@ export function CommonInfoPage() {
     },
     [handleChange]
   );
+
+  const handleCopyFaqTemplate = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(FAQ_TEMPLATE);
+      setToast({ message: "ひな型をクリップボードにコピーしました。", tone: "success" });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "コピーできませんでした。手動で選択してください。", tone: "error" });
+    }
+  }, []);
 
   const currentImages: string[] = settings.commonInfoImages ?? (settings.commonInfoImage ? [settings.commonInfoImage] : []);
 
@@ -378,18 +396,21 @@ export function CommonInfoPage() {
               <p>・カード同士は空行で区切ります</p>
               <p>・「Q.」は質問行の先頭に付けてください</p>
             </div>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              onClick={() =>
-                handleChange(
-                  "commonInfoFaq",
-                  `Q. ご利用前に準備するものは？\nお好きなブラウザと安定したネット環境をご用意ください。\n\nQ. 推奨ブラウザは？\n最新の Edge / Chrome / Firefox / Safari でご利用ください。\n\nQ. 作ったデザインは保存できますか？\nブラウザに保存されます。別の端末では再度デザインしてください。`
-                )
-              }
-            >
-              ひな型を挿入
-            </button>
+            <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-semibold text-slate-800">ひな型（コピーして使えます）</p>
+                <button
+                  type="button"
+                  className="rounded-full border border-slate-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold text-amber-800 hover:bg-amber-100"
+                  onClick={handleCopyFaqTemplate}
+                >
+                  ひな型をコピー
+                </button>
+              </div>
+              <pre className="whitespace-pre-wrap break-words rounded bg-slate-50 px-2 py-2 font-mono text-[11px] leading-relaxed text-slate-800">
+{FAQ_TEMPLATE}
+              </pre>
+            </div>
           </div>
         </div>
 
