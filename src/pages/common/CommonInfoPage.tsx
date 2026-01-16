@@ -100,11 +100,13 @@ export function CommonInfoPage() {
       {targetTemplate && (
         <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold uppercase tracking-wide text-amber-700">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold uppercase tracking-wide text-amber-700">
               対象
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-semibold leading-tight text-amber-900">{targetTemplate.name}</span>
+              <span className="text-[26px] font-semibold leading-snug text-amber-900 md:text-3xl">
+                {targetTemplate.name}
+              </span>
             </div>
           </div>
         </div>
