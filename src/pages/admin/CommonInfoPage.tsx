@@ -358,6 +358,12 @@ export function CommonInfoPage() {
             <label className="text-sm font-semibold text-slate-700">よくある質問（カード表示）</label>
             <span className="text-[11px] text-slate-500">1行目: 質問 / 2行目以降: 回答 / 空行で次のカード</span>
           </div>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+            <span>入力ルール:</span>
+            <span className="rounded-full bg-amber-50 px-2 py-1">・質問は「Q.」で始める</span>
+            <span className="rounded-full bg-amber-50 px-2 py-1">・回答は空行を入れずに続ける</span>
+            <span className="rounded-full bg-amber-50 px-2 py-1">・カード間は空行1つ</span>
+          </div>
           <textarea
             className="w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono leading-relaxed"
             rows={16}
@@ -365,11 +371,25 @@ export function CommonInfoPage() {
             onChange={(event) => handleChange("commonInfoFaq", event.target.value)}
             placeholder={`Q. サンプルの質問を書きます。\n回答はこの行から書きます。\nさらに補足を書くときは改行を続けます。\n\nQ. 2つ目の質問は空行を挟んで追加します。\n回答は同じカードに収まります。`}
           />
-          <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
-            <p className="font-semibold text-slate-800">表示イメージ</p>
-            <p className="mt-1">・カード1 = 質問行 + 回答行（空行なし）</p>
-            <p>・カード同士は空行で区切ります</p>
-            <p>・「Q.」は質問行の先頭に付けてください</p>
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+              <p className="font-semibold text-slate-800">表示イメージ</p>
+              <p className="mt-1">・カード1 = 質問行 + 回答行（空行なし）</p>
+              <p>・カード同士は空行で区切ります</p>
+              <p>・「Q.」は質問行の先頭に付けてください</p>
+            </div>
+            <button
+              type="button"
+              className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              onClick={() =>
+                handleChange(
+                  "commonInfoFaq",
+                  `Q. ご利用前に準備するものは？\nお好きなブラウザと安定したネット環境をご用意ください。\n\nQ. 推奨ブラウザは？\n最新の Edge / Chrome / Firefox / Safari でご利用ください。\n\nQ. 作ったデザインは保存できますか？\nブラウザに保存されます。別の端末では再度デザインしてください。`
+                )
+              }
+            >
+              ひな型を挿入
+            </button>
           </div>
         </div>
 
