@@ -7,7 +7,7 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 const navItems = [
   { to: "/top", label: "公開テンプレート一覧", tone: "emerald" },
   { to: "/admin/templates", label: "テンプレート管理", tone: "amber" },
-  { to: "/admin/designs", label: "デザイン発行履歴", tone: "indigo" },
+  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" },
   { to: "/admin/common", label: "基本設定", tone: "rose" }
 ] as const;
 
@@ -18,10 +18,6 @@ const navToneClass: Record<
   emerald: {
     active: "bg-emerald-600 text-white shadow-sm",
     inactive: "border border-emerald-200 text-emerald-700 bg-white hover:bg-emerald-50"
-  },
-  sky: {
-    active: "bg-sky-600 text-white shadow-sm",
-    inactive: "border border-sky-200 text-sky-700 bg-white hover:bg-sky-50"
   },
   amber: {
     active: "bg-amber-500 text-white shadow-sm",

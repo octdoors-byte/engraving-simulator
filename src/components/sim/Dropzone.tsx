@@ -87,7 +87,7 @@ export function Dropzone({ onFileAccepted, onReject, disabled }: DropzoneProps) 
       <p className="text-xs text-slate-500">
         PNG/JPEG/WEBP・5MBまで。ドラッグ&ドロップでも選択できます。
       </p>
-      {disabled && <p className="mt-2 text-xxs text-rose-500">発行中はアップロードできません</p>}
+      {disabled && <p className="mt-2 text-xxs text-rose-500">作成中はアップロードできません</p>}
     </div>
   );
 }

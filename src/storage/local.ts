@@ -50,7 +50,7 @@ export function saveTemplate(template: Template): void {
 
 function normalizeEngravingArea(template: Template): Template {
   if (template.engravingArea) {
-    const label = template.engravingArea.label || "刻印枠";
+    const label = template.engravingArea.label || "デザインできる範囲";
     if (label !== template.engravingArea.label) {
       return { ...template, engravingArea: { ...template.engravingArea, label } };
     }
@@ -61,7 +61,7 @@ function normalizeEngravingArea(template: Template): Template {
   return {
     ...template,
     engravingArea: {
-      label: "刻印枠",
+      label: "デザインできる範囲",
       x: 0,
       y: 0,
       w: width > 0 ? width : 1,
@@ -142,8 +142,15 @@ export function deleteTemplate(templateKey: string): void {
 }
 
 export function saveDesign(design: Design): void {
-  writeJson(`${STORAGE_PREFIX}design:${design.designId}`, design);
-  updateDesignIndex(design);
+  try {
+    writeJson(`${STORAGE_PREFIX}design:${design.designId}`, design);
+    updateDesignIndex(design);
+  } catch (error) {
+    const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("saveDesign failed", design.designId, message, stack ?? "", error);
+    throw error;
+  }
 }
 
 export function listDesigns(): DesignSummary[] {
@@ -232,7 +239,6 @@ export function migrateLegacyText(): void {
     }
   }
 }
-
 
 
 

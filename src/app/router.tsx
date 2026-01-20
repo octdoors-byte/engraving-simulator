@@ -42,7 +42,7 @@ export const appRouter = createBrowserRouter([
       {
         path: "admin/designs",
         element: (
-          <ErrorBoundary title="発行履歴の読み込みでエラーが発生しました。">
+          <ErrorBoundary title="作成履歴の読み込みでエラーが発生しました。">
             <AdminDesignsPage />
           </ErrorBoundary>
         )

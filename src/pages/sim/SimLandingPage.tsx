@@ -1,6 +1,7 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import type { Template, TemplateSummary } from "@/domain/types";
 import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
+import { HelpIcon } from "@/components/common/HelpIcon";
 
 type ColumnKey = "name" | "category" | "comment" | "paper" | "templateKey" | "info" | "url";
 
@@ -9,7 +10,7 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "category", label: "カテゴリ" },
   { key: "comment", label: "備考（お客様表示用）" },
   { key: "paper", label: "用紙" },
-  { key: "templateKey", label: "テンプレキー" },
+  { key: "templateKey", label: "テンプレートID" },
   { key: "info", label: "共通説明＋公開URL" },
   { key: "url", label: "公開URL" }
 ];
@@ -159,7 +160,9 @@ export function SimLandingPage() {
     const all = listTemplates();
     const targets = all.filter((item) => splitTemplateKey(item.templateKey).baseKey === row.key);
     const base = targets.length ? targets : all.filter((item) => item.templateKey === row.primaryTemplateKey);
-    base.forEach((template) => {
+    base.forEach((summary) => {
+      const template = getTemplate(summary.templateKey);
+      if (!template) return;
       saveTemplate({
         ...template,
         comment: nextComment ? nextComment : undefined,
@@ -206,29 +209,13 @@ export function SimLandingPage() {
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">公開テンプレート一覧</h1>
-        <div className="mt-5 space-y-3 text-base text-slate-700">
-          <p className="font-semibold text-slate-800">使い方</p>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">ステップ1</span>
-            <span>テンプレート一覧から使いたいテンプレートを選ぶ</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">ステップ2</span>
-            <span>公開URLをクリックしてシミュレーターを開く</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">ステップ3</span>
-            <span>ロゴをアップロードして、配置を確認</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">ステップ4</span>
-            <span>問題がなければPDFを発行する</span>
-          </div>
-          <p className="mt-2 text-sm text-amber-700">
-            注意：用紙のサイズやデザイン範囲の大きさが、テンプレートの大きさと相違が出ないか必ずチェックしてください。
-          </p>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-semibold text-slate-900">公開テンプレート一覧</h1>
+          <HelpIcon guideUrl="/public_templates.html" title="公開テンプレート一覧の操作ガイド" />
         </div>
+        <p className="mt-5 text-sm text-slate-600">
+          テンプレート一覧から使いたいテンプレートを選び、公開URLをクリックしてシミュレーターを開きます。詳細は？アイコンからご確認ください。
+        </p>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
