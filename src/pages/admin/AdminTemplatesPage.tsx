@@ -1,7 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Toast } from "@/components/common/Toast";
-import { HelpIcon } from "@/components/common/HelpIcon";
 import type { CommonSettings, Template, TemplateStatus, TemplateSummary } from "@/domain/types";
 import { validateTemplate } from "@/domain/template/validateTemplate";
 import {
@@ -21,26 +20,12 @@ import { createBackupPayload, getAutoBackupPayload, restoreFromPayload } from "@
 const columns = [
   { label: "プレビュー", key: "preview" },
   { label: "表示名", key: "name" },
-  { label: "テンプレートID", key: "templateKey" },
+  { label: "テンプレキー", key: "templateKey" },
   { label: "状態", key: "status" },
   { label: "更新日", key: "updatedAt" }
 ] as const;
 
 type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
-
-function formatUpdatedAt(isoString: string): string {
-  try {
-    const date = new Date(isoString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
-  } catch {
-    return isoString;
-  }
-}
 
 async function adjustTemplateToImage(template: Template, imageFile: File): Promise<{
   template: Template;
@@ -108,10 +93,6 @@ export function AdminTemplatesPage() {
   const [editingName, setEditingName] = useState("");
   const [editingCategory, setEditingCategory] = useState("");
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-  const [previewImageName, setPreviewImageName] = useState<string | null>(null);
-  const [pendingJsonFile, setPendingJsonFile] = useState<File | null>(null);
-  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
@@ -150,16 +131,15 @@ export function AdminTemplatesPage() {
 
   useEffect(() => {
     let active = true;
-    const createdUrls: string[] = [];
+    const blobUrls: string[] = [];
     const loadPreviews = async () => {
       const next: Record<string, string> = {};
       for (const template of templates) {
-        if (!active) break;
         try {
           const asset = await getAssetById(`asset:templateBg:${template.templateKey}`);
           if (asset?.blob) {
             const url = URL.createObjectURL(asset.blob);
-            createdUrls.push(url);
+            blobUrls.push(url);
             next[template.templateKey] = url;
             continue;
           }
@@ -172,7 +152,7 @@ export function AdminTemplatesPage() {
         }
       }
       if (!active) {
-        createdUrls.forEach((url) => URL.revokeObjectURL(url));
+        blobUrls.forEach((url) => URL.revokeObjectURL(url));
         return;
       }
       setTemplatePreviewUrls((prev) => {
@@ -185,8 +165,7 @@ export function AdminTemplatesPage() {
     loadPreviews();
     return () => {
       active = false;
-      // 非同期処理中に作成されたURLも含めてクリーンアップ
-      createdUrls.forEach((url) => URL.revokeObjectURL(url));
+      blobUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [templates]);
 
@@ -217,8 +196,17 @@ export function AdminTemplatesPage() {
     };
   }, []);
 
-  const processTemplateRegistration = useCallback(
-    async (jsonFile: File, imageFile: File) => {
+
+  const handleTemplateFiles = useCallback(
+    async (files: FileList | null) => {
+      if (!files || files.length === 0) return;
+      const fileList = Array.from(files);
+      const jsonFile = fileList.find((file) => file.name.toLowerCase().endsWith(".json"));
+      const imageFile = fileList.find((file) => file.type.startsWith("image/"));
+      if (!jsonFile || !imageFile) {
+        setToast({ message: "template.json と背景画像を同時に選択してください。", tone: "error" });
+        return;
+      }
       const readAsDataUrl = (file: File) =>
         new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -239,7 +227,7 @@ export function AdminTemplatesPage() {
           setToast({ message: validation.errors.join(" / "), tone: "error" });
           return;
         }
-        let template: Template = {
+        let template = {
           ...validation.template,
           logoSettings: validation.template.logoSettings ?? {
             monochrome: false
@@ -283,55 +271,6 @@ export function AdminTemplatesPage() {
       }
     },
     [reloadTemplates]
-  );
-
-  const handleTemplateFiles = useCallback(
-    async (files: FileList | null) => {
-      if (!files || files.length === 0) return;
-      const fileList = Array.from(files);
-      const jsonFile = fileList.find((file) => file.name.toLowerCase().endsWith(".json"));
-      const imageFile = fileList.find((file) => file.type.startsWith("image/"));
-      
-      // JSONファイルがアップロードされた場合
-      if (jsonFile && !imageFile) {
-        if (pendingImageFile) {
-          // 既に画像が保存されている場合は、それと組み合わせて登録
-          await processTemplateRegistration(jsonFile, pendingImageFile);
-          setPendingJsonFile(null);
-          setPendingImageFile(null);
-        } else {
-          setPendingJsonFile(jsonFile);
-          setToast({ message: "template.json を読み込みました。次に背景画像をアップロードしてください。", tone: "info" });
-        }
-        return;
-      }
-      
-      // 画像ファイルがアップロードされた場合
-      if (imageFile && !jsonFile) {
-        if (pendingJsonFile) {
-          // 既にJSONが保存されている場合は、それと組み合わせて登録
-          await processTemplateRegistration(pendingJsonFile, imageFile);
-          setPendingJsonFile(null);
-          setPendingImageFile(null);
-        } else {
-          setPendingImageFile(imageFile);
-          setToast({ message: "背景画像を読み込みました。次に template.json をアップロードしてください。", tone: "info" });
-        }
-        return;
-      }
-      
-      // 両方が同時にアップロードされた場合
-      if (jsonFile && imageFile) {
-        await processTemplateRegistration(jsonFile, imageFile);
-        setPendingJsonFile(null);
-        setPendingImageFile(null);
-        return;
-      }
-      
-      // どちらも見つからない場合
-      setToast({ message: "template.json または背景画像を選択してください。", tone: "error" });
-    },
-    [pendingJsonFile, pendingImageFile, processTemplateRegistration]
   );
 
   const handleStatusChange = useCallback(
@@ -438,7 +377,7 @@ export function AdminTemplatesPage() {
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setSettings((prev) => {
-          const next: CommonSettings = { ...prev, logoImage: reader.result as string };
+          const next = { ...prev, logoImage: reader.result };
           saveCommonSettings(next);
           return next;
         });
@@ -519,10 +458,7 @@ export function AdminTemplatesPage() {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-slate-900">テンプレート管理</h1>
-            <HelpIcon guideUrl="/template_management.html" title="テンプレート管理の操作ガイド" />
-          </div>
+          <h1 className="text-2xl font-semibold text-slate-900">テンプレート管理</h1>
         </div>
 
         <div
@@ -553,17 +489,7 @@ export function AdminTemplatesPage() {
             ⬆️
           </div>
           <p className="text-lg font-semibold text-slate-800">新規登録（ドラッグ&ドロップ）</p>
-          <p className="text-sm text-slate-600">デザイン範囲と背景画像のふたつをアップロードしてください</p>
-          {(pendingJsonFile || pendingImageFile) && (
-            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-              {pendingJsonFile && <p>✓ template.json を読み込み済み</p>}
-              {pendingImageFile && <p>✓ 背景画像を読み込み済み</p>}
-              <p className="mt-1 text-amber-700">
-                {pendingJsonFile && !pendingImageFile && "次に背景画像をアップロードしてください"}
-                {pendingImageFile && !pendingJsonFile && "次に template.json をアップロードしてください"}
-              </p>
-            </div>
-          )}
+          <p>ここに template.json と背景画像をまとめて置いてください</p>
           <input
             ref={inputRef}
             type="file"
@@ -580,9 +506,24 @@ export function AdminTemplatesPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-slate-900">テンプレート一覧</h2>
           </div>
-          <p className="mt-4 text-sm text-slate-600">
-            表示名はダブルクリックで変更できます。詳細は？アイコンからご確認ください。
-          </p>
+          <div className="mt-4 space-y-1 text-base leading-relaxed text-slate-600">
+            <p>・表示名はダブルクリックで変更</p>
+            <p>・テスト／スマホ／PCで表示確認</p>
+            <p>・状態は「下書き・テスト済み・公開中・アーカイブ」から選ぶ</p>
+            <p>・登録後はシミュレーターとPDFで見た目を確認</p>
+            <p>・template.json と背景画像を一緒に置く</p>
+            <p>・画像の名前は JSON に書いた名前と同じ</p>
+            <p>・JSON と画像はブラウザに保存される</p>
+          </div>
+          <div className="mt-3">
+            <button
+              type="button"
+              className="rounded-full border border-rose-200 px-4 py-2 text-xs font-semibold text-rose-600"
+              onClick={handleResetStorage}
+            >
+              保存データを初期化
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
@@ -612,11 +553,7 @@ export function AdminTemplatesPage() {
                           <img
                             src={templatePreviewUrls[template.templateKey]}
                             alt={`${template.name} の背景`}
-                            className="h-full w-full cursor-pointer object-contain transition hover:opacity-80"
-                            onClick={() => {
-                              setPreviewImageUrl(templatePreviewUrls[template.templateKey]);
-                              setPreviewImageName(template.name);
-                            }}
+                            className="h-full w-full object-contain"
                           />
                         ) : (
                           <span className="text-xs text-slate-400">なし</span>
@@ -792,7 +729,7 @@ export function AdminTemplatesPage() {
                         </label>
                       </div>
                     </td>
-                    <td className="px-6 py-4">{formatUpdatedAt(template.updatedAt)}</td>
+                    <td className="px-6 py-4">{template.updatedAt}</td>
                     <td className="px-6 py-4 space-x-2 text-xs">
                       <button
                         type="button"
@@ -841,41 +778,6 @@ export function AdminTemplatesPage() {
         </div>
       </div>
 
-      {previewImageUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => {
-            setPreviewImageUrl(null);
-            setPreviewImageName(null);
-          }}
-        >
-          <div
-            className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
-              <span className="font-semibold text-slate-900">{previewImageName}</span>
-              <button
-                type="button"
-                className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
-                onClick={() => {
-                  setPreviewImageUrl(null);
-                  setPreviewImageName(null);
-                }}
-              >
-                閉じる
-              </button>
-            </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-slate-50 p-8">
-              <img
-                src={previewImageUrl}
-                alt={previewImageName || "プレビュー"}
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

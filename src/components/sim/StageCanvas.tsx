@@ -71,7 +71,7 @@ export function StageCanvas({
   };
   const safeEngravingArea = useMemo(() => {
     const base = template.engravingArea ?? {
-      label: "デザインできる範囲",
+      label: "刻印枠",
       x: 0,
       y: 0,
       w: canvasWidth,

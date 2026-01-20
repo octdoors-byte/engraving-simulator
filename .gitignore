@@ -1,9 +1,4 @@
 node_modules
-dist
-reports
-.node-bin
-*.log
-desktop.ini
 test-results
 playwright-report
 qa-report

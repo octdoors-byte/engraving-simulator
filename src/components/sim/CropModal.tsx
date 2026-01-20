@@ -197,7 +197,7 @@ export function CropModal({ open, imageUrl, crop, onClose, onApply }: CropModalP
             className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white"
             onClick={() => onApply(localCrop)}
           >
-            適用して位置調整へ
+            適用して配置へ
           </button>
         </div>
       </div>

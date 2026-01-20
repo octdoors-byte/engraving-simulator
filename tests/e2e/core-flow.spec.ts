@@ -2,11 +2,6 @@
 import { fileURLToPath } from "url";
 import { test, expect } from "@playwright/test";
 
-// このテストの目的:
-// - テンプレ追加→ロゴアップロード→位置調整→PDF作成までの基本フローを通しで検証するE2E
-// こんな症状のときに実行:
-// - 通し操作で途中失敗/エラーが出る/完了できないときにフロー全体を確認したい場合
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -76,7 +71,7 @@ async function waitForAppReady(page) {
 }
 
 async function waitForReady(page) {
-  await expect(page.getByText("状態: 作成可能")).toBeVisible({ timeout: longTimeout });
+  await expect(page.getByText("状態: 発行可能")).toBeVisible({ timeout: longTimeout });
 }
 
 async function waitForIssued(page) {
@@ -101,8 +96,8 @@ async function waitForDesignsTable(page) {
   if (bodyText.includes("ページが見つかりません")) {
     throw new Error(`デザイン履歴ページが見つかりません: ${page.url()}`);
   }
-  await expect(page.getByRole("heading", { name: "デザイン作成履歴" })).toBeVisible({ timeout: longTimeout });
-  const emptyMessage = page.getByText("デザイン作成履歴がありません。", { exact: true });
+  await expect(page.getByRole("heading", { name: "デザイン発行履歴" })).toBeVisible({ timeout: longTimeout });
+  const emptyMessage = page.getByText("デザイン発行履歴がありません。", { exact: true });
   const firstRow = page.locator("tbody tr").first();
   await Promise.race([
     emptyMessage.waitFor({ state: "visible", timeout: longTimeout }).then(() => "empty"),
@@ -139,9 +134,9 @@ test("TC-E2E-03 お客様：正常フロー", async ({ page }) => {
   await uploadLogo(page, logoOk);
   await waitForReady(page);
 
-  const issueButton = page.getByRole("button", { name: "PDF確認" });
+  const issueButton = page.getByRole("button", { name: "PDFプレビュー" });
   await issueButton.click();
-  await page.getByRole("button", { name: "IDを作成する" }).click();
+  await page.getByRole("button", { name: "IDを発行する" }).click();
   await waitForIssued(page);
 
   const issuedText = await page.locator("div", { hasText: /\d{6}_[A-Z2-9]{8}/ }).first().textContent();
@@ -170,9 +165,9 @@ test("TC-E2E-04 管理：履歴に残りPDF再取得", async ({ page }) => {
   await uploadLogo(page, logoOk);
   await waitForReady(page);
 
-  const issueButton = page.getByRole("button", { name: "PDF確認" });
+  const issueButton = page.getByRole("button", { name: "PDFプレビュー" });
   await issueButton.click();
-  await page.getByRole("button", { name: "IDを作成する" }).click();
+  await page.getByRole("button", { name: "IDを発行する" }).click();
   await waitForIssued(page);
 
   const issuedText = await page.locator("div", { hasText: /\d{6}_[A-Z2-9]{8}/ }).first().textContent();
@@ -190,7 +185,7 @@ test("TC-E2E-04 管理：履歴に残りPDF再取得", async ({ page }) => {
     await expect(page.getByText(issuedId, { exact: true })).toBeVisible({ timeout: longTimeout });
   }
 
-  const previewButton = page.getByRole("button", { name: "確認用PDF" }).first();
+  const previewButton = page.getByRole("button", { name: "確認用プレビュー" }).first();
   await previewButton.click();
   await expect(page.getByRole("button", { name: "ダウンロード" })).toBeEnabled({ timeout: longTimeout });
 });
@@ -206,4 +201,3 @@ test("TC-E2E-05 異常：容量超過", async ({ page }) => {
 
   await expect(page.getByText("5MB 以上のファイルはアップロードできません。")).toBeVisible();
 });
-

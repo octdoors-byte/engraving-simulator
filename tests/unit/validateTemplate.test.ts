@@ -1,10 +1,5 @@
 ﻿import { describe, expect, it } from "vitest";
 import { validateTemplate } from "@/domain/template/validateTemplate";
-// このテストの目的:
-// - テンプレート定義の必須項目や範囲チェックが正しく落ちるかを確認する
-// こんな症状のときに実行:
-// - テンプレート登録が失敗する/通ってはいけないものが通るなど、テンプレのバリデーション挙動を確認したいとき
-
 
 const baseTemplate = {
   templateKey: "test_template_a4",
@@ -74,5 +69,4 @@ describe("validateTemplate", () => {
     expect(result.errors.length).toBeGreaterThan(0);
   });
 });
-
 

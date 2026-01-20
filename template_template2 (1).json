@@ -1,0 +1,19 @@
+{
+  "templateId": "tpl_43q9f1fqd",
+  "name": "template2",
+  "paperSize": "A4",
+  "orientation": "portrait",
+  "dimensions": {
+    "width": 210,
+    "height": 297
+  },
+  "backgroundImage": "background_A4_210x297_portrait.png",
+  "engravingArea": {
+    "top": 79.07547890629263,
+    "left": 72.04304488603898,
+    "width": 20,
+    "height": 15
+  },
+  "createdAt": "2026-01-09T02:33:49.780Z",
+  "createdBy": "かわうそ背景作成ツール"
+}

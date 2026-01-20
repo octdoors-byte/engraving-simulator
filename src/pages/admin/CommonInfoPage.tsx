@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Toast } from "@/components/common/Toast";
-import { HelpIcon } from "@/components/common/HelpIcon";
 import type { CommonSettings } from "@/domain/types";
 import { loadCommonSettings, saveCommonSettings } from "@/storage/local";
 
@@ -18,32 +17,32 @@ Q. 推奨ブラウザは？
 Q. 作ったデザインは保存できますか？
 ブラウザに保存されます。別の端末では再度デザインしてください。`;
 const DEFAULT_FAQ = [
-  "Q.スマホでもデザイン画面を使えますか？",
+  "Q.スマホでもデザインエディタを使えますか？",
   "スマートフォンでもご利用いただけます。PCと操作方法は変わりません。",
   "",
   "Q.推奨ブラウザを教えてください。",
   "Microsoft Edge、Google Chrome、Firefox、Safariです。いずれも最新バージョンでのご利用をおすすめいたします。",
   "",
-  "Q.買い物アプリでもデザイン画面を使えますか？",
-  "アプリでは動かない場合があります。デザイン画面が動かなかった場合は、大変お手数ですが、デザインだけスマートフォンのインターネット閲覧アプリ（ブラウザ）で行っていただくか、ブラウザからデザイン→注文を行って下さい。",
+  "Q.買い物アプリでもデザインエディタを使えますか？",
+  "アプリでは動かない場合があります。デザインエディタが動かなかった場合は、大変お手数ですが、デザインだけスマートフォンのインターネット閲覧アプリ（ブラウザ）で行っていただくか、ブラウザからデザイン→注文を行って下さい。",
   "",
   "Q.デザインIDとはなんですか？",
-  "お客様がデザインする毎に作成される、固有の英数字です。デザインをして、デザインIDを作成していただいたら、商品ページに戻り、デザインID欄に作成された英数字を貼り付けてから、ご購入手続きにお進み下さい。",
+  "お客様がデザインする毎に発行される、ユニークな英数字です。デザインをして、デザインIDを発行していただいたら、商品ページに戻り、デザインID欄に発行された英数字を貼り付けてから、ご購入手続きにお進み下さい。",
   "",
-  "Q.デザイン画面の読み込みに時間がかかります。",
+  "Q.キャンバスの読み込みに時間がかかります。",
   "申し訳ございません。たくさんの方が一度にご利用いただいたりすると、一時的に動作が遅くなります。お手数ですが読み込みが終わるまでお待ち下さい。",
   "",
-  "Q.確認してから気に入らないのでやり直したいのですが？",
-  "何度でもデザイン画面で編集ボタンを押すとデザインをやり直すことができます。デザインを完了するボタンを押すと、やり直しは出来ませんので、その場合は再度新しくデザインし直して下さい。",
+  "Q.プレビューしてから気に入らないのでやり直したいのですが？",
+  "何度でもキャンバスで編集ボタンを押すとデザインをやり直すことができます。デザインを完了するボタンを押すと、やり直しは出来ませんので、その場合は再度新しくデザインし直して下さい。",
   "",
   "Q.作ったデザインが消えてしまいました。",
-  "インターネット閲覧アプリ（ブラウザ）の戻るボタンを押すと、作ったデザインが消える場合がございます。申し訳ございませんが、再度デザインし直してくださいますようお願いいたします。",
+  "ブラウザの戻るボタンを押すと、作ったデザインが消える場合がございます。申し訳ございませんが、再度デザインし直してくださいますようお願いいたします。",
   "",
   "Q.少しずつデザインを変えたものを複数注文したいのですが。",
   "１枚のみロゴをいれたデザインをしてください。テスト刻印後に店舗からご連絡します。",
   "",
   "Q.著作権はどうなりますか？",
-  "お客様が当店のデザイン画面システムを利用して作成したデザインの著作権はお客様に帰属します。当店が著作権を行使したり所有権を主張することはございません。",
+  "お客様が当店のデザインエディタシステムを利用して作成したデザインの著作権はお客様に帰属します。当店が著作権を行使したり所有権を主張することはございません。",
   "",
   "Q.キャラクターもののオリジナルグッズを作ってもらえませんか？",
   "申し訳ございませんが、当店では権利侵害に当たる行為に加担することはできません。また、お客様がデザインして当店が作成した成果物によって起きたあらゆる損害について、当店ではその責任を負いません。",
@@ -66,7 +65,6 @@ export function CommonInfoPage() {
   const dragIndexRef = useRef<number | null>(null);
   const settingsRef = useRef<CommonSettings>(settings);
   const [isDirty, setIsDirty] = useState(false);
-  const [hasBackup, setHasBackup] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -181,73 +179,14 @@ export function CommonInfoPage() {
     setIsDirty(false);
   }, []);
 
-  const handleBackup = useCallback(() => {
-    const current = settingsRef.current;
-    const backupKey = "ksim:commonSettings:backup";
-    localStorage.setItem(backupKey, JSON.stringify(current));
-    setHasBackup(true);
-    setToast({ message: "現在の設定をバックアップしました。", tone: "success" });
-  }, []);
-
-  const handleRestoreFromBackup = useCallback(() => {
-    const backupKey = "ksim:commonSettings:backup";
-    const backup = localStorage.getItem(backupKey);
-    if (!backup) {
-      setToast({ message: "バックアップが見つかりません。", tone: "error" });
-      return;
-    }
-    try {
-      const restored = JSON.parse(backup) as CommonSettings;
-      setSettings(restored);
-      settingsRef.current = restored;
-      setIsDirty(true);
-      setPreviewKey(Date.now());
-      setToast({ message: "バックアップから復元しました。「保存する」を押して反映してください。", tone: "info" });
-    } catch (error) {
-      console.error(error);
-      setToast({ message: "バックアップの復元に失敗しました。", tone: "error" });
-    }
-  }, []);
-
-  const handleRestore = useCallback(() => {
-    const confirmed = window.confirm("設定を初期値に戻しますか？この操作は取り消せません。\n\n※ 念のため、事前に「バックアップを取る」ボタンで現在の設定を保存しておくことをおすすめします。");
-    if (!confirmed) return;
-    const defaultSettings: CommonSettings = {
-      headerText: "",
-      footerText: "",
-      landingTitle: "デザインシミュレーター",
-      logoAlign: "left",
-      headerTextAlign: "left",
-      footerTextAlign: "center",
-      logoSize: "md",
-      headerTextSize: "md",
-      footerTextSize: "md"
-    };
-    setSettings(defaultSettings);
-    settingsRef.current = defaultSettings;
-    setIsDirty(true);
-    setPreviewKey(Date.now());
-    setToast({ message: "設定を初期値に戻しました。「保存する」を押して反映してください。", tone: "info" });
-  }, []);
-
-  // ページ読み込み時にバックアップの有無を確認
-  useEffect(() => {
-    const backupKey = "ksim:commonSettings:backup";
-    const backup = localStorage.getItem(backupKey);
-    setHasBackup(!!backup);
-  }, []);
-
   return (
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">基本設定</h1>
-          <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
-        </div>
-        <p className="mt-2 text-sm text-slate-600">トップメニューに共通説明を掲載するための設定です。詳細は？アイコンからご確認ください。</p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <h1 className="text-2xl font-semibold text-slate-900">お客様向け 共通説明ページ</h1>
+        <p className="mt-2 text-sm text-slate-600">トップメニューに共通説明を掲載するための設定です。</p>
+        <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
             className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
@@ -259,29 +198,6 @@ export function CommonInfoPage() {
             onClick={handleManualSave}
           >
             保存する
-          </button>
-          <button
-            type="button"
-            className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-100"
-            onClick={handleBackup}
-          >
-            バックアップを取る
-          </button>
-          {hasBackup && (
-            <button
-              type="button"
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100"
-              onClick={handleRestoreFromBackup}
-            >
-              バックアップから復元
-            </button>
-          )}
-          <button
-            type="button"
-            className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100"
-            onClick={handleRestore}
-          >
-            初期値に戻す
           </button>
           <span className="text-xs text-slate-500">※ 「保存する」を押すと設定が反映されます。</span>
         </div>
@@ -300,7 +216,8 @@ export function CommonInfoPage() {
                   const reader = new FileReader();
                   reader.onload = () => {
                     if (typeof reader.result === "string") {
-                      handleChange("logoImage", reader.result as string);
+                      setSettings((prev) => ({ ...prev, logoImage: reader.result }));
+                      saveCommonSettings({ ...(settings ?? {}), logoImage: reader.result });
                     }
                   };
                   reader.readAsDataURL(file);
@@ -313,7 +230,11 @@ export function CommonInfoPage() {
                 type="text"
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.landingTitle ?? "デザインシミュレーター"}
-                onChange={(event) => handleChange("landingTitle", event.target.value)}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setSettings((prev) => ({ ...prev, landingTitle: value }));
+                  saveCommonSettings({ ...(settings ?? {}), landingTitle: value });
+                }}
               />
             </div>
             <div>
@@ -322,7 +243,11 @@ export function CommonInfoPage() {
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.headerText ?? ""}
-                onChange={(event) => handleChange("headerText", event.target.value)}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setSettings((prev) => ({ ...prev, headerText: value }));
+                  saveCommonSettings({ ...(settings ?? {}), headerText: value });
+                }}
               />
             </div>
             <div>
@@ -331,7 +256,11 @@ export function CommonInfoPage() {
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.footerText ?? ""}
-                onChange={(event) => handleChange("footerText", event.target.value)}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setSettings((prev) => ({ ...prev, footerText: value }));
+                  saveCommonSettings({ ...(settings ?? {}), footerText: value });
+                }}
               />
             </div>
             <div>
@@ -339,7 +268,11 @@ export function CommonInfoPage() {
               <select
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.headerTextAlign ?? "left"}
-                onChange={(event) => handleChange("headerTextAlign", event.target.value as CommonSettings["headerTextAlign"])}
+                onChange={(event) => {
+                  const value = event.target.value as CommonSettings["headerTextAlign"];
+                  setSettings((prev) => ({ ...prev, headerTextAlign: value }));
+                  saveCommonSettings({ ...(settings ?? {}), headerTextAlign: value });
+                }}
               >
                 <option value="left">左</option>
                 <option value="center">中央</option>
@@ -351,7 +284,11 @@ export function CommonInfoPage() {
               <select
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.footerTextAlign ?? "center"}
-                onChange={(event) => handleChange("footerTextAlign", event.target.value as CommonSettings["footerTextAlign"])}
+                onChange={(event) => {
+                  const value = event.target.value as CommonSettings["footerTextAlign"];
+                  setSettings((prev) => ({ ...prev, footerTextAlign: value }));
+                  saveCommonSettings({ ...(settings ?? {}), footerTextAlign: value });
+                }}
               >
                 <option value="left">左</option>
                 <option value="center">中央</option>
@@ -363,7 +300,11 @@ export function CommonInfoPage() {
               <select
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.logoSize ?? "md"}
-                onChange={(event) => handleChange("logoSize", event.target.value as CommonSettings["logoSize"])}
+                onChange={(event) => {
+                  const value = event.target.value as CommonSettings["logoSize"];
+                  setSettings((prev) => ({ ...prev, logoSize: value }));
+                  saveCommonSettings({ ...(settings ?? {}), logoSize: value });
+                }}
               >
                 <option value="sm">小</option>
                 <option value="md">中</option>
@@ -375,7 +316,11 @@ export function CommonInfoPage() {
               <select
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.headerTextSize ?? "md"}
-                onChange={(event) => handleChange("headerTextSize", event.target.value as CommonSettings["headerTextSize"])}
+                onChange={(event) => {
+                  const value = event.target.value as CommonSettings["headerTextSize"];
+                  setSettings((prev) => ({ ...prev, headerTextSize: value }));
+                  saveCommonSettings({ ...(settings ?? {}), headerTextSize: value });
+                }}
               >
                 <option value="sm">小</option>
                 <option value="md">中</option>
@@ -387,7 +332,11 @@ export function CommonInfoPage() {
               <select
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.footerTextSize ?? "md"}
-                onChange={(event) => handleChange("footerTextSize", event.target.value as CommonSettings["footerTextSize"])}
+                onChange={(event) => {
+                  const value = event.target.value as CommonSettings["footerTextSize"];
+                  setSettings((prev) => ({ ...prev, footerTextSize: value }));
+                  saveCommonSettings({ ...(settings ?? {}), footerTextSize: value });
+                }}
               >
                 <option value="sm">小</option>
                 <option value="md">中</option>
@@ -627,19 +576,19 @@ export function CommonInfoPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between text-sm text-slate-700">
-            <span>確認（ページ下部にスクロールして確認してください）</span>
+            <span>プレビュー（ページ下部にスクロールして確認してください）</span>
             <button
               type="button"
               className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700"
               onClick={() => setPreviewKey(Date.now())}
             >
-              確認を更新
+              プレビューを更新
             </button>
           </div>
           <div className="h-[70vh] rounded-xl border border-slate-100 bg-slate-50">
             <iframe
               key={previewKey}
-              title="共通説明確認"
+              title="共通説明プレビュー"
               src="/common?hideNav=1"
               className="h-full w-full rounded-xl"
             />

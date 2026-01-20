@@ -1,10 +1,5 @@
-﻿import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { getTemplate } from "@/storage/local";
-// このテストの目的:
-// - ローカルストレージ保存のテンプレデータを読み込む際に欠損項目を正規化できるかを確認する
-// こんな症状のときに実行:
-// - 既存テンプレが壊れている/項目欠けで画面が落ちるときの再現と確認に使う
-
 
 const KEY_PREFIX = "ksim:template:";
 
@@ -30,8 +25,7 @@ describe("getTemplate normalization", () => {
 
     const template = getTemplate("missing_area");
     expect(template?.engravingArea).toBeTruthy();
-    // 現仕様のデフォルトラベルは「デザインできる範囲」
-    expect(template?.engravingArea.label).toBe("デザインできる範囲");
+    expect(template?.engravingArea.label).toBe("刻印枠");
     expect(template?.engravingArea.x).toBe(0);
     expect(template?.engravingArea.y).toBe(0);
     expect(template?.engravingArea.w).toBe(300);
@@ -73,4 +67,3 @@ describe("getTemplate normalization", () => {
     expect(template?.background.canvasHeightPx).toBe(1);
   });
 });
-

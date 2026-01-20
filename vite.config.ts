@@ -9,7 +9,7 @@ export default defineConfig({
     strictPort: true
   },
   build: {
-    minify: "esbuild"
+    minify: "terser"
   },
   resolve: {
     alias: {

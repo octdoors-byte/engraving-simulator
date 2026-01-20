@@ -1,10 +1,5 @@
 ﻿import { describe, expect, it } from "vitest";
 import { generateDesignId } from "@/domain/id/designId";
-// このテストの目的:
-// - デザインID生成のフォーマットと使用文字が仕様通りかを確認する
-// こんな症状のときに実行:
-// - 発行されたIDの形式が変/重複する/使えない文字が入る、といった不具合確認に使う
-
 
 const allowed = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
@@ -25,5 +20,4 @@ describe("generateDesignId", () => {
     expect(isAllowedSuffix(suffix)).toBe(true);
   });
 });
-
 

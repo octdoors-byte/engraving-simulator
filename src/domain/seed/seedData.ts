@@ -40,7 +40,7 @@ function createTemplateSet(): Template[] {
       templateKey: "certificate_cover_a4_v1",
       name: "証書カバー A4 右下刻印",
       status: "published",
-      updatedAt: "2026-01-19T11:34:00.000+09:00",
+      updatedAt: "2026-01-09T10:00:00.000+09:00",
       background: {
         fileName: "certificate-cover-a4.png",
         canvasWidthPx: 1200,
@@ -69,42 +69,10 @@ function createTemplateSet(): Template[] {
       }
     },
     {
-      templateKey: "template_20260115",
-      name: "テンプレート20260115",
-      status: "published",
-      updatedAt: "2026-01-15T10:00:00.000+09:00",
-      background: {
-        fileName: "certificate-cover-a4.png",
-        canvasWidthPx: 1200,
-        canvasHeightPx: 1600
-      },
-      engravingArea: {
-        label: "デザインできる範囲",
-        x: 150,
-        y: 1100,
-        w: 900,
-        h: 300
-      },
-      placementRules: {
-        allowRotate: true,
-        keepInsideEngravingArea: true,
-        minScale: 0.1,
-        maxScale: 6.0
-      },
-      logoSettings: {
-        monochrome: false
-      },
-      pdf: {
-        pageSize: "A4",
-        orientation: "portrait",
-        dpi: 300
-      }
-    },
-    {
       templateKey: "certificate_cover_a4_left_v1",
       name: "証書カバー A4 左下刻印",
       status: "tested",
-      updatedAt: "2026-01-19T11:34:00.000+09:00",
+      updatedAt: "2026-01-09T10:30:00.000+09:00",
       background: {
         fileName: "certificate-cover-a4.png",
         canvasWidthPx: 1200,
@@ -359,9 +327,6 @@ export async function seedIfEmpty(mode: "ifEmpty" | "always" = "ifEmpty"): Promi
 
     localStorage.setItem(SEED_KEY, "1.1.0");
   } catch (error) {
-    const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-    const stack = error instanceof Error ? error.stack : undefined;
-    console.error("seed failed raw", error);
-    console.error("seed failed", message, stack ?? "", error);
+    console.error("seed failed", error);
   }
 }

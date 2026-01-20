@@ -1,1050 +1,410 @@
 <!DOCTYPE html>
-<html lang="ja" data-theme="light">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>名入れ刻印シミュレーターの使い方ガイド</title>
+    <title>名入れ刻印シミュレーター ご利用ガイド</title>
     <style>
-      :root {
-        --primary: #2f80ed;
-        --primary-hover: #1e5bb8;
-        --background-color: #ffffff;
-        --text-color: #333333;
-        --muted-text: #666666;
-        --section-bg: #f9f9f9;
-        --border-radius: 8px;
-        
-        /* フォントサイズ統一 */
-        --font-size-base: 1rem;
-        --font-size-lg: 1.1rem;
-        --font-size-xl: 1.2rem;
-        --font-size-sm: 0.95rem;
-        --font-size-xs: 0.9rem;
-        
-        /* 色の統一 */
-        --step-1-bg: #fff5f5;
-        --step-1-border: #f97316;
-        --step-1-text: #c2410c;
-        --step-2-bg: #f0f9ff;
-        --step-2-border: #0ea5e9;
-        --step-2-text: #0369a1;
-        --step-3-bg: #fffbeb;
-        --step-3-border: #f59e0b;
-        --step-3-text: #92400e;
-        --step-4-bg: #f0f9ff;
-        --step-4-border: #0ea5e9;
-        --step-4-text: #0369a1;
-        
-        /* スペーシング統一 */
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 0.75rem;
-        --spacing-md: 1rem;
-        --spacing-lg: 1.5rem;
-        --spacing-xl: 2rem;
-      }
-
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
       body {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-        line-height: 1.6;
-        color: var(--text-color);
-        background-color: var(--background-color);
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0;
-        overflow-x: hidden;
-      }
-
-      /* 共通レイアウト調整 */
-      main {
-        padding: 2rem;
-      }
-
-      h1,
-      h2,
-      h3 {
-        color: #111;
-        font-weight: 700;
-      }
-
-      h2 {
-        border-bottom: 2px solid var(--primary);
-        padding-bottom: 0.5rem;
-        margin-top: 3rem;
-        margin-bottom: 1.5rem;
-        font-size: 1.75rem;
-      }
-
-      h3 {
-        font-size: 1.25rem;
-        margin-top: 1.5rem;
-        margin-bottom: 0.75rem;
-        color: #444;
-      }
-
-      /* ヒーローセクション */
-      .hero {
-        background-color: #f0f7ff;
-        text-align: center;
-        padding: 4rem 2rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid #e0e0e0;
-      }
-
-      .hero h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: var(--primary);
-      }
-
-      .hero p.lead {
-        font-size: 1.2rem;
-        color: var(--muted-text);
-        margin-bottom: 2rem;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .cta-container {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .btn-primary {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        color: white;
-        padding: 1rem 2rem;
-        font-size: 1.1rem;
-        font-weight: bold;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: background-color 0.2s;
-        display: inline-block;
-      }
-
-      .btn-primary:hover {
-        background-color: var(--primary-hover);
-        border-color: var(--primary-hover);
-      }
-
-      .btn-secondary {
-        background-color: white;
-        border: 2px solid var(--primary);
-        color: var(--primary);
-        padding: 1rem 2rem;
-        font-size: 1.1rem;
-        font-weight: bold;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: background-color 0.2s;
-        display: inline-block;
-      }
-
-      .btn-secondary:hover {
-        background-color: #f0f7ff;
-      }
-
-      /* 図解セクション */
-      .step-section {
-        margin-bottom: 4rem;
-      }
-
-      figure {
         margin: 0;
-        padding: 0;
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: var(--border-radius);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        position: relative;
+        font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f7f5;
+        color: #0f172a;
       }
-
-      figure img {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-
-      .image-fallback {
-        display: none;
-        padding: 60px 40px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        border: 2px dashed #94a3b8;
-        border-radius: 12px;
+      header {
+        background: #f0f0ec;
+        color: #0f172a;
+        padding: 26px 20px 22px;
         text-align: center;
-        color: #64748b;
-        min-height: 300px;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        border-bottom: 1px solid #e2e8f0;
       }
-      .image-fallback-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        opacity: 0.7;
+      header h1 {
+        margin: 0 0 8px;
+        font-size: 26px;
+        letter-spacing: 0.02em;
       }
-      .image-fallback-text {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+      header p {
+        margin: 0;
+        font-size: 14px;
         color: #475569;
       }
-      .image-fallback-desc {
-        font-size: 0.9rem;
-        color: #64748b;
-        line-height: 1.6;
+      main {
+        max-width: 1040px;
+        margin: 24px auto 56px;
+        padding: 0 18px;
       }
-      .image-fallback p {
-        margin: 0 0 8px;
-        font-size: 16px;
-      }
-      .image-fallback p:first-child {
-        font-weight: bold;
-      }
-
-      figcaption {
-        padding: 1rem;
-        background: #fafafa;
-        border-top: 1px solid #eee;
-        font-size: 0.95rem;
-        color: #555;
-        text-align: center;
-        font-weight: 500;
-      }
-
-      /* Grid layout for STEP A, B, C */
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-
-      .grid article {
-        background: #f9f9f9;
-        padding: 1.5rem;
-        border-radius: var(--border-radius);
-        border-left: 4px solid var(--primary);
-      }
-
-      .grid article header {
-        font-size: 1.1rem;
-        color: var(--primary);
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-      }
-
-      /* 重要ポイントボックス */
-      .highlight-box {
-        background-color: #fff8e1;
-        border-left: 5px solid #ffc107;
-        padding: 1.5rem;
-        margin: 2rem 0;
-        border-radius: 4px;
-      }
-
-      .highlight-box h3 {
-        margin-top: 0;
-        color: #d35400;
-      }
-
-      /* 注意事項 */
-      .alert-box {
-        background-color: #fff5f5;
-        border: 1px solid #ffcdd2;
-        color: #c62828;
-        padding: 1.5rem;
-        border-radius: var(--border-radius);
-        margin-bottom: 2rem;
-      }
-
-      .alert-box strong {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
-      }
-
-      /* FAQ */
-      details {
-        margin-bottom: 1rem;
-        border: 1px solid #eee;
-        border-radius: var(--border-radius);
-        padding: 0.5rem 1rem;
+      .card {
         background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+        margin-bottom: 20px;
       }
-
-      summary {
-        font-weight: bold;
-        cursor: pointer;
-        padding: 0.5rem 0;
-      }
-
-      details[open] summary {
-        border-bottom: 1px solid #eee;
-        margin-bottom: 0.5rem;
-      }
-
-      /* フッター */
-      footer {
-        background-color: #f0f0f0;
-        padding: 3rem 2rem;
-        text-align: center;
-        margin-top: 4rem;
-        border-top: 1px solid #e0e0e0;
-      }
-
-      .footer-links a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-      /* ステップボックス統一スタイル */
-      .step-box {
-        padding: var(--spacing-lg);
-        border-radius: var(--border-radius);
-        margin-bottom: var(--spacing-lg);
-        border-left: 5px solid;
-      }
-      
-      .step-box-header {
+      h2 {
+        margin: 0 0 14px;
+        font-size: 19px;
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
-        margin-bottom: var(--spacing-sm);
+        gap: 10px;
       }
-      
-      .step-number {
+      p.lead {
+        margin: 6px 0 0;
+        color: #475569;
+        line-height: 1.6;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        background: #fff7ed;
+        color: #c2410c;
+        border: 1px solid #fed7aa;
+      }
+      .steps {
+        display: grid;
+        gap: 14px;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #f8fafc, #ffffff);
+        align-items: flex-start;
+      }
+      .badge-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: #0ea5e9;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.25);
+      }
+      .step strong { color: #0f172a; font-size: 16px; }
+      .step ul { margin: 6px 0 0; padding-left: 18px; }
+      .step li { margin: 4px 0; font-size: 14px; color: #334155; }
+      .icon-bubble {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #e0f2fe;
+        display: grid;
+        place-items: center;
+        box-shadow: inset 0 0 0 1px #bae6fd;
+      }
+      .icon-bubble svg {
+        width: 22px;
+        height: 22px;
+        stroke: #0284c7;
+        fill: none;
+        stroke-width: 1.6;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 8px 0 0;
+      }
+      ul { padding-left: 20px; margin: 6px 0; }
+      li { margin: 4px 0; color: #334155; }
+      .points {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .point-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 14px;
+        background: #fff;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+      }
+      .point-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: #fff7ed;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 6px 14px rgba(249, 115, 22, 0.18);
+        border: 1px solid #fed7aa;
+      }
+      .point-icon svg {
+        width: 26px;
+        height: 26px;
+        stroke: #c2410c;
+        fill: none;
+        stroke-width: 2;
+      }
+      .mini-icons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .mini-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+        font-size: 12px;
+        color: #475569;
+      }
+      .mini-icon svg {
+        width: 20px;
+        height: 20px;
+        stroke: #0f172a;
+        fill: none;
+        stroke-width: 1.8;
+      }
+      .illus-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .illus-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+      }
+      .illus-card svg {
+        width: 100%;
+        height: 120px;
+        display: block;
+      }
+      .illus-caption {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #475569;
+        text-align: center;
+      }
+      .tip {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+      .quick-check {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .check-item {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 12px;
+        background: #f8fafc;
+        font-size: 14px;
+      }
+      .feature {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fafafa;
+      }
+      .feature img {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+      }
+      .feature h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      .feature p {
+        margin: 0 0 6px;
+        color: #475569;
+        line-height: 1.6;
+      }
+      .badge {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 32px;
         height: 32px;
-        border-radius: 50%;
-        color: white;
-        font-weight: bold;
-        font-size: 14px;
-        flex-shrink: 0;
-      }
-      
-      .step-box h3 {
-        margin: 0;
-        font-size: var(--font-size-lg);
+        border-radius: 10px;
+        background: #f97316;
+        color: #fff;
         font-weight: 700;
+        box-shadow: 0 6px 12px rgba(249, 115, 22, 0.25);
+        margin-right: 8px;
       }
-      
-      .step-box p {
-        margin: 0;
-        line-height: 1.8;
-        font-size: var(--font-size-base);
+      .footer-note {
+        text-align: center;
+        color: #475569;
+        font-size: 12px;
+        margin-top: 12px;
       }
-      
-      .step-box-tip {
-        margin-top: var(--spacing-sm);
-        padding: var(--spacing-sm);
-        background: #fff;
-        border-radius: 6px;
-        border: 1px solid;
-      }
-      
-      .step-box-tip p {
-        margin: 0;
-        font-size: var(--font-size-xs);
-        color: var(--muted-text);
-        line-height: 1.6;
-      }
-      
-      .step-1 {
-        background: var(--step-1-bg);
-        border-left-color: var(--step-1-border);
-      }
-      
-      .step-1 .step-number {
-        background: var(--step-1-border);
-      }
-      
-      .step-1 h3 {
-        color: var(--step-1-text);
-      }
-      
-      .step-1 .step-box-tip {
-        border-color: #fecdd3;
-      }
-      
-      .step-2 {
-        background: var(--step-2-bg);
-        border-left-color: var(--step-2-border);
-      }
-      
-      .step-2 .step-number {
-        background: var(--step-2-border);
-      }
-      
-      .step-2 h3 {
-        color: var(--step-2-text);
-      }
-      
-      .step-2 .step-box-tip {
-        border-color: #bae6fd;
-      }
-      
-      .step-3 {
-        background: var(--step-3-bg);
-        border-left-color: var(--step-3-border);
-      }
-      
-      .step-3 .step-number {
-        background: var(--step-3-border);
-      }
-      
-      .step-3 h3 {
-        color: var(--step-3-text);
-      }
-      
-      .step-3 .step-box-tip {
-        border-color: #fde68a;
-      }
-      
-      .step-4 {
-        background: var(--step-4-bg);
-        border-left-color: var(--step-4-border);
-      }
-      
-      .step-4 .step-number {
-        background: var(--step-4-border);
-      }
-      
-      .step-4 h3 {
-        color: var(--step-4-text);
-      }
-      
-      /* サブセクション */
-      .sub-section {
-        margin-bottom: var(--spacing-lg);
-      }
-      
-      .sub-section h4 {
-        margin: 0 0 var(--spacing-xs) 0;
-        font-size: var(--font-size-base);
-        font-weight: 600;
-      }
-      
-      .sub-section-box {
-        padding: var(--spacing-md);
-        background: #fff;
-        border-radius: 6px;
-        border: 1px solid;
-        margin-bottom: var(--spacing-sm);
-      }
-      
-      .sub-section-box p {
-        margin: 0 0 var(--spacing-sm) 0;
-        line-height: 1.8;
-        font-size: var(--font-size-base);
-      }
-      
-      .sub-section-box ol {
-        margin: 0 0 0 1.5rem;
-        padding: 0;
-        line-height: 1.8;
-        font-size: var(--font-size-sm);
-      }
-      
-      .info-box {
-        padding: var(--spacing-sm);
-        border-radius: 4px;
-        margin-bottom: var(--spacing-sm);
-      }
-      
-      .info-box p {
-        margin: 0;
-        line-height: 1.8;
-        font-size: var(--font-size-sm);
-      }
-      
-      /* ポイントカード */
-      .point-card {
-        padding: var(--spacing-lg);
-        border-radius: 12px;
-        border: 2px solid;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-      
-      .point-card-icon {
-        font-size: 2.5rem;
-        margin-bottom: var(--spacing-xs);
-      }
-      
-      .point-card h3 {
-        margin: 0 0 var(--spacing-xs) 0;
-        font-size: var(--font-size-lg);
-        font-weight: 700;
-      }
-      
-      .point-card p {
-        margin: 0;
-        font-size: var(--font-size-sm);
-        line-height: 1.6;
-      }
-      
-      /* テキストスタイル統一 */
-      .text-muted {
-        color: var(--muted-text);
-        font-size: var(--font-size-sm);
-      }
-      
-      .text-small {
-        font-size: var(--font-size-sm);
-      }
-      
-      .text-xs {
-        font-size: var(--font-size-xs);
-      }
-      
-      .section-intro {
-        font-size: var(--font-size-lg);
-        margin-bottom: var(--spacing-xl);
-        line-height: 1.8;
-      }
-      
-      /* 特定のクラス内の要素にもリストスタイルを適用しない */
-      .step-box p,
-      .step-box div,
-      .step-box strong,
-      .step-box span,
-      .highlight-box p,
-      .highlight-box div,
-      .alert-box p,
-      .alert-box div,
-      .info-box p,
-      .info-box div {
-        list-style: none !important;
-        list-style-type: none !important;
-        list-style-image: none !important;
-      }
-      
-      /* 通常のテキスト要素にリストスタイルを適用しない */
-      p, div, span, strong, em, h1, h2, h3, h4, h5, h6, section, article, header, footer, main, aside, nav, figure, figcaption {
-        list-style: none !important;
-        list-style-type: none !important;
-        list-style-image: none !important;
-      }
-      
-      /* リストスタイル統一 */
-      ul {
-        list-style-type: disc;
-        margin: var(--spacing-md) 0;
-        padding-left: 1.5rem;
-        line-height: 1.8;
-      }
-      
-      ul > li {
-        display: list-item;
-        list-style-type: disc;
-        margin-bottom: var(--spacing-xs);
-      }
-      
-      ol {
-        list-style-type: decimal;
-        margin: var(--spacing-md) 0;
-        padding-left: 1.5rem;
-        line-height: 1.8;
-      }
-      
-      ol > li {
-        display: list-item;
-        list-style-type: decimal;
-        margin-bottom: var(--spacing-xs);
-      }
-      
-      /* レスポンシブ調整 */
-      @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 1.8rem;
-        }
-        .hero p.lead {
-          font-size: var(--font-size-base);
-        }
-        main {
-          padding: var(--spacing-md);
-        }
-        .cta-container {
-          flex-direction: column;
-        }
-        .btn-primary,
-        .btn-secondary {
-          width: 100%;
-          text-align: center;
-        }
-        .grid {
-          grid-template-columns: 1fr;
-        }
-        .point-card {
-          padding: var(--spacing-md);
-        }
+      @media (min-width: 768px) {
+        header h1 { font-size: 32px; }
+        .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
     </style>
   </head>
   <body>
-    <!-- 1. ヒーローセクション -->
-    <header class="hero">
-      <div class="container">
-        <h1>🎨 刻印シミュレーター 使い方ガイド</h1>
-        <p class="lead">
-          初めての方でも安心！<strong>4つのステップ</strong>で簡単にデザインが完成します。<br />
-          操作で困ったときは、このページを参考にしてください。
-        </p>
-        
-        <!-- ポイント3つ -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg); margin: 2.5rem 0; max-width: 900px; margin-left: auto; margin-right: auto;">
-          <div class="point-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #0ea5e9;">
-            <div class="point-card-icon">📸</div>
-            <h3 style="color: #0369a1;">1. 画像をアップロード</h3>
-            <p style="color: #0c4a6e;">ロゴや画像ファイルを選ぶだけ。すぐに始められます。</p>
-          </div>
-          <div class="point-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;">
-            <div class="point-card-icon">✂️</div>
-            <h3 style="color: #92400e;">2. 位置とサイズを調整</h3>
-            <p style="color: #78350f;">ドラッグで移動、角をドラッグでサイズ変更。簡単です。</p>
-          </div>
-          <div class="point-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-            <div class="point-card-icon">🎯</div>
-            <h3 style="color: #1e40af;">3. デザインIDを発行</h3>
-            <p style="color: #1e3a8a;">確認してからIDを発行。商品購入に使えます。</p>
-          </div>
-        </div>
-        
-        <div class="cta-container">
-          <a href="#usage-steps" class="btn-primary" role="button" aria-label="使い方を確認する">📖 使い方を確認する</a>
-          <a href="#troubleshooting" class="btn-secondary" role="button" aria-label="トラブルシューティングへ移動">❓ 困ったときはこちら</a>
-        </div>
-      </div>
+    <header>
+      <h1>名入れ刻印シミュレーター ご利用ガイド</h1>
+      <p>リンクを開いて、画像を置いて、保存用のファイルを送るだけ。初めてでもすぐ終わります。</p>
     </header>
 
-    <main class="container">
-      <!-- 2. 使い方（図解①） -->
-      <section id="usage-steps" class="step-section">
-        <h2>✨ 1. 迷わない使い方の手順（4ステップ）</h2>
-        <p class="section-intro">
-          <strong>たった4ステップ</strong>で、あなただけのオリジナルデザインが完成します！<br />
-          画面<strong>左側のメニュー</strong>を上から順番に操作していくだけ。各ステップは<strong>色分け</strong>されているので、今どのステップかすぐにわかります。<br />
-          <span class="text-muted">💡 初めての方でも、このガイドを見ながら進めれば大丈夫です。</span>
-        </p>
-
-        <figure>
-          <img
-            src="./guide-shots/sim-template.png"
-            alt="使い方4ステップ：1.画像ファイルを選択 2.トリミングを削除 3.ここでデザインIDを保存 4.PDFプレビュー"
-            loading="lazy"
-            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
-          />
-          <div class="image-fallback">
-            <div class="image-fallback-icon">📋</div>
-            <div class="image-fallback-text">使い方4ステップの図解</div>
-            <div class="image-fallback-desc">
-              画面左側に4つのステップが表示されます<br />
-              ステップ1（ピンク）: ロゴをアップロード<br />
-              ステップ2（青）: トリミングと透過<br />
-              ステップ3（黄色/オレンジ）: 配置して発行<br />
-              ステップ4（青）: PDFプレビューとデザインID発行
-            </div>
+    <main>
+      <section class="card">
+        <h2>3ステップで完了 <span class="pill">初めてでも簡単</span></h2>
+        <p class="lead">大まかな流れは「リンクを開く → 画像を置く → 保存用のファイルを送る」の3つだけ。画面のイメージとセットで確認できます。</p>
+        <div class="mini-icons">
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h13" /><path d="M13 6l7 6-7 6" /></svg>
+            URLを開く
           </div>
-          <figcaption>画面左側のメニューを上から順番に操作していきます</figcaption>
-        </figure>
-
-        <div style="margin: var(--spacing-xl) 0;">
-          <div class="step-box step-1">
-            <div class="step-box-header">
-              <span class="step-number">1</span>
-              <h3>ステップ1：ロゴをアップロード</h3>
-            </div>
-            <p>
-              <strong>「画像を追加」</strong>エリアをクリックするか、画像ファイルをドラッグ&ドロップします。<br />
-              <span class="text-muted">📎 JPG、PNG、GIF形式に対応しています。スマートフォンで撮影した写真でもOKです！</span>
-            </p>
-            <div class="step-box-tip">
-              <p>
-                💡 <strong>コツ：</strong>ロゴやイラストが中央に配置されている画像がおすすめです。余白が多い場合は、次のステップでトリミングできます。
-              </p>
-            </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20l16-16" /></svg>
+            余白をカット
           </div>
-
-          <div class="step-box step-2">
-            <div class="step-box-header">
-              <span class="step-number">2</span>
-              <h3>ステップ2：トリミングと透過（必要に応じて）</h3>
-            </div>
-            
-            <div class="sub-section">
-              <h4 style="color: var(--step-2-text);">📐 余白のカット</h4>
-              <p>
-                画像の周りに余白がある場合、<strong>「トリミングを開く」</strong>ボタンを押して余白をカットできます。<br />
-                画面で、<strong>切り取りたい範囲をマウスで動かして</strong>選択します。選択範囲は自由に調整できます。
-              </p>
-              <p class="text-muted">
-                ✅ 余白がない画像や、余白を残したい場合はスキップできます。必須ではありません。
-              </p>
-            </div>
-
-            <div class="sub-section-box" style="border-color: #bae6fd;">
-              <h4 style="color: var(--step-2-text);">🎨 背景色を透明にする</h4>
-              <p>
-                ロゴの背景色を透明にしたい場合に使います。<br />
-                画像内の<strong>背景の色をクリック</strong>すると、その色が透明になります。
-              </p>
-              
-              <div class="info-box" style="background: #f8fafc; border-color: #bae6fd;">
-                <p style="font-weight: 600; color: var(--step-2-text);">📝 操作手順（とっても簡単！）：</p>
-                <ol>
-                  <li>画像が表示されているエリアで、<strong>背景の色をクリック</strong>します（例：白い背景なら白い部分をクリック）</li>
-                  <li>クリックした色が透明色として設定され、その色が透明になります</li>
-                  <li>設定された透明色は、<strong>色の丸と数値</strong>で表示されるので確認できます</li>
-                  <li>間違えた場合は<strong>「透過をリセット」</strong>ボタンで何度でもやり直せます</li>
-                </ol>
-                <p style="margin-top: var(--spacing-xs); color: var(--step-2-text);">
-                  💡 <strong>ポイント：</strong>背景が複数の色で構成されている場合は、メインの背景色をクリックしてください。
-                </p>
-              </div>
-
-              <div class="info-box" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
-                <p style="font-weight: 600; color: #92400e;">✅ 背景透過の確認方法（重要！）：</p>
-                <p style="color: #78350f;">
-                  背景透過を設定したら、<strong>必ず「PDFプレビュー」で確認</strong>してください。<br />
-                  PDFプレビュー画面で、背景が正しく消えているか確認できます。<br />
-                  <strong>背景が残っている場合は、再度透過色を設定するか、「透過をリセット」してやり直してください。</strong><br />
-                  <span class="text-xs">💡 確認は何度でもできます。納得いくまで調整してくださいね！</span>
-                </p>
-              </div>
-
-              <p class="text-muted">
-                ※ 既に背景が透明な画像（PNG形式など）の場合は、この機能は不要です<br />
-                ※ 透過色は1色のみ設定できます。複数の色を透過したい場合は、画像編集ソフトで事前に処理してください
-              </p>
-            </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><rect x="6" y="5" width="12" height="14" rx="2" /><path d="M9 10h6" /></svg>
+            PDFを発行
           </div>
-
-          <div class="step-box step-3">
-            <div class="step-box-header">
-              <span class="step-number">3</span>
-              <h3>ステップ3：配置して発行</h3>
-            </div>
-            <p>
-              画面右側の<strong>キャンバス上でロゴをドラッグ</strong>して位置を移動します。<br />
-              ロゴの<strong>四隅の小さな点をドラッグ</strong>してサイズを変更できます。<br />
-              <strong>「90°回転」</strong>ボタンでロゴを回転させることもできます。<br />
-              <span class="text-muted">📏 枠からはみ出さないように調整してください。枠内に収まっていればOKです！</span>
-            </p>
-            <div class="step-box-tip">
-              <p>
-                💡 <strong>コツ：</strong>位置の微調整は、ロゴをクリックしたまま少しずつ動かすと細かく調整できます。サイズは四隅の点をドラッグするだけで簡単に変更できます。回転は90度ずつ変更できます。
-              </p>
-            </div>
-          </div>
-
-          <div class="step-box step-4">
-            <div class="step-box-header">
-              <span class="step-number">4</span>
-              <h3>ステップ4：PDFプレビューで確認してデザインIDを発行</h3>
-            </div>
-            <p>
-              <strong>「PDFプレビュー」</strong>ボタンで仕上がりを確認します。<br />
-              問題なければ<strong>「IDを発行する」</strong>ボタンを押して、デザインIDを発行します。<br />
-              <span class="text-muted">📄 PDFは自動的にダウンロードされますが、商品購入には不要です。確認用として保存しておけます。</span>
-            </p>
-            <div class="alert-box" style="margin-top: var(--spacing-md);">
-              <strong>⚠️ 重要：デザインIDについて</strong>
-              <p>
-                <strong>商品購入時に必要なのは、デザインIDのみです。</strong><br />
-                「IDを発行する」ボタンを押すと、PDFファイルが自動的にダウンロードされますが、商品購入には不要です。デザインIDを商品ページに入力すれば、作成した通りのデザインで商品を製作いたします。<br />
-                デザインIDは必ず控えておいてください。失くしてしまうと、同じデザインで再製作できません。
-              </p>
-            </div>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+            位置調整
           </div>
         </div>
-
-        <div class="highlight-box">
-          <h3>💡 初心者向けのコツ（これを見れば完璧！）</h3>
-          <ul>
-            <li><strong>うまくいかなかったとき：</strong>トリミングモーダルを閉じてから、もう一度画像をアップロードし直すとスムーズです。何度でもやり直せます！</li>
-            <li><strong>位置の調整：</strong>キャンバス上でロゴを<strong>クリックしたままドラッグ</strong>するだけ。簡単です！</li>
-            <li><strong>サイズの調整：</strong>ロゴの<strong>四隅の小さな点</strong>をドラッグします。点が見えない場合は、ロゴをクリックすると表示されます。</li>
-            <li><strong>最終確認：</strong>PDFプレビューで確認してから、問題なければデザインIDを発行してください。確認は何度でもできます。</li>
-            <li><strong>デザインIDは必ず控える：</strong>発行されたデザインIDは、商品購入に必要です。必ずメモやメールに保存しておきましょう。</li>
-          </ul>
+        <div class="feature" style="margin-top:16px;">
+          <div>
+            <div class="badge">1</div><strong>まずはURLを開く</strong>
+            <p>お店から届いたリンクを開くだけで、説明ページが表示されます。</p>
+            <p>商品名と説明をざっと読んで、チェックを入れて「編集を開始する」を押します。</p>
+          </div>
+          <img src="/guide-shots/common-consent.png?v=20260116d" alt="共通説明ページの例" />
+        </div>
+        <div class="feature">
+          <div>
+            <div class="badge">2</div><strong>ロゴを置く</strong>
+            <p>「画像を追加」から画像を選ぶだけ。背景が透けている画像はそのままOKです。</p>
+            <p>枠からはみ出さないように、位置と大きさだけ合わせれば完了です。</p>
+          </div>
+          <img src="/guide-shots/sim-upload-card.png?v=20260116d" alt="ロゴアップロードの例" />
+        </div>
+        <div class="feature">
+          <div>
+            <div class="badge">3</div><strong>見た目を確認してPDF</strong>
+            <p>仕上がりを確認して「保存用のファイルを作る」を押します。作ったファイルをお店に送れば完了です。</p>
+            <p>ファイルに書かれている番号も一緒に伝えると早いです。</p>
+          </div>
+          <img src="/guide-shots/sim-pdf-card.png?v=20260116d" alt="PDF発行ボタンの例" />
         </div>
       </section>
 
-      <!-- 3. 確認PDFプレビュー（図解②） -->
-      <section id="pdf-check" class="step-section">
-        <h2>📄 2. 仕上がりをPDFで最終確認</h2>
-        <p class="section-intro">
-          <strong>「PDFプレビュー」</strong>ボタンを押すと、印刷イメージの確認画面（モーダルウィンドウ）が開きます。<br />
-          ここで最終確認をしてから、デザインIDを発行しましょう。確認は何度でもできますので、安心してください。
-        </p>
-
-        <figure>
-          <img
-            src="./guide-shots/sim-pdf.png"
-            alt="確認PDFプレビュー画面の見方：閉じる、戻って再作成、IDを発行する"
-            loading="lazy"
-            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
-          />
-          <div class="image-fallback">
-            <div class="image-fallback-icon">📄</div>
-            <div class="image-fallback-text">PDFプレビュー画面の見方</div>
-            <div class="image-fallback-desc">
-              モーダルウィンドウでPDFが表示されます<br />
-              「戻って再作成」ボタンで編集画面に戻る<br />
-              「IDを発行する」ボタンでデザインIDを発行
+      <section class="card">
+        <h2>操作のポイント</h2>
+        <div class="tags">
+          <span class="pill">推奨環境: 最新のブラウザ</span>
+          <span class="pill">途中の保存: この画面の中だけ</span>
+          <span class="pill">画像サイズ: 2MB くらいまで</span>
+        </div>
+        <div class="points">
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12h12" />
+                <path d="M13 7l6 5-6 5" />
+              </svg>
             </div>
+            <div>リンクは商品専用。届いたリンクだけ開けばOKです。</div>
           </div>
-          <figcaption>仕上がりに問題がなければ『IDを発行する』。直したい場合は『戻って再作成』で戻れます。</figcaption>
-        </figure>
-
-        <div class="info-box" style="background: var(--step-2-bg); border-left: 4px solid var(--step-2-border); margin-top: var(--spacing-md);">
-          <p style="color: var(--step-2-text);">
-            <strong>📥 PDFについて：</strong>「IDを発行する」ボタンを押すと、PDFファイルが<strong>自動的にダウンロード</strong>されます。メールで送られることはありません。PDFは確認用として保存しておくことができますが、<strong>商品購入には不要です。必要なのはデザインIDだけです。</strong>
-          </p>
-        </div>
-      </section>
-
-      <!-- 4. デザインIDコピー〜購入（図解③） -->
-      <section id="design-id" class="step-section">
-        <h2>🎯 3. デザインIDを発行して購入へ</h2>
-        <div class="alert-box" style="margin-bottom: var(--spacing-lg);">
-          <strong>⚠️ 重要：商品購入に必要なのはデザインIDのみです</strong>
-          <p>
-            「IDを発行する」ボタンを押すと、PDFファイルが自動的にダウンロードされますが、商品購入には不要です。<br />
-            <strong>デザインIDを商品ページに入力するだけで、作成した通りのデザインで商品を製作いたします。</strong><br />
-            デザインIDは必ず控えておいてください。失くしてしまうと、同じデザインで再製作できません。
-          </p>
-        </div>
-        <p class="section-intro">
-          デザインが確定したら、最後に<strong>デザインIDを発行</strong>し、商品購入手続きに進みます。<br />
-          <span class="text-muted">💡 デザインIDは、商品購入時に必要です。必ず控えておいてください。</span>
-        </p>
-
-        <figure>
-          <img
-            src="https://www.genspark.ai/api/files/s/OzCgKQr8?cache_control=3600"
-            alt="デザインIDの発行フロー：PDFプレビュー後、IDを発行し、表示されたIDをコピーして商品ページへ貼り付け"
-            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
-          />
-          <div class="image-fallback">
-            <div class="image-fallback-icon">🎯</div>
-            <div class="image-fallback-text">デザインIDの発行フロー</div>
-            <div class="image-fallback-desc">
-              PDFプレビュー後、「IDを発行する」ボタンを押すと<br />
-              画面左側に英数字のIDが表示されます<br />
-              「デザインIDをコピー」ボタンでクリップボードにコピー<br />
-              商品ページのデザインID欄に貼り付けて購入手続きへ
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#fff; box-shadow:0 6px 14px rgba(15,23,42,0.06); border-color:#e5e7eb;">
+              <svg viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id="alphaGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#111827" />
+                    <stop offset="1" stop-color="#ffffff" />
+                  </linearGradient>
+                </defs>
+                <rect x="5" y="5" width="14" height="14" rx="3" fill="url(#alphaGrad)" stroke="#cbd5e1" />
+              </svg>
             </div>
+            <div>背景が透けている画像だと仕上がりがきれいです。</div>
           </div>
-          <figcaption>『デザインIDをコピー』→商品ページのデザインID欄に貼り付け→購入手続きへ。</figcaption>
-        </figure>
-
-        <div class="grid">
-          <article>
-            <header><strong>STEP A</strong></header>
-            「IDを発行する」ボタンを押すと、画面左側に英数字のIDが表示されます。
-          </article>
-          <article>
-            <header><strong>STEP B</strong></header>
-            「デザインIDをコピー」ボタンを押して、IDをクリップボードにコピーします。
-          </article>
-          <article>
-            <header><strong>STEP C</strong></header>
-            商品ページに戻り、<strong>「デザインID欄」</strong>に貼り付けてカートに入れてください。
-          </article>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#10b981; box-shadow:0 6px 14px rgba(16,185,129,0.18); border-color:#a7f3d0;">
+              <svg viewBox="0 0 24 24">
+                <circle cx="6.5" cy="6.5" r="2.2" />
+                <circle cx="6.5" cy="17.5" r="2.2" />
+                <path d="M9 8l11 11" />
+                <path d="M9 16l6-6" />
+              </svg>
+            </div>
+            <div>はみ出る余白はカット。枠に収まる大きさにします。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#6366f1; box-shadow:0 6px 14px rgba(99,102,241,0.18); border-color:#c7d2fe;">
+              <svg viewBox="0 0 24 24">
+                <rect x="6" y="5" width="12" height="14" rx="2" />
+                <path d="M9 3v4M15 3v4" />
+                <path d="M8.5 10.5h7" />
+              </svg>
+            </div>
+            <div>途中の内容はこの画面に残ります。同じ端末なら続きができます。</div>
+          </div>
+          <div class="point-card">
+            <div class="point-icon" aria-hidden="true" style="background:#0ea5e9; box-shadow:0 6px 14px rgba(14,165,233,0.18); border-color:#bae6fd;">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 5v14" />
+                <path d="M6 12h12" />
+                <path d="M9 9l3-3 3 3" />
+                <path d="M9 15l3 3 3-3" />
+              </svg>
+            </div>
+            <div>動きが重いときはタブを閉じるか、ブラウザを開き直してください。</div>
+          </div>
+        </div>
+        <div class="quick-check">
+          <div class="check-item">✔ 背景が透けている画像だときれいに見えます</div>
+          <div class="check-item">✔ 余白はカットしてから配置</div>
+          <div class="check-item">✔ 枠からはみ出していないか確認</div>
+          <div class="check-item">✔ ファイル内の番号をお店に伝えると早いです</div>
         </div>
       </section>
 
-      <!-- 5. トラブルシューティング -->
-      <section id="troubleshooting">
-        <h2>❓ トラブルシューティング（困ったときはこちら）</h2>
-        <p class="section-intro">
-          よくある問題とその解決方法をまとめました。<br />
-          うまくいかないときは、このセクションを確認してください。きっと解決できます！
-        </p>
-
-        <div class="alert-box">
-          <strong>⚠️ 重要：ブラウザの「戻る」ボタンは使わないでください</strong>
-          <p style="margin-top: var(--spacing-xs); line-height: 1.8;">
-            作成中のデザインが消えてしまう場合があります。<strong>前の画面に戻りたいときは、シミュレーター画面内の「戻って再作成」ボタン</strong>などを使用してください。<br />
-            <span class="text-muted">💡 ブラウザの「戻る」ボタンではなく、画面内のボタンを使えば安全です。</span>
-          </p>
-        </div>
-
-        <h3>画像がうまく表示されない</h3>
-        <ul>
-          <li><strong>画像形式を確認：</strong>JPG、PNG、GIF形式に対応しています。他の形式の場合は変換してください。</li>
-          <li><strong>ファイルサイズを確認：</strong>大きな画像は読み込みに時間がかかります。必要に応じてサイズを調整してください。</li>
-          <li><strong>「トリミングを削除」を試す：</strong>うまく表示されない場合は、「トリミングを削除」ボタンを押してから、もう一度画像をアップロードしてください。</li>
-        </ul>
-
-        <h3>位置の調整がうまくいかない</h3>
-        <ul>
-          <li><strong>ドラッグで移動：</strong>ロゴをクリックしたままドラッグすると位置を移動できます。</li>
-          <li><strong>サイズ調整：</strong>ロゴの四隅をドラッグしてサイズを変更できます。</li>
-          <li><strong>リセット：</strong>「トリミングを削除」で一度リセットしてから、再度アップロードしてください。</li>
-        </ul>
-
-        <h3>PDFが表示されない</h3>
-        <ul>
-          <li><strong>ポップアップブロックを確認：</strong>ブラウザの設定でポップアップがブロックされていないか確認してください。</li>
-          <li><strong>別のブラウザで試す：</strong>推奨ブラウザ（Edge、Chrome、Firefox、Safari）でお試しください。</li>
-          <li><strong>ダウンロードして確認：</strong>PDFプレビュー画面から「ダウンロード」ボタンでファイルを保存して確認できます。</li>
-        </ul>
-
-        <h3>デザインIDがコピーできない</h3>
-        <ul>
-          <li><strong>「デザインIDをコピー」ボタンをクリック：</strong>ボタンを押すと、クリップボードに自動的にコピーされます。</li>
-          <li><strong>手動でコピー：</strong>表示されたIDをマウスで選択して、Ctrl+C（Mac: Cmd+C）でコピーすることもできます。</li>
-        </ul>
+      <section class="card">
+        <h2>お問い合わせ</h2>
+        <p>操作に不明点がある場合や、刻印内容の個別相談が必要な場合はショップまでご連絡ください。</p>
+        <div class="tip">PDFに記載されるデザインIDを合わせてお伝えいただくと、対応がスムーズです。</div>
       </section>
 
-      <!-- 6. 技術的な注意事項 -->
-      <section id="notes">
-        <h2>📱 技術的な注意事項</h2>
-        <p class="section-intro" style="margin-bottom: var(--spacing-lg);">
-          快適にご利用いただくための、推奨環境や注意点をご案内します。
-        </p>
-
-        <ul>
-          <li>
-            <strong>推奨ブラウザ：</strong>
-            Microsoft Edge、Google Chrome、Firefox、Safari の最新版をご利用ください。古いブラウザでは正しく動作しない場合があります。
-          </li>
-          <li>
-            <strong>スマートフォンでの利用：</strong>
-            スマートフォンでもご利用いただけますが、画面サイズによっては操作がしにくい場合があります。可能であればPCでの利用をおすすめします。
-          </li>
-          <li>
-            <strong>著作権について：</strong>
-            アニメキャラクターや有名企業のロゴなど、第三者の著作権・商標権を侵害する画像のアップロードはお控えください。
-          </li>
-          <li>
-            <strong>デザインの保管期限：</strong>
-            作成したデザインデータは、発行から<strong>1年間</strong>保管されます。期限を過ぎたデザインは再発行できません。
-          </li>
-          <li>
-            <strong>データの保存：</strong>
-            デザインはブラウザに保存されます。別の端末やブラウザでは表示されません。同じデザインを別の端末で使う場合は、デザインIDを発行してご利用ください。
-          </li>
-        </ul>
-      </section>
-
-      <!-- 7. よくある質問（FAQ） -->
-      <section id="faq">
-        <h2>💬 よくある質問（FAQ）</h2>
-        <p class="section-intro" style="margin-bottom: var(--spacing-lg);">
-          お客様からよくいただく質問をまとめました。気になることがあれば、こちらを確認してください。
-        </p>
-
-        <details>
-          <summary>Q. デザインIDとは何ですか？</summary>
-          <p>
-            お客様が作成したデザインを識別するための、固有の英数字コードです。<strong>商品購入時に必要なのは、このデザインIDのみです。</strong>「IDを発行する」ボタンを押すと、PDFファイルが自動的にダウンロードされますが、商品購入には不要です。形式は「日付_ランダム文字列」（例：260117_NXGH3UA）となっています。
-          </p>
-          <p class="info-box" style="margin-top: var(--spacing-xs); background: #fee2e2; border-left: 4px solid #ef4444; color: #7f1d1d;">
-            <strong>⚠️ 重要：</strong>デザインIDを商品ページに入力するだけで、作成した通りのデザインで商品を製作いたします。デザインIDは必ず控えておいてください。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. デザインをやり直したいのですが？</summary>
-          <p>
-            「PDFプレビュー」画面で「戻って再作成」ボタンを押すか、編集画面でロゴを再アップロードすることで何度でもやり直せます。ただし、一度「デザインIDを発行」して画面を閉じた後は修正できないため、最初から作り直しとなります。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. 作っていたデザインが消えてしまいました。</summary>
-          <p>
-            ブラウザの「戻る」ボタンや「更新」ボタンを押すと、作業内容がリセットされる場合があります。ご注意ください。また、ブラウザのキャッシュをクリアした場合も、保存されていないデザインは消えてしまいます。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. 作成したデザインはいつまで保存されますか？</summary>
-          <p>デザインの保管期間は、最終発行日から1年間となっております。期限を過ぎたデザインは再発行できませんので、必要な場合は期限内にご利用ください。</p>
-          <p class="text-muted" style="margin-top: var(--spacing-xs); color: #991b1b; font-weight: 600;">
-            ※ デザインIDを控えておけば、同じデザインで再製作できます。デザインIDは必ず保存しておいてください。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. PDFファイルをダウンロードする必要はありますか？</summary>
-          <p>
-            <strong>いいえ、PDFファイルをダウンロードする必要はありません。</strong>「IDを発行する」ボタンを押すと、PDFファイルが自動的にダウンロードされますが、商品購入には不要です。商品購入時に必要なのは、デザインIDのみです。デザインIDを商品ページに入力するだけで、作成した通りのデザインで商品を製作いたします。
-          </p>
-          <p class="info-box" style="margin-top: var(--spacing-xs); background: #f0f9ff; border-left: 4px solid #0ea5e9; color: #0369a1;">
-            <strong>PDFについて：</strong>「IDを発行する」ボタンを押すと、PDFファイルが<strong>自動的にダウンロード</strong>されます。メールで送られることはありません。PDFは確認用として保存しておくことができますが、商品購入には不要です。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. デザインIDを失くしてしまいました</summary>
-          <p>
-            デザインIDを失くしてしまうと、同じデザインで再製作できません。デザインIDは必ず控えておいてください。
-          </p>
-          <p class="text-muted" style="margin-top: var(--spacing-xs); color: #991b1b; font-weight: 600;">
-            ※ デザインIDは「デザインIDをコピー」ボタンでクリップボードにコピーできます。メモ帳やメールに保存しておくことをおすすめします。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. 複数のデザインを作りたいのですが？</summary>
-          <p>
-            何度でも新しいデザインを作成できます。各デザインには別々のデザインIDが発行されます。複数のデザインを注文する場合は、それぞれのデザインIDを商品ページに入力してください。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. 以前作ったデザインと同じものを作り直せますか？</summary>
-          <p>
-            デザインIDが分かれば、同じデザインで再製作することが可能です（保管期限内の場合）。デザインIDを控えておくと便利です。詳しくはお問い合わせください。
-          </p>
-        </details>
-
-        <details>
-          <summary>Q. 専門用語の説明</summary>
-          <div style="margin-top: var(--spacing-sm);">
-            <p style="margin: 0 0 var(--spacing-sm) 0; font-weight: 600; color: #0369a1;">📝 このガイドで使われている用語の説明：</p>
-            <ul>
-              <li><strong>アップロード：</strong>パソコンやスマートフォンから画像ファイルを選んで、画面に表示すること</li>
-              <li><strong>ドラッグ：</strong>マウスを押したまま動かす操作</li>
-              <li><strong>トリミング：</strong>画像の余白をカットすること</li>
-              <li><strong>透過（透明化）：</strong>背景の色を透明にすること</li>
-              <li><strong>PDF：</strong>印刷用のファイル形式。確認用として自動的にダウンロードされます</li>
-              <li><strong>デザインID：</strong>作成したデザインを識別するための英数字コード。商品購入に必要</li>
-            </ul>
-          </div>
-        </details>
-      </section>
+      <p class="footer-note">© 名入れ刻印シミュレーター</p>
     </main>
-
-    <!-- 7. フッター -->
-    <footer>
-      <div class="container">
-        <p style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md);">
-          <strong>ご不明な点がございましたら、お気軽にお問い合わせください。</strong>
-        </p>
-        <p style="margin-bottom: var(--spacing-lg); line-height: 1.8;">
-          このガイドを見ても解決しない場合は、お問い合わせフォームからご連絡ください。<br />
-          お客様のご利用をサポートさせていただきます。
-        </p>
-        <div class="footer-links">
-          <a href="#contact" aria-label="お問い合わせフォームへ" style="font-size: var(--font-size-lg); padding: var(--spacing-sm) var(--spacing-xl);">📧 お問い合わせはこちら</a>
-        </div>
-        <p style="margin-top: var(--spacing-xl); font-size: 0.8rem; color: #888">
-          &copy; Name Engraving Simulator All Rights Reserved.
-        </p>
-      </div>
-    </footer>
   </body>
 </html>
