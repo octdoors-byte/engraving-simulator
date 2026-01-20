@@ -6,6 +6,7 @@ import { CropModal } from "@/components/sim/CropModal";
 import { StageCanvas } from "@/components/sim/StageCanvas";
 import { Toast } from "@/components/common/Toast";
 import { Modal } from "@/components/common/Modal";
+import { HelpIcon } from "@/components/common/HelpIcon";
 import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
 import { prepareEngraveLogoBlob } from "@/domain/image/prepareEngraveLogo";
@@ -120,6 +121,15 @@ export function SimPage() {
   const [toast, setToast] = useState<ToastState>(null);
   const [phase, setPhase] = useState<SimPhase>("EMPTY");
   const [imageBitmap, setImageBitmap] = useState<ImageBitmap | null>(null);
+
+  // imageBitmapのクリーンアップ
+  useEffect(() => {
+    return () => {
+      if (imageBitmap && "close" in imageBitmap) {
+        imageBitmap.close();
+      }
+    };
+  }, [imageBitmap]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
@@ -151,7 +161,7 @@ export function SimPage() {
 
   useEffect(() => {
     if (!templateKey) {
-      setErrorMessage("テンプレートキーが指定されていません。");
+      setErrorMessage("テンプレートIDが指定されていません。");
       setTemplateSet(null);
       setTemplate(null);
       return;
@@ -279,7 +289,14 @@ export function SimPage() {
 
   useEffect(() => {
     if (!previewPdfUrl) return;
-    return () => URL.revokeObjectURL(previewPdfUrl);
+    // iframe/objectがblob URLを読み込む前にrevokeされないよう、少し遅延してからrevoke
+    // モーダルが閉じられ、iframeがDOMから削除されるのを待つ
+    const timeoutId = window.setTimeout(() => {
+      URL.revokeObjectURL(previewPdfUrl);
+    }, 300);
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [previewPdfUrl]);
 
   useEffect(() => {
@@ -329,9 +346,16 @@ export function SimPage() {
     const url = URL.createObjectURL(processedLogoBlob);
     setProcessedLogoUrl(url);
     let cancelled = false;
+    let bitmap: ImageBitmap | null = null;
     createImageBitmap(processedLogoBlob)
-      .then((bitmap) => {
-        if (cancelled) return;
+      .then((bmp) => {
+        bitmap = bmp;
+        if (cancelled) {
+          if ("close" in bitmap) {
+            bitmap.close();
+          }
+          return;
+        }
         const size = { width: bitmap.width, height: bitmap.height };
         setLogoBaseSize(size);
         if (!placementInitialized.current) {
@@ -346,6 +370,9 @@ export function SimPage() {
     return () => {
       cancelled = true;
       URL.revokeObjectURL(url);
+      if (bitmap && "close" in bitmap) {
+        bitmap.close();
+      }
     };
   }, [processedLogoBlob, template]);
 
@@ -397,15 +424,13 @@ export function SimPage() {
   );
 
   const resetPreview = useCallback(() => {
-    if (previewPdfUrl) {
-      URL.revokeObjectURL(previewPdfUrl);
-    }
     setPreviewPdfUrl(null);
     setPreviewPdfBlob(null);
     setPendingDesignId(null);
     setPendingCreatedAt(null);
     setPreviewOpen(false);
-  }, [previewPdfUrl]);
+    // useEffectのクリーンアップで自動的にrevokeされる
+  }, []);
 
   const handleIssue = useCallback(async () => {
     if (!template || !imageBitmap || !uploadedFile || !processedLogoBlob || !placement) {
@@ -414,13 +439,13 @@ export function SimPage() {
     }
     if (placement.w > template.engravingArea.w || placement.h > template.engravingArea.h) {
       setToast({
-        message: "ロゴのサイズが刻印枠より大きいので発行できません。",
+        message: "ロゴのサイズがデザインできる範囲より大きいので作成できません。",
         tone: "error"
       });
       return;
     }
     if (!isPlacementInside(placement, template.engravingArea)) {
-      setToast({ message: "ロゴを刻印枠内に収めてください。", tone: "error" });
+      setToast({ message: "ロゴをデザインできる範囲内に収めてください。", tone: "error" });
       setPhase("PLACEMENT");
       return;
     }
@@ -437,8 +462,9 @@ export function SimPage() {
       setPendingCreatedAt(createdAt);
       setPreviewOpen(true);
     } catch (error) {
-      console.error(error);
-      setToast({ message: "プレビューの生成に失敗しました。", tone: "error" });
+      const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      console.error("[issue] confirm pdf generation failed", message, error);
+      setToast({ message: "確認画面の生成に失敗しました。", tone: "error" });
     }
   }, [template, imageBitmap, uploadedFile, processedLogoBlob, placement, backgroundBlob, rotationDeg]);
 
@@ -448,12 +474,17 @@ export function SimPage() {
       return;
     }
     if (!pendingDesignId || !pendingCreatedAt || !previewPdfBlob) {
-      setToast({ message: "プレビューがありません。", tone: "error" });
+      setToast({ message: "確認画面がありません。", tone: "error" });
       return;
     }
     setIsIssuing(true);
     setPhase("ISSUING");
     try {
+      console.log("[issue] step: start", {
+        templateKey: template.templateKey,
+        hasProcessedLogo: Boolean(processedLogoBlob),
+        hasPlacement: Boolean(placement)
+      });
       const logoSettings = template.logoSettings ?? { monochrome: false };
       let engraveSourceBlob = processedLogoBlob;
       if (!(await hasVisiblePixels(engraveSourceBlob)) && uploadedFile) {
@@ -473,11 +504,14 @@ export function SimPage() {
           console.error(error);
         }
       }
+      console.log("[issue] step: prepare engrave logo");
       const engraveLogoBlob = await prepareEngraveLogoBlob(engraveSourceBlob);
+      console.log("[issue] step: generate engrave pdf");
       const engravePdf = await generateEngravePdf(template, engraveLogoBlob, { ...placement, rotationDeg }, {
         designId: pendingDesignId,
         createdAt: pendingCreatedAt
       });
+      console.log("[issue] step: generate confirm pdf already done, now saving assets");
       const assets = [
         { id: `asset:logoOriginal:${pendingDesignId}`, type: "logoOriginal" as AssetType, blob: uploadedFile },
         { id: `asset:logoEdited:${pendingDesignId}`, type: "logoEdited" as AssetType, blob: processedLogoBlob },
@@ -492,6 +526,7 @@ export function SimPage() {
           })
         )
       );
+      console.log("[issue] step: save design");
       saveDesign({
         designId: pendingDesignId,
         templateKey: template.templateKey,
@@ -510,14 +545,38 @@ export function SimPage() {
           engraveAssetId: `asset:pdfEngrave:${pendingDesignId}`
         }
       });
-      downloadBlob(previewPdfBlob, `${pendingDesignId}-confirm.pdf`);
+      console.log("[issue] step: download confirm pdf");
+      try {
+        downloadBlob(previewPdfBlob, `${pendingDesignId}-confirm.pdf`);
+      } catch (error) {
+        console.error("[issue] download confirm pdf failed", error);
+        throw error;
+      }
       setIssuedDesignId(pendingDesignId);
-      setToast({ message: "PDF確認用をダウンロードしました。", tone: "success" });
+      setToast({ message: "確認用PDFをダウンロードしました。", tone: "success" });
       setPhase("ISSUED");
       resetPreview();
     } catch (error) {
-      console.error(error);
-      setToast({ message: "発行中にエラーが発生しました。", tone: "error" });
+      const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      const serialized = (() => {
+        try {
+          return JSON.stringify(error);
+        } catch {
+          return null;
+        }
+      })();
+      console.error("[issue] finalize failed raw", error);
+      console.error("[issue] finalize failed", message, stack ?? "", serialized ?? "", error);
+      console.error("[issue] context", {
+        hasTemplate: Boolean(template),
+        hasProcessedLogo: Boolean(processedLogoBlob),
+        hasPlacement: Boolean(placement),
+        pendingDesignId,
+        pendingCreatedAt,
+        previewPdfBlob: Boolean(previewPdfBlob)
+      });
+      setToast({ message: "作成中にエラーが発生しました。", tone: "error" });
       setPhase("READY_TO_ISSUE");
       if (pendingDesignId) {
         await deleteAssets([
@@ -664,19 +723,15 @@ export function SimPage() {
             )}
           </div>
         )}
-        <h1 className="mt-2 text-2xl font-semibold text-slate-900">{template.name}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-semibold text-slate-900">{template.name}</h1>
+          <HelpIcon guideUrl="/user-guide.html" title="使い方ガイドを見る" variant="button" />
+        </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
         <div className="order-2 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-1">
           <div className="space-y-4">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-              <p className="text-center font-semibold text-slate-700">使い方の流れ</p>
-              <p>1. ロゴをアップロード。</p>
-              <p>2. 余白を調整したい場合は、トリミングを使う。</p>
-              <p>3. 背景を消したい場合は、透過で背景色を削除。</p>
-              <p>4. 枠内の位置と大きさを調整して、PDFを発行。</p>
-            </div>
             <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-white px-4 py-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white">
@@ -695,7 +750,6 @@ export function SimPage() {
                 </span>
                 <p className="text-sm font-semibold text-sky-700">トリミングと透過</p>
               </div>
-              <p className="mt-2 text-xs text-slate-500">ロゴをアップロードすると操作できます。</p>
               <button
                 type="button"
                 className="mt-3 w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm"
@@ -706,7 +760,7 @@ export function SimPage() {
               </button>
               <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-xs">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs text-slate-500">ロゴの色をクリックして透過します。</p>
+                  <p className="text-xs text-slate-500">色をクリックして透過</p>
                   <button
                     type="button"
                     className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
@@ -751,9 +805,8 @@ export function SimPage() {
                 <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-white">
                   ステップ3
                 </span>
-                <p className="text-sm font-semibold text-amber-700">配置して発行</p>
+                <p className="text-sm font-semibold text-amber-700">位置を調整して作成</p>
               </div>
-              <p className="mt-2 text-xs text-slate-500">枠線内で大きさを調整してください。</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
@@ -782,14 +835,11 @@ export function SimPage() {
                 </button>
                 <span className="text-xs text-slate-500">現在: {rotationDeg}°</span>
               </div>
-              <div className="mt-3 text-sm font-semibold text-sky-600">
-                ↓ ここでデザインIDを発行
-              </div>
             </div>
           </div>
 
           <div className="space-y-3 rounded-2xl border border-sky-200 bg-sky-100 px-4 py-4 text-center text-slate-900 shadow-sm">
-            <p className="text-sm font-semibold">デザインID発行（PDF保存）</p>
+            <p className="text-sm font-semibold">デザインID作成（PDF保存）</p>
             <p className="text-xs text-slate-600">
               修正は新しいデザインIDで作り直し。旧デザインは参照用に残ります。
             </p>
@@ -799,7 +849,7 @@ export function SimPage() {
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
-              {isIssuing ? "発行中..." : "PDFプレビュー"}
+              {isIssuing ? "作成中..." : "PDF確認"}
             </button>
             {sizeCheck && sizeCheck.isBelowMin && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-left text-xs text-amber-800">
@@ -849,7 +899,7 @@ export function SimPage() {
                   </button>
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-slate-400">発行後に表示されます</p>
+                <p className="mt-2 text-sm text-slate-400">作成後に表示されます</p>
               )}
             </div>
           </div>
@@ -858,9 +908,9 @@ export function SimPage() {
         <div className="order-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-2">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">配置プレビュー</h2>
+              <h2 className="text-lg font-semibold text-slate-900">位置の確認</h2>
               <p className="text-xs text-slate-500">
-                右側でロゴの位置と大きさを調整できます。枠内に収まるように配置してください。
+                右側でロゴの位置と大きさを調整できます。デザインできる範囲内に収まるように調整してください。
               </p>
             </div>
             <div
@@ -872,7 +922,7 @@ export function SimPage() {
               <span>
                 状態:{" "}
                 {phase === "READY_TO_ISSUE"
-                  ? "発行可能"
+                  ? "作成可能"
                   : phase === "EMPTY"
                     ? "ロゴ未選択"
                     : phase === "UPLOADED"
@@ -880,11 +930,11 @@ export function SimPage() {
                       : phase === "EDITING"
                         ? "調整中"
                         : phase === "PLACEMENT"
-                          ? "配置中"
+                          ? "位置調整中"
                           : phase === "ISSUING"
-                            ? "発行中"
+                            ? "作成中"
                             : phase === "ISSUED"
-                              ? "発行済み"
+                              ? "作成済み"
                               : phase === "ERROR"
                                 ? "エラー"
                                 : phase}
@@ -910,20 +960,20 @@ export function SimPage() {
             />
             {!imageBitmap && (
               <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm font-semibold text-slate-700">
-                {template.comment?.trim() || "ロゴをアップロードすると配置できます。"}
+                {template.comment?.trim() || "ロゴをアップロードすると位置を調整できます。"}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <Modal title="確認PDFプレビュー" open={previewOpen} onClose={resetPreview}>
+      <Modal title="確認PDF" open={previewOpen} onClose={resetPreview}>
         <div className="space-y-4">
           <div className="rounded-lg border border-slate-200 bg-slate-50">
             {previewPdfUrl ? (
               <iframe title="確認PDF" src={previewPdfUrl} className="h-[70vh] w-full rounded-lg" />
             ) : (
-              <div className="p-6 text-center text-sm text-slate-500">プレビューを作成中です。</div>
+              <div className="p-6 text-center text-sm text-slate-500">確認画面を作成中です。</div>
             )}
           </div>
           <div className="flex flex-wrap justify-end gap-2">
@@ -944,7 +994,7 @@ export function SimPage() {
               onClick={finalizeIssue}
               disabled={isIssuing}
             >
-              IDを発行する
+              IDを作成する
             </button>
           </div>
         </div>
@@ -965,5 +1015,3 @@ export function SimPage() {
     </section>
   );
 }
-
-

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>刻印範囲シミュレーター｜基本設定（お客様向け共通説明ページ）操作ガイド</title>
+    <style>
+      :root {
+        --primary: #2f80ed;
+        --secondary: #f2994a;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --muted-color: #666666;
+        --border-radius: 12px;
+        --spacing-large: 4rem;
+        --spacing-medium: 2rem;
+        --spacing-small: 1rem;
+      }
+
+      .text-orange {
+        color: var(--secondary);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* 通常のテキスト要素にリストスタイルを適用しない */
+      p, div, span, strong, em, h1, h2, h3, h4, h5, h6 {
+        list-style: none !important;
+        list-style-type: none !important;
+      }
+      
+      /* リスト要素のみリストスタイルを適用 */
+      ul > li, ol > li {
+        display: list-item;
+        list-style-type: disc;
+      }
+      
+      ol > li {
+        list-style-type: decimal;
+      }
+      
+      /* すべての要素でリストスタイルをリセット */
+      * {
+        list-style-position: outside;
+      }
+      
+      p, div, span, strong, em, h1, h2, h3, h4, h5, h6, section, article, header, footer, main, aside, nav {
+        list-style: none !important;
+        list-style-type: none !important;
+        list-style-image: none !important;
+      }
+
+      /* Layout Container */
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      /* Card Component */
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-medium);
+        margin-bottom: var(--spacing-medium);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        border: 1px solid #eee;
+      }
+
+      /* Headings */
+      h1 {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 700;
+      }
+      .page-header {
+        margin-bottom: var(--spacing-medium);
+        border-bottom: 2px solid #eaeaea;
+        padding-bottom: 16px;
+      }
+      .subtitle {
+        font-size: 0.9rem;
+        color: var(--muted-color);
+        font-weight: normal;
+      }
+      h2 {
+        font-size: 1.5rem;
+        color: var(--primary);
+        border-left: 5px solid var(--primary);
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+      }
+      h3 {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        padding: var(--spacing-large) 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-medium);
+        border: 1px solid #e1e4e8;
+      }
+      .hero h1 {
+        color: var(--text-color);
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+      .hero p {
+        color: var(--muted-color);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Visuals (Figure & Img) */
+      figure {
+        margin: 24px 0;
+        text-align: center;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .image-fallback {
+        display: none;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: 2px dashed #94a3b8;
+        border-radius: 12px;
+        text-align: center;
+        color: #64748b;
+        min-height: 300px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .image-fallback-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+      }
+      .image-fallback-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #475569;
+      }
+      .image-fallback-desc {
+        font-size: 0.9rem;
+        color: #64748b;
+        line-height: 1.6;
+      }
+      figcaption {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #666;
+        font-weight: bold;
+      }
+
+      /* Lists */
+      ul {
+        list-style-type: disc;
+        margin-left: 24px;
+        margin-bottom: 16px;
+        padding-left: 0;
+      }
+      ol {
+        list-style-type: decimal;
+        margin-left: 24px;
+        margin-bottom: 16px;
+        padding-left: 0;
+      }
+      li {
+        margin-bottom: 8px;
+        line-height: 1.8;
+      }
+
+      /* Steps Styling */
+      .step-item {
+        margin-bottom: 20px;
+        padding: 16px;
+        background-color: #f9fafb;
+        border-radius: 8px;
+        border-left: 4px solid #ccc;
+      }
+      .step-item:hover {
+        background-color: #f0f4f8;
+        border-left-color: #2f80ed;
+      }
+      .step-item p,
+      .step-item div,
+      .step-item strong,
+      .step-item span {
+        list-style: none !important;
+        list-style-type: none !important;
+        display: block;
+      }
+      .step-num {
+        font-weight: bold;
+        color: #2f80ed;
+        margin-right: 8px;
+      }
+
+      /* Warning Box */
+      .warning-box {
+        background-color: #fff9f2; /* Orange tint */
+        border: 1px solid #ffdcb5;
+        color: #8a5300;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 24px;
+      }
+      .warning-title {
+        font-weight: bold;
+        color: #f2994a;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      /* FAQ Section */
+      .faq-item {
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 16px;
+      }
+      .faq-q {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 4px;
+      }
+      .faq-q::before {
+        content: 'Q.';
+        color: #2f80ed;
+        margin-right: 8px;
+      }
+      .faq-a {
+        color: #555;
+        padding-left: 24px;
+      }
+
+      /* Navigation Links (Footer) */
+      .nav-links {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+      .nav-link {
+        flex: 1;
+        min-width: 200px;
+        text-decoration: none;
+        color: #333;
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-weight: bold;
+        transition: all 0.2s;
+      }
+      .nav-link:hover {
+        border-color: #2f80ed;
+        color: #2f80ed;
+        background: #f0f7ff;
+      }
+
+      /* Navigation */
+      .nav-header {
+        background: var(--card-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-bottom: 2rem;
+      }
+      .nav-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .nav-item {
+        color: var(--muted-color);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        border-bottom: 2px solid transparent;
+      }
+      .nav-item.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .nav-item:hover {
+        color: var(--primary);
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .container {
+          padding: 20px 16px;
+        }
+        .card {
+          padding: 20px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        h2 {
+          font-size: 18px;
+        }
+        .nav-links {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <header class="nav-header">
+      <div class="nav-inner">
+        <a href="./public_templates.html" class="nav-item">公開テンプレート一覧</a>
+        <a href="./template_management.html" class="nav-item">テンプレート管理</a>
+        <a href="./design_history.html" class="nav-item">デザイン発行履歴</a>
+        <a href="./basic_settings.html" class="nav-item active">基本設定</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Hero -->
+      <section class="hero">
+        <h1>基本設定（お客様向け共通説明ページ）操作ガイド</h1>
+        <p>
+          シミュレーターのトップ画面にお客様向けに表示される情報を設定・編集します。<br />
+          対象：システム管理者・サイト運営担当者
+        </p>
+
+      <!-- Hero with Points -->
+      <section style="text-align: center; padding: 2rem 0; margin-bottom: 2rem;">
+        <p style="font-size: 1.05rem; color: #666; margin-bottom: 2rem;">
+          シミュレーターのトップ画面にお客様向けに表示される情報を設定・編集します。
+        </p>
+        
+        <!-- ポイント3つ -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 900px; margin-left: auto; margin-right: auto;">
+          <div style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #0ea5e9; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #0369a1; font-weight: 700;">1. 説明文を設定</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #0c4a6e;">タイトルや説明文、よくある質問を入力します。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🖼️</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #92400e; font-weight: 700;">2. 画像を追加</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #78350f;">説明用の画像をアップロードできます（各2MBまで）。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👁️</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1e40af; font-weight: 700;">3. プレビューで確認</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #1e3a8a;">保存前にプレビューで表示を確認してから保存します。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visuals Card -->
+      <div class="card">
+        <h2>画面イメージと構成</h2>
+
+        <!-- Image 1: Screenshot -->
+        <figure>
+          <img
+            src="https://www.genspark.ai/api/files/s/aBfLaKuE"
+            alt="基本設定画面のスクリーンショット"
+            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
+          />
+          <div style="display:none; padding:40px; background:#f0f0f0; border:2px dashed #ccc; text-align:center; color:#666;">
+            <p style="font-size:16px; margin-bottom:8px;">🖼️ 基本設定画面のスクリーンショット</p>
+            <p style="font-size:14px;">ヘッダー/フッター設定、タイトル・説明テキスト、FAQ、レイアウト・画像設定、プレビューエリアが表示されます。各項目を編集して「保存する」ボタンで反映します。</p>
+          </div>
+          <figcaption>▲ 管理画面「基本設定」の実際のインターフェース</figcaption>
+        </figure>
+
+        <!-- Image 2: Diagram -->
+        <figure>
+          <img
+            src="https://www.genspark.ai/api/files/s/13Ky13Mb?cache_control=3600"
+            alt="基本設定画面の構成図解"
+            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
+          />
+          <div class="image-fallback">
+            <div class="image-fallback-icon">⚙️</div>
+            <div class="image-fallback-text">設定項目の構成と流れ（図解）</div>
+            <div class="image-fallback-desc">
+              ヘッダー/フッター設定 → タイトル・説明テキスト<br />
+              → FAQ → レイアウト・画像<br />
+              → プレビュー確認 → 保存の流れを示す図解
+            </div>
+          </div>
+          <figcaption>▲ 設定項目の構成と流れ（図解）</figcaption>
+        </figure>
+      </div>
+
+      <!-- Operation Steps Card -->
+      <div class="card">
+        <h2>設定・編集の手順</h2>
+
+        <div class="step-item">
+          <span class="step-num">①</span>
+          <strong>ヘッダー/フッター設定</strong>
+          <p style="margin-top: 8px; font-size: 14px; line-height: 1.8;">
+            画面上部・下部の共通エリアの設定です。以下の項目を設定できます：
+          </p>
+          <ul style="margin: 8px 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+            <li><strong>ロゴ画像</strong>：ファイルを選択すると自動保存されます（JPG/PNG推奨）</li>
+            <li><strong>トップのタイトル</strong>：シミュレーターのメインタイトル（例：「刻印印刷シミュレーター」）</li>
+            <li><strong>ヘッダーテキスト</strong>：画面上部に表示するテキスト</li>
+            <li><strong>フッターテキスト</strong>：画面下部に表示するテキスト（例：「このシミュレーションはイメージです」）</li>
+            <li><strong>ヘッダー配置</strong>：左 / 中央 / 右から選択</li>
+            <li><strong>フッター配置</strong>：左 / 中央 / 右から選択</li>
+            <li><strong>ロゴサイズ</strong>：小 / 中 / 大から選択</li>
+            <li><strong>ヘッダー文字サイズ</strong>：小 / 中 / 大から選択</li>
+            <li><strong>フッター文字サイズ</strong>：小 / 中 / 大から選択</li>
+          </ul>
+          <p style="margin-top: 8px; font-size: 13px; color: #666; line-height: 1.6;">
+            💡 <strong>ポイント：</strong>ロゴ画像は選択すると自動保存されますが、その他の設定は「保存する」ボタンで反映してください。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">②</span>
+          <strong>タイトル / フッター文言</strong>
+          <p style="margin-top: 4px; font-size: 14px">
+            シミュレーターのメインタイトル（例：「刻印印刷シミュレーター」）や、フッターに表示する注釈（例：「このシミュレーションはイメージです」等）を入力します。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">③</span>
+          <strong>共通説明テキスト</strong>
+          <p style="margin-top: 4px; font-size: 14px">
+            お客様が最初に目にする「ご利用前のご案内」を入力します。利用の流れや注意点などを記載してください。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">④</span>
+          <strong>よくある質問（FAQ）の追加・編集</strong>
+          <p style="margin-top: 8px; font-size: 14px; line-height: 1.8;">
+            FAQは<strong>カード形式</strong>で表示されます。テキストエリアに直接入力するか、<strong>「ひな型をコピー」</strong>ボタンでテンプレートをコピーして使用できます。
+          </p>
+          <div style="margin-top: 12px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #fde68a;">
+            <p style="margin: 0 0 8px 0; font-weight: 600; color: #92400e; font-size: 13px;">📝 入力ルール（重要！）：</p>
+            <ul style="margin: 0 0 0 1.5rem; font-size: 13px; line-height: 1.8; color: #78350f;">
+              <li><strong>質問行：</strong>「Q.」で始める（例：「Q. 推奨ブラウザは？」）</li>
+              <li><strong>回答行：</strong>質問の次の行から続けて書く（空行を入れない）</li>
+              <li><strong>複数行の回答：</strong>改行を続けて書く</li>
+              <li><strong>次のカード：</strong>空行1つを入れて区切る</li>
+            </ul>
+            <div style="margin-top: 12px; padding: 10px; background: #f9fafb; border-radius: 4px; font-family: monospace; font-size: 12px; line-height: 1.6; color: #374151;">
+              <p style="margin: 0 0 4px 0; font-weight: 600;">入力例：</p>
+              <p style="margin: 0;">Q. 推奨ブラウザは？<br />
+              最新の Edge / Chrome / Firefox / Safari でご利用ください。<br />
+              <br />
+              Q. 作ったデザインは保存できますか？<br />
+              デザインIDを発行すると保存されます。デザインIDを控えておけば、同じデザインで再製作できます。</p>
+            </div>
+          </div>
+          <p style="margin-top: 8px; font-size: 13px; color: #666; line-height: 1.6;">
+            💡 <strong>コツ：</strong>「ひな型をコピー」ボタンを押すと、サンプルのFAQがクリップボードにコピーされます。それを貼り付けて編集すると効率的です。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">⑤</span>
+          <strong>レイアウト / 画像添付</strong>
+          <p style="margin-top: 8px; font-size: 14px; line-height: 1.8;">
+            <strong>レイアウト設定：</strong>画像とテキストの配置を選択します。
+          </p>
+          <ul style="margin: 8px 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+            <li>画像を上 / テキストを下</li>
+            <li>テキストを上 / 画像を下</li>
+            <li>画像が左 / テキストが右</li>
+            <li>テキストが左 / 画像が右</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 14px; line-height: 1.8;">
+            <strong>画像添付：</strong>説明用の補足画像をアップロードできます。
+          </p>
+          <ul style="margin: 8px 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+            <li><strong>「画像を選択」</strong>ボタンをクリックしてファイルを選択</li>
+            <li><span class="text-orange">※ 画像サイズ上限：各2MBまで、最大5枚</span></li>
+            <li><strong>画像の並び替え：</strong>画像を<strong>ドラッグ&ドロップ</strong>するか、各画像の<strong>「↑」「↓」</strong>ボタンで順序を変更</li>
+            <li><strong>画像の削除：</strong>各画像の<strong>「削除」</strong>ボタンをクリック</li>
+          </ul>
+          <p style="margin-top: 8px; font-size: 13px; color: #666; line-height: 1.6;">
+            💡 <strong>コツ：</strong>画像はドラッグ&ドロップで簡単に並び替えられます。画像の上に「⇅ 並び替え」と表示されている部分をドラッグしてください。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">⑥</span>
+          <strong>補足資料（PDF）の添付</strong>
+          <p style="margin-top: 4px; font-size: 14px">
+            補足資料としてPDFファイルを添付できます。<br />
+            <span class="text-orange">※ PDFサイズ上限：5MBまで</span><br />
+            お客様がダウンロードできる形式で表示されます。
+          </p>
+        </div>
+
+        <div class="step-item">
+          <span class="step-num">⑦</span>
+          <strong>プレビューで確認 → 保存</strong>
+          <p style="margin-top: 8px; font-size: 14px; line-height: 1.8;">
+            <strong>プレビュー確認：</strong>
+          </p>
+          <ul style="margin: 8px 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+            <li>画面下部の<strong>プレビューエリア</strong>で、実際のお客様からの見え方を確認できます</li>
+            <li><strong>「プレビューを更新」</strong>ボタンで最新の設定を反映</li>
+            <li><strong>「新しいタブで開く」</strong>ボタンで別タブで確認も可能</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 14px; line-height: 1.8;">
+            <strong>保存：</strong>
+          </p>
+          <ul style="margin: 8px 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+            <li>問題なければ<strong>「保存する」</strong>ボタンを押して反映させます</li>
+            <li><span class="text-orange">※ 変更がある場合のみ「保存する」ボタンが有効（青色）になります</span></li>
+            <li>変更がない場合は「保存する」ボタンは無効（グレーアウト）のままです</li>
+            <li>保存すると<strong>即時に本番反映</strong>されます</li>
+          </ul>
+          <div style="margin-top: 12px; padding: 10px; background: #fee2e2; border-left: 4px solid #ef4444; border-radius: 4px;">
+            <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #991b1b;">
+              ⚠️ <strong>重要：</strong>保存する前に必ずプレビューで確認してください。保存すると即時に本番反映されます。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes & Warning Card -->
+      <div class="card" style="border-left: 5px solid #f2994a">
+        <h2 style="border-left: none; padding-left: 0; color: #f2994a">⚠️ 運用上の注意点</h2>
+        <ul style="list-style-type: disc; color: #444">
+          <li>
+            <strong>保存ボタンの確認</strong
+            >：変更を加えると「保存する」ボタンが有効になります。必ず「保存する」ボタンを押して設定を反映してください。
+          </li>
+          <li>
+            <strong>公開前のプレビュー必須</strong
+            >：保存すると即時に本番反映されます。必ずプレビューで崩れがないか確認してください。
+          </li>
+          <li><strong>文言はお客様に見えます</strong>：社内用語ではなく、お客様に伝わる言葉で入力してください。</li>
+          <li>
+            <strong>画像サイズ制限</strong
+            >：各画像2MBを超える画像はアップロードできません。事前にリサイズや圧縮を行ってください。最大5枚まで登録できます。
+          </li>
+          <li>
+            <strong>PDFサイズ制限</strong>：5MBを超えるPDFはアップロードできません。必要に応じて圧縮してください。
+          </li>
+          <li>
+            <strong>変更の影響範囲</strong>：ここでの設定は、すべてのテンプレート共通の「導入ページ」に影響します。
+          </li>
+          <li>
+            <strong>自動保存について</strong>：一部の項目（ロゴ画像など）は自動保存されますが、基本的には「保存する」ボタンで手動保存してください。
+          </li>
+        </ul>
+      </div>
+
+      <!-- Admin FAQ Card -->
+      <div class="card">
+        <h2>管理者向けFAQ</h2>
+
+        <div class="faq-item">
+          <div class="faq-q">設定した内容はどこに表示されますか？</div>
+          <div class="faq-a">
+            シミュレーターのURLを開いた直後の「トップページ（導入画面）」、または「共通説明 + 公開URL」をクリックした際に表示される共通説明ページ（/common）に表示されます。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">保存した内容はいつ反映されますか？</div>
+          <div class="faq-a">
+            「保存する」ボタンを押すと即時に反映されます。ブラウザのキャッシュにより古い情報が残る場合があるため、確認時はスーパーリロード（Ctrl+F5等）を推奨します。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">アップロードした画像が表示されません</div>
+          <div class="faq-a">
+            画像形式（JPG/PNG推奨）やサイズ（各2MB以下、最大5枚）を確認してください。また、特殊な文字コードを含むファイル名は避けてください。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">画像の順序を変更したい</div>
+          <div class="faq-a">
+            画像一覧で画像をドラッグ&ドロップすることで、順序を変更できます。変更後は「保存する」ボタンを押して反映してください。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">「保存する」ボタンが無効になっています</div>
+          <div class="faq-a">
+            変更がない場合、「保存する」ボタンは無効（グレーアウト）になります。設定を変更すると自動的に有効（青色）になります。<br />
+            <span style="font-size: 0.9rem; color: #666;">💡 ロゴ画像は自動保存されますが、その他の設定は「保存する」ボタンで手動保存が必要です。</span>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">FAQの入力方法がわかりません</div>
+          <div class="faq-a">
+            FAQは特定のフォーマットで入力します：
+            <ul style="margin: 8px 0 0 1.5rem; font-size: 0.9rem; line-height: 1.8;">
+              <li>質問は「Q.」で始める</li>
+              <li>回答は質問の次の行から続けて書く（空行を入れない）</li>
+              <li>複数のカードは空行1つで区切る</li>
+            </ul>
+            「ひな型をコピー」ボタンでサンプルをコピーして、それを参考に編集すると分かりやすいです。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">画像の順序を変更する方法は？</div>
+          <div class="faq-a">
+            画像の順序は以下の方法で変更できます：
+            <ul style="margin: 8px 0 0 1.5rem; font-size: 0.9rem; line-height: 1.8;">
+              <li><strong>ドラッグ&ドロップ：</strong>画像をドラッグして別の位置にドロップ</li>
+              <li><strong>↑↓ボタン：</strong>各画像の「↑」「↓」ボタンをクリック</li>
+            </ul>
+            変更後は「保存する」ボタンを押して反映してください。
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Navigation -->
+      <div class="nav-links">
+        <a href="./index.html" class="nav-link"
+          >目次に戻る<br /><span style="font-size: 12px; font-weight: normal">ガイド一覧</span></a
+        >
+        <a href="./public_templates.html" class="nav-link"
+          >公開テンプレート一覧<br /><span style="font-size: 12px; font-weight: normal">の使い方を見る</span></a
+        >
+        <a href="./template_management.html" class="nav-link"
+          >テンプレート管理<br /><span style="font-size: 12px; font-weight: normal">の使い方を見る</span></a
+        >
+        <a href="./design_history.html" class="nav-link"
+          >デザイン発行履歴<br /><span style="font-size: 12px; font-weight: normal">の使い方を見る</span></a
+        >
+      </div>
+    </div>
+  </body>
+</html>

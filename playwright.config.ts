@@ -15,7 +15,7 @@ export default defineConfig({
     acceptDownloads: true
   },
   webServer: {
-    command: "pnpm dev -- --port 5174",
+    command: "npm run dev -- --port 5174",
     port: 5174,
     reuseExistingServer: true,
     timeout: 120000
@@ -24,6 +24,14 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] }
+    },
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 5"] }
+    },
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 13"] }
     }
   ]
 });

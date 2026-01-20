@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>デザイン発行履歴（管理者）操作ガイド</title>
+    <!-- 外部CSSなし（単一HTML運用のため） -->
+    <style>
+      :root {
+        --primary: #2f80ed;
+        --secondary: #f2994a;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --muted-color: #666666;
+        --border-radius: 12px;
+        --spacing-large: 4rem;
+        --spacing-medium: 2rem;
+        --spacing-small: 1rem;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Container override for wide layout */
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      /* Navigation */
+      .nav-header {
+        background: var(--card-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-bottom: 2rem;
+      }
+      .nav-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .nav-item {
+        color: var(--muted-color);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        border-bottom: 2px solid transparent;
+      }
+      .nav-item.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .nav-item:hover {
+        color: var(--primary);
+      }
+
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        padding: var(--spacing-large) 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-medium);
+        border: 1px solid #e1e4e8;
+      }
+      .hero h1 {
+        color: var(--text-color);
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+      .hero p {
+        color: var(--muted-color);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Cards and Sections */
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-medium);
+        margin-bottom: var(--spacing-medium);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        border: 1px solid #eee;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        color: var(--primary);
+        border-left: 5px solid var(--primary);
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+      }
+
+      h3 {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      /* Step List */
+      .step-list {
+        list-style: none;
+        padding: 0;
+        counter-reset: step-counter;
+      }
+      .step-list li {
+        position: relative;
+        padding-left: 50px;
+        margin-bottom: 1.5rem;
+      }
+      .step-list li::before {
+        counter-increment: step-counter;
+        content: counter(step-counter);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 36px;
+        height: 36px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 36px;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+      /* サブセクション内のリストには番号を付けない */
+      .step-list ul li::before {
+        display: none;
+      }
+      .step-highlight {
+        font-weight: bold;
+        color: var(--primary);
+        background: #eef4fc;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      /* Feature Grid */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 1.5rem;
+      }
+      .feature-item {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #eee;
+      }
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      .feature-title {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+      }
+
+      /* Images */
+      figure {
+        margin: 0 0 2rem 0;
+        text-align: center;
+      }
+      figure img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .image-fallback {
+        display: none;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: 2px dashed #94a3b8;
+        border-radius: 12px;
+        text-align: center;
+        color: #64748b;
+        min-height: 300px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .image-fallback-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+      }
+      .image-fallback-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #475569;
+      }
+      .image-fallback-desc {
+        font-size: 0.9rem;
+        color: #64748b;
+        line-height: 1.6;
+      }
+      figcaption {
+        margin-top: 0.5rem;
+        color: var(--muted-color);
+        font-size: 0.9rem;
+      }
+
+      /* Attention Box */
+      .attention-box {
+        background: #fff8f2;
+        border: 1px solid #ffeeba;
+        border-left: 5px solid var(--secondary);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+      .attention-title {
+        color: #d35400; /* Darker orange for text */
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      /* FAQ */
+      details {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+      }
+      summary {
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--text-color);
+      }
+      summary:hover {
+        color: var(--primary);
+      }
+      .faq-answer {
+        padding: 1rem 0 0 1.5rem;
+        color: var(--muted-color);
+        font-size: 0.95rem;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 3rem 0;
+        color: var(--muted-color);
+        font-size: 0.9rem;
+        border-top: 1px solid #eee;
+        margin-top: 3rem;
+      }
+      .contact-btn {
+        display: inline-block;
+        background: var(--text-color);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        margin-top: 1rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <header class="nav-header">
+      <div class="nav-inner">
+        <a href="./public_templates.html" class="nav-item">公開テンプレート一覧</a>
+        <a href="./template_management.html" class="nav-item">テンプレート管理</a>
+        <a href="./design_history.html" class="nav-item active">デザイン発行履歴</a>
+        <a href="./basic_settings.html" class="nav-item">基本設定</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Hero -->
+      <section class="hero">
+        <h1>デザイン発行履歴（管理者）操作ガイド</h1>
+        <p>
+          お客様が作成したデザインの検索・確認・管理を一元管理できます。
+        </p>
+        
+        <!-- ポイント3つ -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2.5rem 0; max-width: 900px; margin-left: auto; margin-right: auto;">
+          <div style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #0ea5e9; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #0369a1; font-weight: 700;">1. 検索で探す</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #0c4a6e;">デザインIDやテンプレートキーで素早く検索できます。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #15803d; font-weight: 700;">2. PDFで確認</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #14532d;">印刷用データをプレビュー・ダウンロードできます。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🗑️</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #991b1b; font-weight: 700;">3. 不要なデータを削除</h3>
+            <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #7f1d1d;">チェックボックスで選択して一括削除できます。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Illustration (Diagram) -->
+      <section class="card">
+        <h2>機能概要（図解）</h2>
+        <figure>
+          <img
+            src="https://www.genspark.ai/api/files/s/Mq97iXoP?cache_control=3600"
+            alt="デザイン発行履歴画面の機能図解：探す・確認する・削除の流れ"
+            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
+          />
+          <div class="image-fallback">
+            <div class="image-fallback-icon">🔍</div>
+            <div class="image-fallback-text">機能図解：探す・確認する・削除の流れ</div>
+            <div class="image-fallback-desc">
+              画面上部の検索エリアでデザインIDやテンプレートキーで検索<br />
+              一覧からPDFプレビューで確認<br />
+              チェックボックスで選択して削除<br />
+              3つの主要機能を示す図解
+            </div>
+          </div>
+          <figcaption>▲ 画面の主要な3つの機能エリア（検索・確認・削除）</figcaption>
+        </figure>
+      </section>
+
+      <!-- 3. Screen Shot & 4. Operations -->
+      <section class="card">
+        <h2>操作手順と画面の見方</h2>
+
+        <figure>
+          <img
+            src="https://www.genspark.ai/api/files/s/OdjWLCFE"
+            alt="実際のデザイン発行履歴管理画面のスクリーンショット"
+            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
+          />
+          <div class="image-fallback">
+            <div class="image-fallback-icon">📊</div>
+            <div class="image-fallback-text">デザイン発行履歴管理画面のスクリーンショット</div>
+            <div class="image-fallback-desc">
+              画面上部に検索・絞り込み・削除ボタン<br />
+              下部にデザイン一覧テーブルが表示されます<br />
+              各デザインのID、テンプレート情報、発行日時、プレビューボタンが確認できます
+            </div>
+          </div>
+          <figcaption>▲ 実際の管理画面：一覧形式で日時順に並びます</figcaption>
+        </figure>
+
+        <div class="step-container">
+          <ol class="step-list">
+            <li>
+              <h3>ステップ1：目的のデータを探す</h3>
+              <p style="line-height: 1.8;">
+                画面上部の検索エリアを使います。
+              </p>
+              <div style="margin-top: 12px; padding: 12px; background: #f0f9ff; border-radius: 6px; border-left: 4px solid #0ea5e9;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #0369a1; font-size: 14px;">🔍 デザインIDで検索</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.8;">
+                  <span class="step-highlight">「デザインIDで検索」</span> フォームにデザインIDを入力します（例：260117_NXGH3UA）。<br />
+                  入力すると、一覧が自動的に絞り込まれます。<br />
+                  <span style="font-size: 0.9rem; color: #666;">💡 デザインIDは「日付_ランダム文字列」の形式です（例：260117_NXGH3UA）。</span>
+                </p>
+              </div>
+              <div style="margin-top: 12px; padding: 12px; background: #f0fdf4; border-radius: 6px; border-left: 4px solid #22c55e;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #15803d; font-size: 14px;">📋 テンプレートキーで絞り込み</p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.8;">
+                  <span class="step-highlight">「テンプレキーで絞り込み」</span> プルダウンからテンプレートを選択します。<br />
+                  選択すると、そのテンプレートで作成されたデザインのみが表示されます。<br />
+                  <span style="font-size: 0.9rem; color: #666;">💡 絞り込みを解除するには、デザインID検索をクリアするか、テンプレキーで「テンプレキーで絞り込み」を選択し直してください。</span>
+                </p>
+              </div>
+            </li>
+            <li>
+              <h3>ステップ2：内容を確認する</h3>
+              <p style="line-height: 1.8;">
+                一覧表の右側にある
+                <span class="step-highlight">「確認用プレビュー」</span> ボタンを押します。
+              </p>
+              <div style="margin-top: 12px; padding: 12px; background: #fff7ed; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #92400e; font-size: 14px;">📄 PDFプレビューの使い方</p>
+                <ul style="margin: 0 0 0 1.5rem; font-size: 14px; line-height: 1.8;">
+                  <li>画面中央にモーダルウィンドウが開き、お客様が作成したそのままのレイアウトを確認できます</li>
+                  <li>プレビューから<strong>「ダウンロード」</strong>ボタンでPDFファイルを保存することもできます</li>
+                  <li>モーダルウィンドウを閉じる場合は、右上の「×」ボタンまたは「閉じる」ボタンをクリックしてください</li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <h3>ステップ3：不要なデータを削除する</h3>
+              <p style="line-height: 1.8;">
+                一覧の左端にある<strong>チェックボックス</strong>で削除したい項目を選択します（複数選択可能）。<br />
+                選択後、検索バーの横にある
+                <span class="step-highlight">「選択したものを削除」</span> ボタンを押します。
+              </p>
+              <div style="margin-top: 12px; padding: 12px; background: #fee2e2; border-radius: 6px; border-left: 4px solid #ef4444;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #991b1b; font-size: 14px;">⚠️ 削除時の注意</p>
+                <ul style="margin: 0 0 0 1.5rem; font-size: 14px; line-height: 1.8; color: #7f1d1d;">
+                  <li>確認ダイアログが表示されます</li>
+                  <li>確認ダイアログで<strong>「OK」</strong>を選択すると削除されます</li>
+                  <li><strong>一度削除すると復元できません</strong>。必ずPDFプレビューで内容を確認してから削除してください</li>
+                </ul>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 5. Attention -->
+      <section class="attention-box">
+        <div class="attention-title">⚠️ 操作上の注意</div>
+        <ul>
+          <li>
+            <strong>削除は慎重に行ってください：</strong
+            >一度削除すると、お客様が発行したIDが無効になり、復元できません。
+          </li>
+          <li><strong>削除前の確認：</strong>必ずPDFの内容を確認してから削除を行ってください。</li>
+          <li>
+            <strong>共有について：</strong
+            >社内でデータを共有する際は、PDFファイルそのものではなく「デザインID」を伝えると確実です。
+          </li>
+          <li>
+            <strong>PDFプレビューについて：</strong
+            >PDFは画面中央に表示されます。閉じる場合は右上の「閉じる」ボタンをクリックしてください。
+          </li>
+        </ul>
+      </section>
+
+      <!-- 6. FAQ -->
+      <section class="card">
+        <h2>よくある質問</h2>
+        <details>
+          <summary>Q. 削除したデータは復元できますか？</summary>
+          <div class="faq-answer">
+            <p style="margin: 0 0 8px 0; line-height: 1.8;">
+              原則として復元はできません。誤って削除しないよう、必ずPDFプレビューで中身を確認してから操作してください。
+            </p>
+            <p style="margin: 0; padding: 10px; background: #fee2e2; border-left: 4px solid #ef4444; border-radius: 4px; font-size: 0.9rem; color: #991b1b; line-height: 1.6;">
+              ⚠️ <strong>重要：</strong>削除前に必ずPDFプレビューで内容を確認してください。一度削除すると、お客様が発行したIDが無効になり、復元できません。
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. デザインIDはお客様の注文番号と同じですか？</summary>
+          <div class="faq-answer">
+            <p style="margin: 0; line-height: 1.8;">
+              いいえ、異なります。デザインIDはシミュレーターが独自に発行する英数字（例：260117_NXGH3UA）です。形式は「日付_ランダム文字列」となっており、注文情報と照らし合わせる際は、お客様に入力していただいた備考欄のデザインIDをご確認ください。
+            </p>
+            <p style="margin: 8px 0 0 0; padding: 10px; background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 4px; font-size: 0.9rem; color: #0369a1; line-height: 1.6;">
+              💡 <strong>デザインIDの形式：</strong>「日付_ランダム文字列」（例：260117_NXGH3UA）。日付部分は6桁の数字（YYMMDD形式）です。
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. PDFがうまく表示されません</summary>
+          <div class="faq-answer">
+            <p style="margin: 0 0 8px 0; line-height: 1.8;">
+              ブラウザのポップアップブロックが有効になっている可能性があります。設定を確認するか、推奨ブラウザ（Chrome/Edge/Safari）でお試しください。
+            </p>
+            <p style="margin: 0; line-height: 1.8;">
+              PDFは画面中央に表示されるため、画面中央に表示されることを確認してください。表示されない場合は、ブラウザを再読み込みしてみてください。
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. 一覧に表示されない履歴があります</summary>
+          <div class="faq-answer">
+            <p style="margin: 0 0 8px 0; line-height: 1.8;">
+              テンプレートが削除された場合、「テンプレートなし」と表示されますが、PDFの確認は可能です。
+            </p>
+            <p style="margin: 0; line-height: 1.8;">
+              また、検索条件に該当しない場合は表示されません。検索条件をクリアして再度確認してください。<br />
+              <span style="font-size: 0.9rem; color: #666;">💡 デザインID検索をクリアし、テンプレキーで「テンプレキーで絞り込み」を選択し直すと、すべての履歴が表示されます。</span>
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. 複数のデザインを一度に削除できますか？</summary>
+          <div class="faq-answer">
+            <p style="margin: 0; line-height: 1.8;">
+              はい、可能です。一覧の左端にあるチェックボックスで複数の項目を選択し、「選択したものを削除」ボタンを押すと、選択したすべてのデザインが削除されます。<br />
+              <span style="font-size: 0.9rem; color: #991b1b;">⚠️ 複数選択して削除する場合も、確認ダイアログが表示されます。慎重に確認してください。</span>
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. PDFをダウンロードする方法は？</summary>
+          <div class="faq-answer">
+            <p style="margin: 0; line-height: 1.8;">
+              「確認用プレビュー」ボタンを押して画面を開き、プレビュー画面内の<strong>「ダウンロード」</strong>ボタンをクリックすると、PDFファイルが保存されます。<br />
+              <span style="font-size: 0.9rem; color: #666;">💡 ダウンロードしたPDFは、印刷用データとしてそのまま使用できます。</span>
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Q. 専門用語の説明</summary>
+          <div class="faq-answer">
+            <p style="margin: 0 0 0.75rem 0; font-weight: 600; color: #0369a1;">📝 このガイドで使われている用語の説明：</p>
+            <ul style="margin: 0 0 0 1.5rem; padding: 0; line-height: 1.8;">
+              <li><strong>デザインID：</strong>お客様が作成したデザインを識別するための英数字コード（例：260117_NXGH3UA）</li>
+              <li><strong>テンプレートキー：</strong>商品テンプレートを識別するためのID</li>
+              <li><strong>PDF：</strong>印刷用のファイル形式。確認や印刷に使用できます</li>
+              <li><strong>プレビュー：</strong>実際の表示を確認すること</li>
+              <li><strong>チェックボックス：</strong>選択するための四角いボックス</li>
+              <li><strong>一括削除：</strong>複数の項目を一度に削除すること</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <!-- 7. Footer -->
+    <footer>
+      <p>操作についてご不明な点がある場合は、システム担当者へお問い合わせください。</p>
+      <a href="./index.html" class="contact-btn">目次に戻る</a>
+    </footer>
+  </body>
+</html>

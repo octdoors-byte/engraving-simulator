@@ -1,10 +1,25 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import { Toast } from "@/components/common/Toast";
+import { HelpIcon } from "@/components/common/HelpIcon";
 import type { Design, TemplateSummary } from "@/domain/types";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { processLogo } from "@/domain/image/processLogo";
 import { deleteDesign, getDesign, getTemplate, listDesigns, listTemplates, loadTemplateBgFallback } from "@/storage/local";
 import { deleteAssets, getAssetById, saveAsset } from "@/storage/idb";
+
+function formatDate(isoString: string): string {
+  try {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
+  } catch {
+    return isoString;
+  }
+}
 
 function downloadBlob(blob: Blob, fileName: string) {
   const url = URL.createObjectURL(blob);
@@ -87,6 +102,8 @@ export function AdminDesignsPage() {
   const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
   const [previewInfo, setPreviewInfo] = useState<{ designId: string; kind: "confirm" } | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [previewImageName, setPreviewImageName] = useState<string | null>(null);
 
   const reload = useCallback(() => {
     const summaries = listDesigns();
@@ -266,18 +283,23 @@ export function AdminDesignsPage() {
   );
 
   const handleClosePreview = useCallback(() => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
+    const urlToRevoke = previewUrl;
     setPreviewUrl(null);
     setPreviewBlob(null);
     setPreviewInfo(null);
+    // objectがblob URLを読み込む前にrevokeされないよう、少し遅延してからrevoke
+    // モーダルが閉じられ、objectがDOMから削除されるのを待つ
+    if (urlToRevoke) {
+      setTimeout(() => {
+        URL.revokeObjectURL(urlToRevoke);
+      }, 300);
+    }
   }, [previewUrl]);
 
   const handleBulkDelete = useCallback(async () => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
-    const confirmed = window.confirm("選択したデザイン発行履歴を削除しますか？");
+    const confirmed = window.confirm("選択したデザイン作成履歴を削除しますか？");
     if (!confirmed) return;
     await Promise.all(
       ids.map(async (designId) => {
@@ -292,7 +314,7 @@ export function AdminDesignsPage() {
     );
     setSelectedIds(new Set());
     reload();
-    setToast({ message: "選択したデザイン発行履歴を削除しました。", tone: "success" });
+    setToast({ message: "選択したデザイン作成履歴を削除しました。", tone: "success" });
   }, [selectedIds, reload]);
 
   useEffect(() => {
@@ -308,8 +330,11 @@ export function AdminDesignsPage() {
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">デザイン発行履歴</h1>
-        <p className="text-sm text-slate-500">発行済みのデザインを一覧で確認できます。</p>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-slate-900">デザイン作成履歴</h1>
+          <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
+        </div>
+        <p className="text-sm text-slate-500">作成済みのデザインを一覧で確認できます。詳細は？アイコンからご確認ください。</p>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
           <input
             type="text"
@@ -323,7 +348,7 @@ export function AdminDesignsPage() {
             value={templateFilter}
             onChange={(event) => setTemplateFilter(event.target.value)}
           >
-            <option value="">テンプレキーで絞り込み</option>
+            <option value="">テンプレートIDで絞り込み</option>
             {templateOptions.map((template) => (
               <option key={template.templateKey} value={template.templateKey}>
                 {template.templateKey}
@@ -365,8 +390,8 @@ export function AdminDesignsPage() {
                 </th>
                 <th className="px-6 py-3 text-left">プレビュー</th>
                 <th className="px-6 py-3 text-left">デザインID</th>
-                <th className="px-6 py-3 text-left">テンプレキー</th>
-                <th className="px-6 py-3 text-left">発行日</th>
+                <th className="px-6 py-3 text-left">テンプレートID</th>
+                <th className="px-6 py-3 text-left">作成日</th>
                 <th className="px-6 py-3 text-left">PDF</th>
               </tr>
             </thead>
@@ -374,7 +399,7 @@ export function AdminDesignsPage() {
               {filteredDesigns.length === 0 ? (
                 <tr>
                   <td className="px-6 py-6 text-sm text-slate-500" colSpan={6}>
-                    デザイン発行履歴がありません。
+                    デザイン作成履歴がありません。
                   </td>
                 </tr>
               ) : (
@@ -404,7 +429,11 @@ export function AdminDesignsPage() {
                           <img
                             src={previewUrls[design.designId]}
                             alt={`${design.designId} のロゴ`}
-                            className="h-full w-full object-contain"
+                            className="h-full w-full cursor-pointer object-contain transition hover:opacity-80"
+                            onClick={() => {
+                              setPreviewImageUrl(previewUrls[design.designId]);
+                              setPreviewImageName(design.designId);
+                            }}
                           />
                         ) : (
                           <span className="text-xs text-slate-400">なし</span>
@@ -415,14 +444,14 @@ export function AdminDesignsPage() {
                     <td className="px-6 py-4">
                       {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
                     </td>
-                    <td className="px-6 py-4">{design.createdAt}</td>
+                    <td className="px-6 py-4">{formatDate(design.createdAt)}</td>
                     <td className="px-6 py-4">
                       <button
                         type="button"
                         className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
                         onClick={() => handlePreview(design, "confirm")}
                       >
-                        確認用プレビュー
+                        確認用PDF
                       </button>
                     </td>
                   </tr>
@@ -454,7 +483,7 @@ export function AdminDesignsPage() {
             </div>
             <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs">
               <span className="text-slate-500">
-                {isPreviewLoading ? "プレビューを読み込み中..." : "プレビューを確認してからダウンロードできます。"}
+                {isPreviewLoading ? "確認画面を読み込み中..." : "確認画面を確認してからダウンロードできます。"}
               </span>
               <button
                 type="button"
@@ -467,6 +496,41 @@ export function AdminDesignsPage() {
               >
                 ダウンロード
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {previewImageUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => {
+            setPreviewImageUrl(null);
+            setPreviewImageName(null);
+          }}
+        >
+          <div
+            className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
+              <span className="font-semibold text-slate-900">{previewImageName}</span>
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                onClick={() => {
+                  setPreviewImageUrl(null);
+                  setPreviewImageName(null);
+                }}
+              >
+                閉じる
+              </button>
+            </div>
+            <div className="flex max-h-[80vh] items-center justify-center bg-slate-50 p-8">
+              <img
+                src={previewImageUrl}
+                alt={previewImageName || "プレビュー"}
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
           </div>
         </div>
