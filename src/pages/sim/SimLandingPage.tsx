@@ -11,8 +11,8 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "comment", label: "備考（お客様表示用）" },
   { key: "paper", label: "用紙" },
   { key: "templateKey", label: "テンプレートID" },
-  { key: "info", label: "共通説明URLをコピー" },
-  { key: "url", label: "公開URLをコピー" }
+  { key: "info", label: "共通説明URL" },
+  { key: "url", label: "公開URL" }
 ];
 
 type TemplateRow = {
@@ -231,10 +231,10 @@ export function SimLandingPage() {
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      window.alert(`${label}をコピーしました`);
+      window.alert(`${label}を保存しました`);
     } catch (err) {
       console.error(err);
-      window.alert(`${label}のコピーに失敗しました`);
+      window.alert(`${label}の保存に失敗しました`);
     }
   };
 
@@ -246,7 +246,7 @@ export function SimLandingPage() {
           <HelpIcon guideUrl="/public_templates.html" title="公開テンプレート一覧の操作ガイド" />
         </div>
         <p className="mt-5 text-sm text-slate-600">
-          テンプレート一覧から使いたいテンプレートを選び、公開URLをコピーしてシミュレーターを開きます。詳細は？アイコンからご確認ください。
+          テンプレート一覧から使いたいテンプレートを選び、公開URLでシミュレーターを開きます。詳細は？アイコンからご確認ください。
         </p>
       </div>
 
@@ -458,25 +458,25 @@ export function SimLandingPage() {
                                   : infoUrl;
                               return (
                                 <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
-                                  <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
-                                    onClick={() => copyToClipboard(infoFullUrl, "共通説明URL")}
-                                  >
-                                    コピー
-                                  </button>
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                                onClick={() => copyToClipboard(infoFullUrl, "共通説明URL")}
+                              >
+                                共通説明URL
+                              </button>
                                 </td>
                               );
                             }
                             return (
                               <td key={col.key} className="px-6" style={rowPaddingStyle}>
-                                <button
-                                  type="button"
-                                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
-                                  onClick={() => copyToClipboard(simUrl, "公開URL")}
-                                >
-                                  コピー
-                                </button>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                              onClick={() => copyToClipboard(simUrl, "公開URL")}
+                            >
+                              公開URL
+                            </button>
                               </td>
                             );
                           })}
