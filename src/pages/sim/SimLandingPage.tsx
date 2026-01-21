@@ -10,7 +10,7 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "category", label: "カテゴリ" },
   { key: "comment", label: "備考" },
   { key: "paper", label: "用紙" },
-  { key: "templateKey", label: "テンプレートID" },
+  { key: "templateKey", label: "テンプレID" },
   { key: "info", label: "共通説明URL" },
   { key: "url", label: "公開URL" }
 ];
