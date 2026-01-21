@@ -69,3 +69,20 @@ test("VR-02 ロゴアップロード後の配置画面が崩れていない", as
   await page.waitForTimeout(300);
   await expect(page).toHaveScreenshot("sim-uploaded.png", screenshotOpts);
 });
+
+test("VR-03 PDF確認モーダルが崩れていない", async ({ page }) => {
+  await page.goto(`/sim/${templateKey}`);
+  await waitForAppReady(page);
+
+  const input = page.locator('input[type="file"]').first();
+  await input.setInputFiles(logoOk);
+
+  await waitForReady(page);
+
+  const previewButton = page.getByRole("button", { name: "PDF確認" });
+  await previewButton.click();
+
+  await expect(page.getByRole("button", { name: "IDを作成する" })).toBeVisible({ timeout: longTimeout });
+  await page.waitForTimeout(300);
+  await expect(page).toHaveScreenshot("sim-pdf-modal.png", screenshotOpts);
+});
