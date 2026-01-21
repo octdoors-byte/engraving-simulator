@@ -86,7 +86,7 @@ export function SimLandingPage() {
   const [columns, setColumns] = useState(defaultColumns);
   const [selectedColumnKey, setSelectedColumnKey] = useState<ColumnKey>("name");
   const [hiddenColumns, setHiddenColumns] = useState<Set<ColumnKey>>(new Set());
-  const [rowPaddingPx, setRowPaddingPx] = useState(8);
+  const [rowPaddingPx, setRowPaddingPx] = useState(4);
   const [tableFontSizePx, setTableFontSizePx] = useState(16);
   const [draggingKey, setDraggingKey] = useState<ColumnKey | null>(null);
   const [searchText, setSearchText] = useState("");
@@ -327,7 +327,7 @@ export function SimLandingPage() {
                       {visibleColumns.map((col) => (
                     <th
                       key={col.key}
-                      className={`px-3 py-2 text-left ${draggingKey === col.key ? "bg-slate-100" : ""}`}
+                      className={`px-2 py-1 text-left ${draggingKey === col.key ? "bg-slate-100" : ""}`}
                       draggable
                       style={{ width: columnWidths[col.key], minWidth: 10 }}
                           onDragStart={(event) => {
@@ -369,14 +369,14 @@ export function SimLandingPage() {
                           {visibleColumns.map((col) => {
                             if (col.key === "name") {
                               return (
-                                <td key={col.key} className="px-3 font-medium text-slate-900" style={rowPaddingStyle}>
+                                <td key={col.key} className="px-2 font-medium text-slate-900" style={rowPaddingStyle}>
                                   {row.name}
                                 </td>
                               );
                             }
                             if (col.key === "category") {
                               return (
-                                <td key={col.key} className="px-3 text-slate-600" style={rowPaddingStyle}>
+                                <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                                   {row.category || "-"}
                                 </td>
                               );
@@ -390,7 +390,7 @@ export function SimLandingPage() {
                                 }, 0);
                               };
                               return (
-                            <td key={col.key} className="px-3 text-slate-700" style={rowPaddingStyle}>
+                            <td key={col.key} className="px-2 text-slate-700" style={rowPaddingStyle}>
                                   {isEditing ? (
                                     <input
                                       ref={commentInputRef}
@@ -435,14 +435,14 @@ export function SimLandingPage() {
                             }
                             if (col.key === "paper") {
                               return (
-                            <td key={col.key} className="px-3 text-slate-600" style={rowPaddingStyle}>
+                            <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                                   {row.paper}
                                 </td>
                               );
                             }
                             if (col.key === "templateKey") {
                               return (
-                            <td key={col.key} className="px-3 text-slate-600" style={rowPaddingStyle}>
+                            <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                                   {row.key}
                                 </td>
                               );
@@ -454,7 +454,7 @@ export function SimLandingPage() {
                                   ? new URL(infoUrl, window.location.origin).toString()
                                   : infoUrl;
                               return (
-                            <td key={col.key} className="px-3 text-slate-600" style={rowPaddingStyle}>
+                            <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                               <button
                                 type="button"
                                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
@@ -466,7 +466,7 @@ export function SimLandingPage() {
                               );
                             }
                             return (
-                          <td key={col.key} className="px-3" style={rowPaddingStyle}>
+                          <td key={col.key} className="px-2" style={rowPaddingStyle}>
                             <button
                               type="button"
                               className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
