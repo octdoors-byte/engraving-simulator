@@ -8,6 +8,7 @@ import { PageNotFound } from "@/pages/common/PageNotFound";
 import { CommonInfoPage } from "@/pages/common/CommonInfoPage";
 import { SimLandingPage } from "@/pages/sim/SimLandingPage";
 import { SimPage } from "@/pages/sim/SimPage";
+import { CategoryLandingPage } from "@/pages/sim/CategoryLandingPage";
 
 export const appRouter = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const appRouter = createBrowserRouter([
       {
         path: "top",
         element: <SimLandingPage />
+      },
+      {
+        path: "categories",
+        element: <CategoryLandingPage />
       },
       {
         path: "common",

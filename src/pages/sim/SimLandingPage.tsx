@@ -1,7 +1,9 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import type { Template, TemplateSummary } from "@/domain/types";
+import { useMemo } from "react";
 import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 import { HelpIcon } from "@/components/common/HelpIcon";
+import { useLocation } from "react-router-dom";
 
 type ColumnKey = "name" | "category" | "comment" | "paper" | "templateKey" | "info" | "url";
 
@@ -18,7 +20,7 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
 type TemplateRow = {
   key: string;
   name: string;
-  category?: string;
+  categories: string[];
   comment?: string;
   paper: string;
   updatedAt: string;
@@ -64,12 +66,19 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
   return Array.from(map.entries()).map(([key, items]) => {
     const sorted = [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     const preferred = items.find((item) => item.templateKey.endsWith("_front")) ?? items[0];
+    const categories = Array.from(
+      new Set(
+        items.flatMap((item) =>
+          item.categories && item.categories.length > 0 ? item.categories : item.category ? [item.category] : []
+        )
+      )
+    );
     const name = items.length > 1 ? `${preferred.name}（表/裏）` : preferred.name;
     const template = getTemplateForRow(preferred.templateKey);
     return {
       key,
       name,
-      category: preferred.category,
+      categories,
       comment: preferred.comment,
       paper: formatPaperLabel(template),
       updatedAt: sorted[0]?.updatedAt ?? "",
@@ -107,6 +116,7 @@ export function SimLandingPage() {
   const [editingComment, setEditingComment] = useState("");
   const nameInputRef = useRef<HTMLInputElement>(null);
   const commentInputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   const normalizedSearch = searchText.trim().toLowerCase();
 
@@ -117,7 +127,9 @@ export function SimLandingPage() {
       row.key.toLowerCase().includes(normalizedSearch) ||
       (row.comment ?? "").toLowerCase().includes(normalizedSearch);
     const matchesCategory =
-      selectedCategories.size === 0 || (row.category ? selectedCategories.has(row.category) : selectedCategories.has("未分類"));
+      selectedCategories.size === 0 ||
+      (row.categories.length > 0 && row.categories.some((cat) => selectedCategories.has(cat))) ||
+      (row.categories.length === 0 && selectedCategories.has("未分類"));
     return matchesSearch && matchesCategory;
   });
 
@@ -132,11 +144,21 @@ export function SimLandingPage() {
   });
 
   const categoryCountMap = templates.reduce<Record<string, number>>((acc, row) => {
-    const cat = row.category || "未分類";
-    acc[cat] = (acc[cat] ?? 0) + 1;
+    const cats = row.categories.length > 0 ? row.categories : ["未分類"];
+    cats.forEach((cat) => {
+      acc[cat] = (acc[cat] ?? 0) + 1;
+    });
     return acc;
   }, {});
   const categoryList = Object.entries(categoryCountMap).sort((a, b) => a[0].localeCompare(b[0]));
+
+  const categoryTitleMap = useMemo(() => {
+    const map = new Map<string, string>();
+    settings?.commonInfoCategories?.forEach((c) => {
+      if (c.id) map.set(c.id, c.title || c.id);
+    });
+    return map;
+  }, [settings?.commonInfoCategories]);
 
   const visibleColumns = columns.filter((col) => !hiddenColumns.has(col.key));
 
@@ -171,6 +193,16 @@ export function SimLandingPage() {
   useEffect(() => {
     refreshTemplates();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cats = params.getAll("cat").filter(Boolean);
+    if (cats.length === 0) {
+      setSelectedCategories(new Set());
+      return;
+    }
+    setSelectedCategories(new Set(cats));
+  }, [location.search]);
 
   useEffect(() => {
     if (!editingKey) return;
@@ -377,7 +409,19 @@ export function SimLandingPage() {
                             if (col.key === "category") {
                               return (
                                 <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
-                                  {row.category || "-"}
+                                  <div className="flex flex-wrap gap-1">
+                                    {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => {
+                                      const label = categoryTitleMap.get(cat) ?? cat;
+                                      return (
+                                        <span
+                                          key={cat}
+                                          className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700"
+                                        >
+                                          {label}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
                                 </td>
                               );
                             }
@@ -447,13 +491,13 @@ export function SimLandingPage() {
                                 </td>
                               );
                             }
-                            if (col.key === "info") {
-                              const infoUrl = `/common?next=${encodeURIComponent(simPath)}&hideNav=1`;
-                              const infoFullUrl =
-                                typeof window !== "undefined"
-                                  ? new URL(infoUrl, window.location.origin).toString()
-                                  : infoUrl;
-                              return (
+                        if (col.key === "info") {
+                          const infoUrl = `/common?next=${encodeURIComponent(simPath)}&hideNav=1`;
+                          const infoFullUrl =
+                            typeof window !== "undefined"
+                              ? new URL(infoUrl, window.location.origin).toString()
+                              : infoUrl;
+                          return (
                             <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                               <button
                                 type="button"
@@ -462,25 +506,40 @@ export function SimLandingPage() {
                               >
                                 共通説明URL
                               </button>
-                                </td>
-                              );
-                            }
-                            return (
+                            </td>
+                          );
+                        }
+                        // 公開URL（カテゴリ別コピー対応）
+                        const cats = row.categories.length > 0 ? row.categories : ["default"];
+                        return (
                           <td key={col.key} className="px-2" style={rowPaddingStyle}>
-                            <button
-                              type="button"
-                              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
-                              onClick={() => copyToClipboard(simUrl, "公開URL")}
-                            >
-                              公開URL
-                            </button>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                            <div className="flex flex-wrap gap-1">
+                              {cats.map((cat) => {
+                                const label = categoryTitleMap.get(cat) ?? cat;
+                                const url =
+                                  typeof window !== "undefined"
+                                    ? new URL(`${simPath}?cat=${encodeURIComponent(cat)}`, window.location.origin).toString()
+                                    : `${simPath}?cat=${encodeURIComponent(cat)}`;
+                                return (
+                                  <button
+                                    key={cat}
+                                    type="button"
+                                    className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                                    onClick={() => copyToClipboard(url, `公開URL(${label})`)}
+                                    title={`${label} のURLをコピー`}
+                                  >
+                                    {label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
                 </table>
               </div>
             )}
@@ -495,6 +554,7 @@ export function SimLandingPage() {
                 {categoryList.map(([category, count]) => {
                   const key = category;
                   const checked = selectedCategories.has(key);
+                  const label = categoryTitleMap.get(key) ?? key;
                   return (
                     <label key={key} className="flex items-center justify-between rounded border border-slate-200 px-3 py-2 text-sm text-slate-800 hover:bg-slate-50">
                       <span className="flex items-center gap-2">
@@ -513,7 +573,7 @@ export function SimLandingPage() {
                             });
                           }}
                         />
-                        <span>{key}</span>
+                        <span>{label}</span>
                       </span>
                       <span className="text-xs text-slate-500">{count}</span>
                     </label>

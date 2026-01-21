@@ -125,7 +125,12 @@ export function getAppVersion(): string | null {
 }
 
 export function listTemplates(): TemplateSummary[] {
-  return readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? [];
+  const list = readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? [];
+  return list.map((entry) => {
+    if (entry.categories && entry.categories.length > 0) return entry;
+    const categories = entry.category ? [entry.category] : [];
+    return { ...entry, categories };
+  });
 }
 
 export function getTemplate(templateKey: string): Template | null {

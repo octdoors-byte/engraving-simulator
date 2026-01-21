@@ -108,6 +108,11 @@ export function AdminTemplatesPage() {
     () => settings.commonInfoCategories?.map((c) => ({ value: c.id, label: c.title || c.id })) ?? [],
     [settings.commonInfoCategories]
   );
+  const categoryLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    categoryOptions.forEach((opt) => map.set(opt.value, opt.label));
+    return map;
+  }, [categoryOptions]);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [editingCategories, setEditingCategories] = useState<string[]>([]);
@@ -697,7 +702,24 @@ const cancelEditing = useCallback(() => {
                           className={`flex flex-wrap items-center gap-2 ${
                             template.status === "archive" ? "" : "cursor-pointer"
                           }`}
+                          tabIndex={0}
                           onDoubleClick={() => {
+                            if (template.status === "archive") {
+                              setToast({ message: "アーカイブは編集できません。", tone: "error" });
+                              return;
+                            }
+                            setEditingKey(template.templateKey);
+                            setEditingName(template.name);
+                            const nextCats =
+                              template.categories && template.categories.length > 0
+                                ? template.categories
+                                : template.category
+                                ? [template.category]
+                                : [];
+                            setEditingCategories(nextCats);
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key !== "Enter") return;
                             if (template.status === "archive") {
                               setToast({ message: "アーカイブは編集できません。", tone: "error" });
                               return;
@@ -714,68 +736,32 @@ const cancelEditing = useCallback(() => {
                           }}
                         >
                           <span
-                            role="button"
-                            tabIndex={0}
                             className={
                               template.status === "archive"
                                 ? "text-slate-400"
-                                : "inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-amber-800 hover:border-amber-300 hover:bg-amber-100 cursor-pointer"
+                                : "inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-amber-800 hover:border-amber-300 hover:bg-amber-100"
                             }
-                            onDoubleClick={() => {
-                              if (template.status === "archive") {
-                                setToast({ message: "アーカイブは編集できません。", tone: "error" });
-                                return;
-                              }
-                              setEditingKey(template.templateKey);
-                              setEditingName(template.name);
-                              setEditingCategory(template.category ?? "");
-                            }}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                if (template.status === "archive") {
-                                  setToast({ message: "アーカイブは編集できません。", tone: "error" });
-                                  return;
-                                }
-                                setEditingKey(template.templateKey);
-                                setEditingName(template.name);
-                                setEditingCategory(template.category ?? "");
-                              }
-                            }}
                           >
                             {template.name}
                           </span>
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            className={
-                              template.status === "archive"
-                                ? "text-xs font-normal text-slate-500"
-                                : "text-xs font-normal text-slate-500 underline decoration-dotted underline-offset-4"
-                            }
-                            onDoubleClick={(event) => {
-                              event.stopPropagation();
-                              if (template.status === "archive") {
-                                setToast({ message: "アーカイブは編集できません。", tone: "error" });
-                                return;
-                              }
-                              setEditingKey(template.templateKey);
-                              setEditingName(template.name);
-                              setEditingCategory(template.category ?? "");
-                            }}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                if (template.status === "archive") {
-                                  setToast({ message: "アーカイブは編集できません。", tone: "error" });
-                                  return;
-                                }
-                                setEditingKey(template.templateKey);
-                                setEditingName(template.name);
-                                setEditingCategory(template.category ?? "");
-                              }
-                            }}
-                          >
-                            ［{template.category && template.category.trim() ? template.category : "カテゴリ未設定"}］
-                          </span>
+                          <div className="flex flex-wrap gap-1 text-xs">
+                            {(template.categories && template.categories.length > 0
+                              ? template.categories
+                              : template.category
+                              ? [template.category]
+                              : []
+                            ).map((cat) => (
+                              <span
+                                key={cat}
+                                className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-slate-700"
+                              >
+                                {categoryLabelMap.get(cat) ?? cat}
+                              </span>
+                            ))}
+                            {(template.categories?.length ?? 0) === 0 && !template.category && (
+                              <span className="text-slate-400">カテゴリ未設定</span>
+                            )}
+                          </div>
                         </div>
                       )}
                     </td>
