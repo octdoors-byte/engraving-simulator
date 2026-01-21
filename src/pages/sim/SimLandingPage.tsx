@@ -11,8 +11,8 @@ const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "comment", label: "備考（お客様表示用）" },
   { key: "paper", label: "用紙" },
   { key: "templateKey", label: "テンプレートID" },
-  { key: "info", label: "共通説明＋公開URL" },
-  { key: "url", label: "公開URL" }
+  { key: "info", label: "共通説明URLをコピー" },
+  { key: "url", label: "公開URLをコピー" }
 ];
 
 type TemplateRow = {
@@ -206,6 +206,16 @@ export function SimLandingPage() {
     resizingActiveRef.current = true;
   };
 
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      window.alert(`${label}をコピーしました`);
+    } catch (err) {
+      console.error(err);
+      window.alert(`${label}のコピーに失敗しました`);
+    }
+  };
+
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -214,7 +224,7 @@ export function SimLandingPage() {
           <HelpIcon guideUrl="/public_templates.html" title="公開テンプレート一覧の操作ガイド" />
         </div>
         <p className="mt-5 text-sm text-slate-600">
-          テンプレート一覧から使いたいテンプレートを選び、公開URLをクリックしてシミュレーターを開きます。詳細は？アイコンからご確認ください。
+          テンプレート一覧から使いたいテンプレートを選び、公開URLをコピーしてシミュレーターを開きます。詳細は？アイコンからご確認ください。
         </p>
       </div>
 
@@ -315,6 +325,7 @@ export function SimLandingPage() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {sortedTemplates.map((row) => {
                   const simPath = `/sim/${row.key}`;
+                  const simUrl = typeof window !== "undefined" ? new URL(simPath, window.location.origin).toString() : simPath;
                   return (
                     <tr key={row.key}>
                       {visibleColumns.map((col) => {
@@ -404,29 +415,31 @@ export function SimLandingPage() {
                         }
                         if (col.key === "info") {
                           const infoUrl = `/common?next=${encodeURIComponent(simPath)}&hideNav=1`;
+                          const infoFullUrl =
+                            typeof window !== "undefined"
+                              ? new URL(infoUrl, window.location.origin).toString()
+                              : infoUrl;
                           return (
                             <td key={col.key} className="px-6 text-slate-600" style={rowPaddingStyle}>
-                              <a
-                                href={infoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-slate-600 underline decoration-slate-300 hover:text-slate-800"
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                                onClick={() => copyToClipboard(infoFullUrl, "共通説明URL")}
                               >
-                                {infoUrl}
-                              </a>
+                                コピー
+                              </button>
                             </td>
                           );
                         }
                         return (
                           <td key={col.key} className="px-6" style={rowPaddingStyle}>
-                            <a
-                              href={simPath}
-                              target="_blank"
-                              rel="noreferrer"
+                            <button
+                              type="button"
                               className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                              onClick={() => copyToClipboard(simUrl, "公開URL")}
                             >
-                              開く
-                            </a>
+                              コピー
+                            </button>
                           </td>
                         );
                       })}
