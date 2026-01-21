@@ -8,7 +8,7 @@ type ColumnKey = "name" | "category" | "comment" | "paper" | "templateKey" | "in
 const defaultColumns: Array<{ key: ColumnKey; label: string }> = [
   { key: "name", label: "表示名" },
   { key: "category", label: "カテゴリ" },
-  { key: "comment", label: "備考（お客様表示用）" },
+  { key: "comment", label: "備考" },
   { key: "paper", label: "用紙" },
   { key: "templateKey", label: "テンプレートID" },
   { key: "info", label: "共通説明URL" },
