@@ -9,6 +9,7 @@ type ToastState = { message: string; tone?: "info" | "success" | "error" } | nul
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const MAX_PDF_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGES = 5;
+const MAX_CATEGORIES = 3;
 const FAQ_TEMPLATE = `Q. ご利用前に準備するものは？
 お好きなブラウザと安定したネット環境をご用意ください。
 
@@ -67,6 +68,7 @@ export function CommonInfoPage() {
   const settingsRef = useRef<CommonSettings>(settings);
   const [isDirty, setIsDirty] = useState(false);
   const [hasBackup, setHasBackup] = useState(false);
+  const genCategoryId = () => Math.random().toString(36).slice(2, 8);
 
   useEffect(() => {
     if (!toast) return;
@@ -236,6 +238,28 @@ export function CommonInfoPage() {
     const backup = localStorage.getItem(backupKey);
     setHasBackup(!!backup);
   }, []);
+
+  // カテゴリ設定（最大3件）
+  const commonInfoCategories = settings.commonInfoCategories ?? [];
+  const addCategory = () => {
+    if (commonInfoCategories.length >= MAX_CATEGORIES) {
+      setToast({ message: `カテゴリは最大 ${MAX_CATEGORIES} 件までです。`, tone: "info" });
+      return;
+    }
+    const next = [...commonInfoCategories, { id: genCategoryId(), title: "", body: "" }];
+    handleChange("commonInfoCategories", next);
+  };
+  const updateCategory = (index: number, key: "title" | "body", value: string) => {
+    const next = [...commonInfoCategories];
+    if (!next[index]) return;
+    next[index] = { ...next[index], [key]: value };
+    handleChange("commonInfoCategories", next);
+  };
+  const removeCategory = (index: number) => {
+    const next = [...commonInfoCategories];
+    next.splice(index, 1);
+    handleChange("commonInfoCategories", next);
+  };
 
   return (
     <section className="space-y-6">
@@ -608,7 +632,59 @@ export function CommonInfoPage() {
           </div>
         </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-800">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
+              <span className="text-xs text-slate-500">共通説明をカテゴリごとに分けたい場合に使います</span>
+            </div>
+            <button
+              type="button"
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              onClick={addCategory}
+            >
+              カテゴリを追加
+            </button>
+          </div>
+          {commonInfoCategories.length === 0 && (
+            <div className="rounded border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+              まだカテゴリがありません。必要に応じて追加してください。
+            </div>
+          )}
+          <div className="space-y-3">
+            {commonInfoCategories.map((cat, index) => (
+              <div key={cat.id ?? index} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-slate-800">カテゴリ {index + 1}</span>
+                  <button
+                    type="button"
+                    className="rounded-full border border-rose-200 bg-white px-2 py-1 text-[11px] text-rose-600 hover:bg-rose-50"
+                    onClick={() => removeCategory(index)}
+                  >
+                    削除
+                  </button>
+                </div>
+                <div className="mt-2 space-y-2">
+                  <input
+                    type="text"
+                    value={cat.title ?? ""}
+                    onChange={(e) => updateCategory(index, "title", e.target.value)}
+                    placeholder="カテゴリ名（例: 楽天用、自社用）"
+                    className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
+                  />
+                  <textarea
+                    value={cat.body ?? ""}
+                    onChange={(e) => updateCategory(index, "body", e.target.value)}
+                    placeholder="カテゴリの説明やメモ（任意）"
+                    className="h-20 w-full rounded border border-slate-200 px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             <div className="flex flex-col">
               <span>お客様ページをプレビュー</span>
               <span className="text-xs text-slate-500">URL: https://localhost:5174/common?hideNav=1</span>
