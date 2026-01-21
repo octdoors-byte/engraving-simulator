@@ -327,6 +327,21 @@ export function CommonInfoPage() {
               </div>
             ))}
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            <span>※ 追加・編集後は「保存する」を押して反映してください。</span>
+            <button
+              type="button"
+              className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition ${
+                isDirty
+                  ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+              }`}
+              disabled={!isDirty}
+              onClick={handleManualSave}
+            >
+              保存する
+            </button>
+          </div>
         </div>
 
         <div className="mt-4 space-y-2">
