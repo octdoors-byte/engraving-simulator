@@ -321,10 +321,7 @@ export function SimLandingPage() {
               <p className="mt-3 text-base text-slate-500">条件に合うテンプレートがありません。</p>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table
-                  className="min-w-full divide-y divide-slate-100"
-                  style={{ fontSize: tableFontSizePx, tableLayout: "fixed" }}
-                >
+            <table className="min-w-full divide-y divide-slate-100" style={{ fontSize: tableFontSizePx, tableLayout: "auto" }}>
                   <thead className="bg-slate-50 uppercase tracking-wide text-slate-600">
                     <tr>
                       {visibleColumns.map((col) => (
