@@ -23,27 +23,27 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] }
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }
     },
     {
       name: "edge",
-      use: { ...devices["Desktop Edge"] }
+      use: { ...devices["Desktop Edge"], viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }
     },
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] }
+      use: { ...devices["Desktop Firefox"], viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }
     },
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] }
+      use: { ...devices["Desktop Safari"], viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }
     },
     {
       name: "mobile-chrome",
-      use: { ...devices["Pixel 5"] }
+      use: { ...devices["Pixel 5"], viewport: { width: 393, height: 851 }, deviceScaleFactor: 1 }
     },
     {
       name: "mobile-safari",
-      use: { ...devices["iPhone 13"] }
+      use: { ...devices["iPhone 13"], viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 }
     }
   ]
 });

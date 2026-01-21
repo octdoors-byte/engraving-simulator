@@ -46,7 +46,7 @@ async function waitForReady(page) {
 }
 
 const screenshotOpts = {
-  fullPage: true,
+  fullPage: false, // ビューポートサイズで固定し、高さ差分を減らす
   animations: "disabled" as const,
   caret: "hide" as const
 };
