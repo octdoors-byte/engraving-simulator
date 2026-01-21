@@ -104,9 +104,13 @@ export function AdminTemplatesPage() {
   const [toast, setToast] = useState<ToastState>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
+  const categoryOptions = useMemo(
+    () => settings.commonInfoCategories?.map((c) => ({ value: c.id, label: c.title || c.id })) ?? [],
+    [settings.commonInfoCategories]
+  );
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [editingCategory, setEditingCategory] = useState("");
+  const [editingCategories, setEditingCategories] = useState<string[]>([]);
   const [templatePreviewUrls, setTemplatePreviewUrls] = useState<Record<string, string>>({});
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [previewImageName, setPreviewImageName] = useState<string | null>(null);
@@ -379,37 +383,38 @@ export function AdminTemplatesPage() {
 
   const commitTemplateMeta = useCallback(
     (templateKey: string) => {
-      const template = getTemplate(templateKey);
-      if (!template) return;
-      if (template.status === "archive") {
-        setToast({ message: "アーカイブは編集できません。", tone: "error" });
-        return;
-      }
-      const nextName = editingName.trim();
-      const nextCategory = editingCategory.trim();
-      if (!nextName) {
-        setToast({ message: "表示名は必須です。", tone: "error" });
-        return;
-      }
-      const next: Template = {
-        ...template,
-        name: nextName,
-        category: nextCategory ? nextCategory : template.category,
-        updatedAt: new Date().toISOString()
-      };
-      saveTemplate(next);
-      reloadTemplates();
-      setEditingKey(null);
-      setToast({ message: "表示名とカテゴリを更新しました。", tone: "success" });
-    },
-    [editingName, editingCategory, reloadTemplates]
-  );
-
-  const cancelEditing = useCallback(() => {
+    const template = getTemplate(templateKey);
+    if (!template) return;
+    if (template.status === "archive") {
+      setToast({ message: "アーカイブは編集できません。", tone: "error" });
+      return;
+    }
+    const nextName = editingName.trim();
+    const nextCategories = editingCategories.map((c) => c.trim()).filter((c) => c.length > 0);
+    if (!nextName) {
+      setToast({ message: "表示名は必須です。", tone: "error" });
+      return;
+    }
+    const next: Template = {
+      ...template,
+      name: nextName,
+      category: nextCategories[0] ?? template.category,
+      categories: nextCategories,
+      updatedAt: new Date().toISOString()
+    };
+    saveTemplate(next);
+    reloadTemplates();
     setEditingKey(null);
-    setEditingName("");
-    setEditingCategory("");
-  }, []);
+    setToast({ message: "表示名とカテゴリを更新しました。", tone: "success" });
+  },
+  [editingName, editingCategories, reloadTemplates]
+);
+
+const cancelEditing = useCallback(() => {
+  setEditingKey(null);
+  setEditingName("");
+  setEditingCategories([]);
+}, []);
 
   const handleDelete = useCallback(
     async (templateKey: string) => {
@@ -642,22 +647,34 @@ export function AdminTemplatesPage() {
                             }}
                             autoFocus
                           />
-                          <input
-                            type="text"
-                            className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                            value={editingCategory}
-                            onChange={(event) => setEditingCategory(event.target.value)}
-                            placeholder="カテゴリ（任意）"
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                event.preventDefault();
-                                commitTemplateMeta(template.templateKey);
-                              }
-                              if (event.key === "Escape") {
-                                cancelEditing();
-                              }
-                            }}
-                          />
+                          <div className="space-y-1 rounded border border-slate-200 p-2">
+                            <p className="text-[11px] text-slate-600">カテゴリ（複数選択可）</p>
+                            <div className="flex flex-wrap gap-2 text-[11px]">
+                              {categoryOptions.length === 0 && (
+                                <span className="text-slate-400">カテゴリマスターが未登録です</span>
+                              )}
+                              {categoryOptions.map((opt) => {
+                                const checked = editingCategories.includes(opt.value);
+                                return (
+                                  <label key={opt.value} className="inline-flex items-center gap-1 rounded border border-slate-200 px-2 py-1">
+                                    <input
+                                      type="checkbox"
+                                      checked={checked}
+                                      onChange={(e) => {
+                                        setEditingCategories((prev) => {
+                                          const next = new Set(prev);
+                                          if (e.target.checked) next.add(opt.value);
+                                          else next.delete(opt.value);
+                                          return Array.from(next);
+                                        });
+                                      }}
+                                    />
+                                    <span>{opt.label}</span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          </div>
                           <div className="flex gap-2">
                             <button
                               type="button"
@@ -687,7 +704,13 @@ export function AdminTemplatesPage() {
                             }
                             setEditingKey(template.templateKey);
                             setEditingName(template.name);
-                            setEditingCategory(template.category ?? "");
+                            const nextCats =
+                              template.categories && template.categories.length > 0
+                                ? template.categories
+                                : template.category
+                                ? [template.category]
+                                : [];
+                            setEditingCategories(nextCats);
                           }}
                         >
                           <span

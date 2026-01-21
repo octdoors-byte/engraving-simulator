@@ -40,6 +40,7 @@ export interface Template {
   templateKey: string;
   name: string;
   category?: string;
+  categories?: string[];
   comment?: string;
   logoMinWidthMm?: number;
   logoMinHeightMm?: number;
@@ -94,6 +95,7 @@ export interface TemplateSummary {
   templateKey: string;
   name: string;
   category?: string;
+  categories?: string[];
   comment?: string;
   status: TemplateStatus;
   updatedAt: string;

@@ -20,10 +20,12 @@ function updateTemplateIndex(template: Template): void {
   const list = (readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? []).filter(
     (entry) => entry.templateKey !== template.templateKey
   );
+  const categories = template.categories && template.categories.length > 0 ? template.categories : undefined;
   list.push({
     templateKey: template.templateKey,
     name: template.name,
     category: template.category,
+    categories,
     comment: template.comment,
     status: template.status,
     updatedAt: template.updatedAt
@@ -129,7 +131,13 @@ export function listTemplates(): TemplateSummary[] {
 export function getTemplate(templateKey: string): Template | null {
   const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
   if (!template) return null;
-  return normalizePlacementRules(normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template))));
+  const normalized = normalizePlacementRules(normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template))));
+  // 後方互換: 単一カテゴリから複数カテゴリへ正規化
+  if (!normalized.categories || normalized.categories.length === 0) {
+    const categories = normalized.category ? [normalized.category] : [];
+    return { ...normalized, categories };
+  }
+  return normalized;
 }
 
 export function deleteTemplate(templateKey: string): void {
