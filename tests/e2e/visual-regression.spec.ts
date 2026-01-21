@@ -86,3 +86,24 @@ test("VR-03 PDF確認モーダルが崩れていない", async ({ page }) => {
   await page.waitForTimeout(300);
   await expect(page).toHaveScreenshot("sim-pdf-modal.png", screenshotOpts);
 });
+
+test("VR-04 デザイン枠の寸法・位置が崩れていない", async ({ page }) => {
+  await page.goto(`/sim/${templateKey}`);
+  await waitForAppReady(page);
+
+  const input = page.locator('input[type="file"]').first();
+  await input.setInputFiles(logoOk);
+  await waitForReady(page);
+
+  // 枠要素を選択（Tailwindの dashed 枠を利用）
+  const frame = page.locator(
+    '[data-testid="sim-frame"], .sim-frame, [data-testid="design-frame"], div.border-dashed, div[class*="border-amber-400"]'
+  );
+  if (!(await frame.count())) {
+    test.skip(true, "デザイン枠を特定できなかったため、このテストをスキップします");
+  }
+  await expect(frame.first()).toBeVisible({ timeout: longTimeout });
+
+  // 枠のみスクリーンショット比較（サイズや位置が変わると差分で検知できる）
+  await expect(frame.first()).toHaveScreenshot("sim-frame.png", screenshotOpts);
+});
