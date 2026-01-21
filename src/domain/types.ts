@@ -117,4 +117,9 @@ export interface CommonSettings {
   commonInfoLayout?: "imageTop" | "imageBottom" | "imageLeft" | "imageRight";
   commonInfoPdf?: { name: string; dataUrl: string };
   commonInfoFaq?: string;
+  commonInfoCategories?: Array<{
+    id: string;
+    title: string;
+    body?: string;
+  }>;
 }
