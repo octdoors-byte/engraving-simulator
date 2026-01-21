@@ -27,7 +27,11 @@ test.beforeEach(async ({ page }) => {
     console.log(`page error: ${err.message}`);
   });
   page.on("requestfailed", (request) => {
-    console.log(`request failed: ${request.url()} ${request.failure()?.errorText ?? ""}`);
+    const errorText = request.failure()?.errorText ?? "";
+    // Blob/PDF読み込みで発生する ERR_ABORTED は無視し、それ以外のみ記録
+    if (request.url().startsWith("blob:")) return;
+    if (errorText.includes("ERR_ABORTED")) return;
+    console.log(`request failed: ${request.url()} ${errorText}`);
   });
 
   // ストレージとIndexedDBをリセットしてシードを再実行させる
@@ -72,6 +76,20 @@ async function waitForIssued(page, opts?: { logPrefix?: string }) {
     console.error(`${logPrefix}発行失敗`, message ?? "error");
     throw new Error(`発行に失敗: ${message ?? "error"}`);
   }
+}
+
+async function emulateSlow3G(page) {
+  // Chromium系のみで利用可（CDPでネットワークを遅くする）
+  const client = await page.context().newCDPSession(page);
+  await client.send("Network.enable");
+  await client.send("Network.emulateNetworkConditions", {
+    offline: false,
+    // 3G想定: ~780kbps down / ~330kbps up / 400ms latency
+    downloadThroughput: Math.floor((780 * 1024) / 8),
+    uploadThroughput: Math.floor((330 * 1024) / 8),
+    latency: 400
+  });
+  return client;
 }
 
 test("TC-SIM-01 ページ読み込み確認", async ({ page }) => {
@@ -264,5 +282,35 @@ test("TC-SIM-10 刻印枠外配置のエラーチェック", async ({ page }) =>
     const message = await errorToast.textContent();
     console.log(`配置エラー: ${message}`);
   }
+});
+
+test("TC-SIM-11 低速回線でのPDF確認 (Chromeのみ)", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium", "Chromium系ブラウザのみで実施");
+  const slowTimeout = 60000;
+
+  const client = await emulateSlow3G(page);
+  const t0 = Date.now();
+
+  await page.goto(`/sim/${templateKey}`);
+  await waitForAppReady(page);
+  const tLoad = Date.now();
+
+  const input = page.locator('input[type="file"]').first();
+  await input.setInputFiles(logoOk);
+
+  await waitForReady(page);
+  const tReady = Date.now();
+
+  const previewButton = page.getByRole("button", { name: "PDF確認" });
+  await previewButton.click();
+  await expect(page.getByRole("button", { name: "IDを作成する" })).toBeVisible({ timeout: slowTimeout });
+  const tPdf = Date.now();
+
+  console.log(
+    `[perf][slow3g] load=${tLoad - t0}ms upload+ready=${tReady - tLoad}ms pdf=${tPdf - tReady}ms total=${tPdf - t0}ms`
+  );
+
+  // ネットワークエミュレーションを解除
+  await client.send("Network.disable");
 });
 

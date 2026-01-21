@@ -29,7 +29,11 @@ test.beforeEach(async ({ page }) => {
     console.log(`page error: ${err.message}`);
   });
   page.on("requestfailed", (request) => {
-    console.log(`request failed: ${request.url()} ${request.failure()?.errorText ?? ""}`);
+    const errorText = request.failure()?.errorText ?? "";
+    // Blob/PDF読み込みで発生する ERR_ABORTED は無視し、それ以外のみ記録
+    if (request.url().startsWith("blob:")) return;
+    if (errorText.includes("ERR_ABORTED")) return;
+    console.log(`request failed: ${request.url()} ${errorText}`);
   });
 });
 
