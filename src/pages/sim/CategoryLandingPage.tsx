@@ -130,27 +130,21 @@ export function CategoryLandingPage() {
                   <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
-                {rows.length > 0 && (
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                    <p className="text-xs text-slate-500 mb-2">このカテゴリに含まれる公開テンプレート</p>
-                    <ul className="space-y-2 text-sm text-slate-800">
-                      {rows.map((row) => {
-                        const simUrl = buildUrl(`/sim/${row.key}?cat=${encodeURIComponent(categoryId)}`);
-                        return (
-                          <li key={row.key} className="flex items-center justify-between gap-2">
-                            <span>{row.name}</span>
-                            <a
-                              href={simUrl}
-                              className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-white"
-                            >
-                              開く
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                  <p className="text-xs text-slate-500 mb-2">カテゴリ別公開URL</p>
+                  <div className="flex flex-col gap-2 text-sm text-slate-800">
+                    <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                      {buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`)}
+                    </div>
+                    <button
+                      type="button"
+                      className="w-fit rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                      onClick={() => navigator.clipboard.writeText(buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`))}
+                    >
+                      URLをコピー
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
