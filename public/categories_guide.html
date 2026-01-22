@@ -8,10 +8,10 @@
       :root {
         --primary: #2f80ed;
         --secondary: #f2994a;
-        --bg-color: #f8f9fa;
+        --bg-color: #f5f7fb;
         --card-bg: #ffffff;
-        --text-color: #333333;
-        --muted-color: #666666;
+        --text-color: #1f2937;
+        --muted-color: #6b7280;
         --border-radius: 12px;
         --spacing-large: 4rem;
         --spacing-medium: 2rem;
@@ -27,12 +27,12 @@
       }
 
       body {
-        background-color: var(--bg-color);
+        background: linear-gradient(120deg, #f5f7fb 0%, #eef2f7 100%);
         color: var(--text-color);
         font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
         line-height: 1.6;
         margin: 0;
-        padding: 40px 20px;
+        padding: 32px 16px 48px;
       }
 
       .container {
@@ -55,9 +55,9 @@
         background: var(--card-bg);
         border: 1px solid #e5e7eb;
         border-radius: var(--border-radius);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 6px 18px rgba(17, 24, 39, 0.07);
         padding: 24px;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
       }
 
       h1 {
@@ -91,13 +91,25 @@
 
       .pill {
         display: inline-block;
-        background: #eef2ff;
-        color: #4338ca;
+        background: #e0f2fe;
+        color: #0369a1;
         padding: 6px 10px;
         border-radius: 999px;
         font-size: 12px;
         margin-right: 6px;
+        margin-bottom: 4px;
       }
+
+      .hero {
+        background: linear-gradient(135deg, #2563eb, #38bdf8);
+        color: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+      }
+      .hero h1 { margin: 0 0 8px; font-size: 26px; }
+      .hero p { margin: 0; color: #e2e8f0; }
     </style>
   </head>
   <body>
@@ -110,29 +122,32 @@
         <a href="/basic_settings.html">基本設定</a>
       </div>
 
-      <div class="card">
+      <div class="hero">
         <h1>カテゴリ一覧ガイド</h1>
-        <p>カテゴリ別公開URLの一覧ページ（<code>/categories</code>）の使い方と活用例をまとめました。</p>
-        <div>
-          <span class="pill">対象</span><span>公開中テンプレートのみ / front/back は表面優先</span>
+        <p>カテゴリ別公開URLページ（<code>/categories</code>）を初心者でも迷わず使えるようにまとめました。</p>
+        <div style="margin-top:10px;">
+          <span class="pill">対象: 公開中テンプレのみ</span>
+          <span class="pill">front/back は表面優先</span>
+          <span class="pill">カラー対応（5色＋黒）</span>
         </div>
       </div>
 
       <div class="card">
         <h2>ページ概要</h2>
         <ul>
-          <li>カテゴリごとにテーブルを分割し、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
-          <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> 形式でカテゴリ絞り込みを保持。</li>
-          <li>公開中ステータスのみ表示。カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映。</li>
+          <li>カテゴリごとに表が分かれ、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
+          <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> でカテゴリ絞り込みを保持。</li>
+          <li>表示対象は <strong>公開中</strong> のテンプレートのみ。front/back がある場合は表面を優先。</li>
+          <li>カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映されます。</li>
         </ul>
       </div>
 
       <div class="card">
-        <h2>使い方（お客様向け）</h2>
+        <h2>使い方（お客様向け・3ステップ）</h2>
         <ol>
-          <li>見たいカテゴリの表を確認する（見出しにカテゴリ名が表示）。</li>
-          <li>「コピー」で公開URLをコピーして共有する。</li>
-          <li>「開く」で新しいタブにシミュレーターを表示する。</li>
+          <li>見たいカテゴリの表を開く（見出しでカテゴリ名を確認）。</li>
+          <li>使いたいテンプレ行の「コピー」で公開URLをコピー。</li>
+          <li>「開く」でシミュレーターを新しいタブで表示し、そのままデザイン開始。</li>
         </ol>
       </div>
 
