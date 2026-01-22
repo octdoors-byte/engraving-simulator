@@ -412,12 +412,13 @@ export function SimLandingPage() {
                                   <div className="flex flex-wrap gap-1">
                                     {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => {
                                       const label = categoryTitleMap.get(cat) ?? cat;
+                                      const short = label ? label[0] : "";
                                       return (
                                         <span
                                           key={cat}
                                           className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700"
                                         >
-                                          {label}
+                                          {short}
                                         </span>
                                       );
                                     })}
