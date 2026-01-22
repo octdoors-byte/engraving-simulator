@@ -20,46 +20,43 @@
     <main class="container">
       <section class="hero">
         <h1>テンプレート管理ガイド</h1>
-        <p>テンプレ登録・状態管理・プレビュー・削除の基本操作をまとめました。</p>
-        <div style="margin-top:10px;">
-          <span class="pill">登録はJSON+背景画像</span>
-          <span class="pill">状態: draft → tested → published → archive</span>
-          <span class="pill">カテゴリ複数選択可</span>
-        </div>
+        <p>テンプレ登録・状態変更・カテゴリ設定の基本操作を、専門用語なしでまとめました。</p>
       </section>
 
-      <section class="card">
-        <h2>新規登録（ドラッグ&ドロップ）</h2>
+      <section class="card beginner">
+        <h2>使い方のポイント</h2>
         <ul>
-          <li><code>template.json</code> と背景画像を同時にドロップ（ファイル名が一致していること）。</li>
-          <li>サイズ差がある場合は自動補正し、通知で知らせます。</li>
-          <li>既存キー重複はエラーで登録されません。</li>
+          <li>登録は「template.json + 背景画像」を同時にドロップ。</li>
+          <li>状態は draft → tested → published → archive。公開一覧に出るのは published だけ。</li>
+          <li>カテゴリは複数選択可。公開バッジに色が反映されます。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>状態管理</h2>
+        <h2>基本の流れ</h2>
+        <ol>
+          <li>新規登録で template.json と背景画像をアップロード。</li>
+          <li>表示名・カテゴリを編集（ダブルクリック）。</li>
+          <li>状態を published にして公開。不要なら archive で非表示。</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>アイコン・ボタンの意味</h2>
         <ul>
-          <li>draft → tested → published → archive（archive は編集不可）。</li>
-          <li>公開一覧に出るのは <strong>published</strong> のみ。</li>
-          <li>削除は関連デザインが無い場合のみ。紐づきがあれば archive を推奨。</li>
+          <li>⬆️ ドロップエリア: JSON と背景を同時に登録。</li>
+          <li>✅ 状態: draft/tested/published/archive を切替。</li>
+          <li>🖼 プレビュー: 背景画像を確認。</li>
+          <li>🗑 削除: デザインが紐づいていると削除不可（先にarchive推奨）。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>編集ポイント</h2>
+        <h2>よくある質問</h2>
         <ul>
-          <li>表示名・カテゴリはダブルクリックで編集（カテゴリはマスターから複数選択）。</li>
-          <li>背景プレビューはIndexedDBのblob、なければfallbackを表示。</li>
-          <li>ロゴ設定でモノクロ切替が可能。</li>
-        </ul>
-      </section>
-
-      <section class="card">
-        <h2>カテゴリとの関係</h2>
-        <ul>
-          <li>カテゴリは基本設定で作成（最大3件）。カラーは公開一覧バッジに反映。</li>
-          <li>front/back のあるテンプレは表面を優先し、「○○（表/裏）」で公開一覧に表示。</li>
+          <li><strong>登録できない</strong>: JSON と背景のファイル名が一致しているか、キーが重複していないか確認。</li>
+          <li><strong>サイズがずれる</strong>: 背景と engravingArea のサイズ差は自動補正されますが、プレビューで必ず確認。</li>
+          <li><strong>公開一覧に出ない</strong>: 状態が published か、カテゴリ未設定でフィルタされていないか確認。</li>
         </ul>
       </section>
     </main>

@@ -20,47 +20,41 @@
     <main class="container">
       <section class="hero">
         <h1>カテゴリ一覧ガイド</h1>
-        <p>カテゴリ別公開URLページ（/categories）の見方と共有方法をまとめました。</p>
-        <div style="margin-top:10px;">
-          <span class="pill">公開中テンプレのみ</span>
-          <span class="pill">front/backは表面優先</span>
-          <span class="pill">カラー対応（5色＋黒）</span>
-        </div>
+        <p>カテゴリ別の公開URLをまとめてコピーしたり開いたりするためのページです。</p>
       </section>
 
-      <section class="card">
-        <h2>ページ概要</h2>
+      <section class="card beginner">
+        <h2>使い方のポイント</h2>
         <ul>
-          <li>カテゴリごとに表が分かれ、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
-          <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> でカテゴリ絞り込みを保持。</li>
-          <li>公開中ステータスのみ表示。カテゴリカラーがあれば公開一覧のバッジにも反映。</li>
+          <li>公開中のテンプレだけが表示されます。</li>
+          <li>カテゴリごとに表が分かれています。</li>
+          <li>各行の「コピー」でURLを共有、「開く」でそのままシミュレーターを開けます。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>使い方（3ステップ）</h2>
+        <h2>基本の流れ</h2>
         <ol>
-          <li>見たいカテゴリの表を探す（見出しでカテゴリ名を確認）。</li>
-          <li>行の「コピー」で公開URLをコピーして共有。</li>
-          <li>「開く」でシミュレーターを新しいタブで開き、すぐデザイン開始。</li>
+          <li>見たいカテゴリの表を選ぶ（見出しで確認）。</li>
+          <li>テンプレート行の「コピー」でURLをコピー。</li>
+          <li>必要なら「開く」で動作を確認してから共有する。</li>
         </ol>
       </section>
 
       <section class="card">
-        <h2>活用例</h2>
+        <h2>アイコン・ボタンの意味</h2>
         <ul>
-          <li>ECモール別リンク集（楽天/自社など）をカテゴリで分けて共有。</li>
-          <li>取引先別マニュアルにカテゴリ別URLを貼り付けて案内。</li>
-          <li>社内検証用カテゴリを作り、「コピー→開く」で動作確認をルーチン化。</li>
+          <li>📋 コピー: 公開URLをクリップボードへ。</li>
+          <li>🔗 開く: 新しいタブでシミュレーターを開く。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>管理者メモ</h2>
+        <h2>よくある質問</h2>
         <ul>
-          <li>カテゴリ設定は <code>/admin/common</code> で管理（最大3件、5色＋黒）。</li>
-          <li>front/backテンプレは表面を優先してURL生成。</li>
-          <li>公開状態にしないとカテゴリ一覧にも公開一覧にも出ません。</li>
+          <li><strong>カテゴリに出てこない</strong>: テンプレが「公開中」になっているか確認してください。</li>
+          <li><strong>色が反映されない</strong>: 基本設定でカテゴリカラーを設定し保存してください。</li>
+          <li><strong>表裏あるテンプレ</strong>: 表面を優先したURLを表示しています。</li>
         </ul>
       </section>
     </main>

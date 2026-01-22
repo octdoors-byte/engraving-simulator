@@ -20,38 +20,43 @@
     <main class="container">
       <section class="hero">
         <h1>テンプレート作成ガイド</h1>
-        <p>template.json と背景画像を用意し、シミュレーターで使えるテンプレートを作る手順をまとめました。</p>
-        <div style="margin-top:10px;">
-          <span class="pill">必要ファイル: template.json + 背景画像</span>
-          <span class="pill">座標は背景サイズと一致</span>
-          <span class="pill">front/back 対応可</span>
-        </div>
+        <p>template.json と背景画像を用意して、公開できるテンプレートを作る手順をまとめました。</p>
       </section>
 
-      <section class="card">
-        <h2>準備するもの</h2>
+      <section class="card beginner">
+        <h2>使い方のポイント</h2>
         <ul>
-          <li><strong>背景画像</strong>: PNG/JPG、実寸で作成。</li>
-          <li><strong>template.json</strong>: 背景サイズに合わせたキャンバス幅・高さと engravingArea を設定。</li>
-          <li>front/back を分ける場合はキーを <code>xxxx_front</code> / <code>xxxx_back</code> にする。</li>
+          <li>必要ファイルは「template.json」と背景画像の2つ。</li>
+          <li>背景サイズと engravingArea の座標を一致させる。</li>
+          <li>表裏を分けたいときはキーを <code>xxx_front</code> / <code>xxx_back</code> にする。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>登録手順</h2>
+        <h2>基本の流れ</h2>
         <ol>
-          <li>テンプレート管理画面で template.json と背景画像を同時にドロップ。</li>
-          <li>サイズ差があれば自動補正。プレビューで位置を確認。</li>
-          <li>必要に応じてカテゴリを設定し、状態を <strong>published</strong> にして公開一覧に出す。</li>
+          <li>背景画像を実寸で作成し、template.json に同じサイズを設定。</li>
+          <li>engravingArea や placementRules を用途に合わせて記入。</li>
+          <li>テンプレート管理画面で JSON + 背景を同時にドロップして登録。</li>
+          <li>公開したい場合は状態を published に変更。</li>
         </ol>
       </section>
 
       <section class="card">
-        <h2>よくあるチェックポイント</h2>
+        <h2>アイコン・ボタンの意味</h2>
         <ul>
-          <li>engravingArea が背景外にはみ出していないか。</li>
-          <li>placementRules（回転可否、拡大縮小範囲）が用途に合っているか。</li>
-          <li>paper サイズ・PDF 設定（A4/縦横）が正しいか。</li>
+          <li>⬆️ ドロップエリア: JSON と背景を同時に登録。</li>
+          <li>🖼 プレビュー: 背景と座標が合っているか確認。</li>
+          <li>✅ 状態: draft/tested/published/archive を切替。</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>よくある質問</h2>
+        <ul>
+          <li><strong>座標がズレる</strong>: 背景サイズと JSON の canvasWidth/Height が一致しているか再確認。</li>
+          <li><strong>登録エラーが出る</strong>: キー重複やファイル名不一致がないか確認。</li>
+          <li><strong>表裏を1行にまとめたい</strong>: <code>xxx_front</code>/<code>xxx_back</code> を同じベース名にすると公開一覧でまとまります。</li>
         </ul>
       </section>
     </main>

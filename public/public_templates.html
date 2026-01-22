@@ -20,38 +20,42 @@
     <main class="container">
       <section class="hero">
         <h1>公開テンプレート一覧ガイド</h1>
-        <p>お客様向け入口（/top）の使い方と、URL共有のポイントをまとめました。</p>
-        <div style="margin-top:10px;">
-          <span class="pill">公開中のみ表示</span>
-          <span class="pill">カテゴリフィルタ</span>
-          <span class="pill">列の表示/並び替え</span>
-        </div>
+        <p>お客様がテンプレートを選ぶ入り口です。絞り込みやURLコピーの使い方をまとめました。</p>
       </section>
 
-      <section class="card">
-        <h2>基本操作</h2>
+      <section class="card beginner">
+        <h2>使い方のポイント</h2>
         <ul>
-          <li>公開中テンプレだけが表示されます（front/back は表面優先でまとめ、「○○（表/裏）」表記）。</li>
-          <li>検索ボックスでテンプレ名・ID・備考を部分一致検索。</li>
-          <li>カテゴリチェックで絞り込み（未設定は「未分類」）。</li>
-          <li>列の表示/非表示と並び替えはヘッダで切り替え可能。</li>
+          <li>公開中ステータスのテンプレだけ表示されます。</li>
+          <li>検索ボックスで名前・ID・備考を部分一致で探せます。</li>
+          <li>カテゴリバッジは頭文字1文字＋設定色で表示されます。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>公開URLの使い方</h2>
+        <h2>基本の流れ</h2>
+        <ol>
+          <li>検索・カテゴリチェックで候補を絞る。</li>
+          <li>必要な列だけ表示／並び替えを調整する。</li>
+          <li>URL列のボタンで公開URLをコピーして共有する。</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>アイコン・ボタンの意味</h2>
         <ul>
-          <li>URL列のボタンでコピー。カテゴリごとのURLは <code>/sim/{key}?cat=カテゴリID</code>。</li>
-          <li>共有時はカテゴリID付きURLを使うと、特定カテゴリが選択された状態で開きます。</li>
+          <li>📋 コピー: 公開URLをクリップボードへ。</li>
+          <li>⚙ 列設定: 表示する列や順番を変更。</li>
+          <li>🔍 検索: 入力したキーワードで絞り込み。</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>見た目の調整</h2>
+        <h2>よくある質問</h2>
         <ul>
-          <li>文字サイズスライダーで一覧の文字を拡大/縮小。</li>
-          <li>列幅はドラッグでリサイズ可能。</li>
-          <li>行の余白は左上のスライダーで調整できます。</li>
+          <li><strong>テンプレが見つからない</strong>: 状態が「公開中」か、検索語が長すぎないか確認してください。</li>
+          <li><strong>カテゴリ色が違う</strong>: 基本設定で色を変更して保存後、ページを再読み込みしてください。</li>
+          <li><strong>front/back の扱い</strong>: 表面を優先して「○○（表/裏）」として1行にまとめています。</li>
         </ul>
       </section>
     </main>
