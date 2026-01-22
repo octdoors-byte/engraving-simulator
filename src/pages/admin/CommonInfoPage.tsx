@@ -323,6 +323,16 @@ export function CommonInfoPage() {
                     placeholder="カテゴリの説明やメモ（任意）"
                     className="h-20 w-full rounded border border-slate-200 px-3 py-2 text-sm"
                   />
+                  <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <label className="whitespace-nowrap">カラー</label>
+                    <input
+                      type="color"
+                      value={cat.color ?? "#94a3b8"}
+                      onChange={(e) => updateCategory(index, "color", e.target.value)}
+                      className="h-8 w-16 rounded border border-slate-200 bg-white"
+                    />
+                    <span className="text-[11px] text-slate-500">バッジ背景色</span>
+                  </div>
                 </div>
               </div>
             ))}
