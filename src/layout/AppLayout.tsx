@@ -6,10 +6,10 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 const navItems = [
   { to: "/top", label: "公開テンプレート一覧", tone: "emerald" },
+  { to: "/categories", label: "カテゴリ一覧", tone: "sky" },
   { to: "/admin/templates", label: "テンプレート管理", tone: "amber" },
   { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" },
-  { to: "/admin/common", label: "基本設定", tone: "rose" },
-  { to: "/categories", label: "カテゴリ一覧", tone: "sky" }
+  { to: "/admin/common", label: "基本設定", tone: "rose" }
 ] as const;
 
 const navToneClass: Record<
