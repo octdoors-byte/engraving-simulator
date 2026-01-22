@@ -10,7 +10,7 @@ const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const MAX_PDF_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGES = 5;
 const MAX_CATEGORIES = 3;
-const CATEGORY_COLORS = ["#94a3b8", "#a78bfa", "#fbbf24", "#34d399", "#fb7185"];
+const CATEGORY_COLORS = ["#94a3b8", "#a78bfa", "#fbbf24", "#34d399", "#fb7185", "#000000"];
 
 const FAQ_TEMPLATE = [
   "Q. 推奨ブラウザは？",

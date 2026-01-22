@@ -425,8 +425,12 @@ export function SimLandingPage() {
                                       return (
                                         <span
                                           key={cat}
-                                          className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] text-slate-700"
-                                          style={bg ? { backgroundColor: bg, border: "1px solid #e2e8f0" } : undefined}
+                                          className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px]"
+                                          style={
+                                            bg
+                                              ? { backgroundColor: bg, color: "#ffffff", border: "1px solid #e2e8f0" }
+                                              : { backgroundColor: "#f1f5f9", color: "#475569", border: "1px solid #e2e8f0" }
+                                          }
                                         >
                                           {short}
                                         </span>
