@@ -8,93 +8,114 @@
       :root {
         --primary: #2f80ed;
         --secondary: #f2994a;
-        --bg-color: #f5f7fb;
+        --bg-color: #f8f9fa;
         --card-bg: #ffffff;
-        --text-color: #1f2937;
-        --muted-color: #6b7280;
+        --text-color: #333333;
+        --muted-color: #666666;
         --border-radius: 12px;
         --spacing-large: 4rem;
         --spacing-medium: 2rem;
         --spacing-small: 1rem;
       }
 
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
       body {
-        background: linear-gradient(120deg, #f5f7fb 0%, #eef2f7 100%);
+        background-color: var(--bg-color);
         color: var(--text-color);
-        font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+        font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
         line-height: 1.6;
         margin: 0;
-        padding: 32px 16px 48px;
+        padding: 0;
       }
 
       .container {
         max-width: 1000px;
         margin: 0 auto;
+        padding: 40px 20px;
       }
 
-      .nav {
+      /* Navigation */
+      .nav-header {
+        background: var(--card-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-bottom: 2rem;
+      }
+      .nav-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .nav-item {
         color: var(--muted-color);
-        font-size: 14px;
-        margin-bottom: 16px;
-      }
-      .nav a {
-        color: var(--primary);
         text-decoration: none;
-        margin-right: 8px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        border-bottom: 2px solid transparent;
+      }
+      .nav-item.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .nav-item:hover {
+        color: var(--primary);
       }
 
+      /* Hero Section */
       .hero {
-        background: linear-gradient(135deg, #2563eb, #38bdf8);
-        color: #fff;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+        text-align: center;
+        padding: var(--spacing-large) 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-medium);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       }
       .hero h1 {
-        margin: 0 0 8px;
-        font-size: 26px;
+        font-size: 2.4rem;
+        margin: 0;
       }
       .hero p {
-        margin: 0;
-        color: #e2e8f0;
+        color: var(--muted-color);
+        margin: 12px 0 0;
+        font-size: 1rem;
       }
 
+      /* Card */
       .card {
         background: var(--card-bg);
-        border: 1px solid #e5e7eb;
         border-radius: var(--border-radius);
-        box-shadow: 0 6px 18px rgba(17, 24, 39, 0.07);
-        padding: 24px;
-        margin-bottom: 18px;
+        padding: var(--spacing-medium);
+        margin-bottom: var(--spacing-medium);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        border: 1px solid #eee;
       }
 
       h2 {
-        font-size: 18px;
-        margin-bottom: 8px;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
         color: var(--primary);
       }
-
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
       p {
-        margin-bottom: 10px;
+        margin: 0 0 0.6rem;
         color: var(--muted-color);
       }
-
-      ul,
-      ol {
-        margin: 8px 0 0;
-        padding-left: 20px;
-        color: var(--text-color);
+      ul {
+        margin: 0.4rem 0 0 1.4rem;
+        padding: 0;
+        line-height: 1.8;
       }
-
       code {
         background: #e5e7eb;
         padding: 2px 6px;
@@ -112,69 +133,103 @@
         margin-right: 6px;
         margin-bottom: 4px;
       }
+
+      .section-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .hint {
+        font-size: 0.9rem;
+        color: var(--muted-color);
+        margin-top: 6px;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="nav">
-        <span>他のガイド: </span>
-        <a href="/public_templates.html">公開テンプレ一覧</a> /
-        <a href="/template_management.html">テンプレート管理</a> /
-        <a href="/design_history.html">デザイン履歴</a> /
-        <a href="/categories_guide.html">カテゴリ一覧</a>
-      </div>
+    <header class="nav-header">
+      <nav class="nav-inner">
+        <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
+        <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item active" href="/basic_settings.html">基本設定</a>
+      </nav>
+    </header>
 
-      <div class="hero">
+    <main class="container">
+      <section class="hero">
         <h1>基本設定ガイド</h1>
-        <p>ロゴ・ヘッダー/フッター文言・共通説明・カテゴリ設定など、初期設定のポイントをまとめました。</p>
-      </div>
+        <p>ロゴ・ヘッダー/フッター・共通説明・カテゴリ設定など、最初に押さえたい設定をまとめています。</p>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>基本設定でできること</h2>
-        <ul>
-          <li>ロゴ画像の設定、表示位置・サイズ（S/M/L）、ヘッダー/フッター文言と揃え位置。</li>
-          <li>共通説明（タイトル・本文・画像・PDF・FAQ）の登録とレイアウト選択。</li>
-          <li>カテゴリの作成（最大3件）とカラー指定（5色＋黒）。</li>
-        </ul>
-      </div>
+        <div class="section-grid">
+          <div>
+            <h3>ブランドまわり</h3>
+            <ul>
+              <li>ロゴ画像設定（PNG/JPG）。</li>
+              <li>ヘッダー/フッターの文言と揃え位置、文字サイズ。</li>
+              <li>タイトル（公開一覧・共通説明の見出し）。</li>
+            </ul>
+          </div>
+          <div>
+            <h3>共通説明（/common）</h3>
+            <ul>
+              <li>本文・画像（最大5枚/2MB）・PDF（5MB）。</li>
+              <li>FAQ 文面の登録（テンプレートあり）。</li>
+              <li>レイアウト指定（画像の位置）。</li>
+            </ul>
+          </div>
+          <div>
+            <h3>カテゴリ設定</h3>
+            <ul>
+              <li>最大3件。タイトル・説明は任意（未入力なら「未設定」表示）。</li>
+              <li>カラーはプリセット5色＋黒から選択。追加時に自動割当。</li>
+              <li>公開一覧のバッジ色、カテゴリ一覧（/categories）に反映。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>画像・PDFアップロード</h2>
         <ul>
-          <li>共通説明の画像: 最大 5 枚、1 枚あたり 2MB まで。</li>
-          <li>共通説明の PDF: 1 ファイル、5MB まで。</li>
-          <li>アップ後は「保存する」ボタンで反映してください。</li>
+          <li>画像（共通説明用）: 最大5枚、1枚あたり 2MB まで。</li>
+          <li>PDF（共通説明添付）: 1ファイル、5MB まで。</li>
+          <li>アップ後は必ず「保存する」ボタンで反映。</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>カテゴリ設定（カラー対応）</h2>
         <ul>
-          <li>最大 3 件まで追加可能。タイトル・説明は任意。未入力の場合は「未設定」と表示。</li>
-          <li>カラーはプリセット（5色＋黒）からクリック選択。公開テンプレ一覧のバッジにも反映。</li>
-          <li>追加時は次のプリセット色を自動割当。不要なカテゴリは削除してください。</li>
-          <li>公開中ステータスのテンプレだけがカテゴリ一覧（/categories）に表示されます。</li>
-          <li>front/back があるテンプレは表面を優先し、URL には <code>?cat=カテゴリID</code> が付きます。</li>
+          <li>「カテゴリ追加」で最大3件まで。タイトル・説明は任意。未入力は「未設定」表示。</li>
+          <li>カラーをクリックで選択（5色＋黒）。公開一覧バッジに反映。</li>
+          <li>公開中ステータスのテンプレだけがカテゴリ一覧（/categories）に表示。</li>
+          <li>front/back があるテンプレは表面優先で URL を生成し、<code>?cat=カテゴリID</code> を付与。</li>
         </ul>
-      </div>
+        <p class="hint">ヒント: カラーを揃えるとカテゴリバッジの見分けが良くなります。</p>
+      </section>
 
-      <div class="card">
-        <h2>バックアップと復元</h2>
+      <section class="card">
+        <h2>バックアップ / 復元</h2>
         <ul>
-          <li>「バックアップを保存」で設定・テンプレ・デザインを JSON 出力（localStorage/IndexedDB が対象）。</li>
-          <li>「バックアップを復元」で JSON から上書き復元（現在のデータは置き換わります）。</li>
+          <li>「バックアップを保存」で設定・テンプレ・デザインをJSON保存（localStorage/IndexedDB を含む）。</li>
+          <li>「バックアップを復元」でJSONから上書き（現在のデータは置き換え）。</li>
           <li>「保存データを初期化」は全削除するため、事前にバックアップ推奨。</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>保存のコツ</h2>
         <ul>
-          <li>入力後は必ず「保存する」ボタンを押して確定。</li>
-          <li>画像・PDFアップ後も保存ボタンで反映されます。</li>
-          <li>カテゴリを変更したら、公開テンプレ一覧・カテゴリ一覧で色と表示を確認してください。</li>
+          <li>入力・アップロード後は必ず「保存する」をクリック。</li>
+          <li>カテゴリ変更後は公開一覧/カテゴリ一覧で色と表示を確認。</li>
+          <li>大きな変更の前にバックアップを取っておくと安心です。</li>
         </ul>
-      </div>
-    </div>
+      </section>
+    </main>
   </body>
 </html>
