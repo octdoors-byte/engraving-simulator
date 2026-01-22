@@ -5,7 +5,7 @@ import { listTemplates, loadCommonSettings } from "@/storage/local";
 type TemplateRow = {
   name: string;
   categories: string[];
-  templateKey: string; // 公開URLに使うキー
+  templateKey: string;
 };
 
 function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
@@ -14,7 +14,6 @@ function splitTemplateKey(templateKey: string): { baseKey: string; side: "front"
   return { baseKey: templateKey, side: null };
 }
 
-// 公開中のみをカテゴリごとにまとめ、front/back があれば表側を優先して URL に使う
 function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
   const published = list.filter((tpl) => tpl.status === "published");
   const groupedByBase = new Map<string, TemplateSummary[]>();
@@ -88,82 +87,73 @@ export function CategoryLandingPage() {
     return result;
   }, [categorized, settings?.commonInfoCategories]);
 
+  const flatRows = useMemo(() => {
+    const rows: Array<{ categoryId: string; categoryLabel: string; row: TemplateRow }> = [];
+    orderedCategories.forEach((catId) => {
+      const list = categorized.get(catId) ?? [];
+      list.forEach((row) => rows.push({ categoryId: catId, categoryLabel: categoryTitleMap.get(catId) ?? catId, row }));
+    });
+    return rows;
+  }, [categorized, orderedCategories, categoryTitleMap]);
+
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（公開URL集）</h1>
-        <p className="mt-4 text-sm text-slate-600">テンプレート名・公開URL・コピー・開くを1行で確認できます。</p>
+        <p className="mt-4 text-sm text-slate-600">テンプレート名・公開URL・コピー・開くを1行の表で一覧できます。</p>
       </div>
 
-      {orderedCategories.length === 0 ? (
+      {flatRows.length === 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
           公開中のテンプレートがありません。
         </div>
       ) : (
-        <div className="space-y-4">
-          {orderedCategories.map((categoryId) => {
-            const rows = categorized.get(categoryId) ?? [];
-            const label = categoryTitleMap.get(categoryId) ?? categoryId;
-            return (
-              <div
-                key={categoryId}
-                className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
-                    <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
-                  </div>
-                  <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
-                </div>
-
-                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                  <div className="mb-2 hidden text-xs text-slate-500 sm:grid sm:grid-cols-[minmax(140px,220px)_1fr_auto] sm:items-center sm:gap-2">
-                    <span className="font-medium text-slate-600">テンプレート名</span>
-                    <span className="font-medium text-slate-600">公開URL</span>
-                    <span className="font-medium text-slate-600">操作</span>
-                  </div>
-
-                  {rows.length === 0 ? (
-                    <p className="text-xs text-slate-500">このカテゴリには公開中の商品がありません。</p>
-                  ) : (
-                    <ul className="space-y-2 text-sm text-slate-800">
-                      {rows.map((row) => {
-                        const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
-                        return (
-                          <li key={`${categoryId}-${row.templateKey}`}>
-                            <div className="grid grid-cols-1 items-center gap-2 overflow-x-auto whitespace-nowrap sm:grid-cols-[minmax(140px,220px)_1fr_auto]">
-                              <div className="min-w-[140px] font-semibold text-slate-900">{row.name}</div>
-                              <div className="flex-1 min-w-[220px] break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
-                                {url}
-                              </div>
-                              <div className="flex flex-wrap justify-start gap-1 sm:justify-end">
-                                <button
-                                  type="button"
-                                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                                  onClick={() => navigator.clipboard.writeText(url)}
-                                >
-                                  コピー
-                                </button>
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                                >
-                                  開く
-                                </a>
-                              </div>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="min-w-full divide-y divide-slate-100 text-sm">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
+              <tr>
+                <th className="px-4 py-3 text-left">カテゴリ</th>
+                <th className="px-4 py-3 text-left">テンプレート名</th>
+                <th className="px-4 py-3 text-left">公開URL</th>
+                <th className="px-4 py-3 text-left">操作</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {flatRows.map(({ categoryId, categoryLabel, row }) => {
+                const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
+                return (
+                  <tr key={`${categoryId}-${row.templateKey}`} className="whitespace-nowrap">
+                    <td className="px-4 py-2 text-slate-800">{categoryLabel}</td>
+                    <td className="px-4 py-2 font-semibold text-slate-900">{row.name}</td>
+                    <td className="px-4 py-2">
+                      <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                        {url}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          type="button"
+                          className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                          onClick={() => navigator.clipboard.writeText(url)}
+                        >
+                          コピー
+                        </button>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                        >
+                          開く
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </section>
