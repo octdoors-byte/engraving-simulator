@@ -99,9 +99,7 @@ export function CategoryLandingPage() {
       }
       row.categories.forEach((cat) => push(cat, row));
     });
-    buckets.forEach((rows, key) => {
-      rows.sort((a, b) => a.name.localeCompare(b.name));
-    });
+    buckets.forEach((rows, key) => rows.sort((a, b) => a.name.localeCompare(b.name)));
     return buckets;
   }, [templates]);
 
@@ -123,7 +121,7 @@ export function CategoryLandingPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">カテゴリ別URLまとめ</h1>
         <p className="mt-4 text-sm text-slate-600">
-          公開中テンプレートをカテゴリごとに表示します。各カテゴリの一覧URLとテンプレートの公開URLをコピーできます。
+          お客様向けの「カテゴリごとの公開テンプレート一覧」へ進むためのページです。見せたいカテゴリのボタンを押すだけで、そのカテゴリの公開テンプレート一覧（/top?cat=...）に移動します。
         </p>
       </div>
 
@@ -132,67 +130,30 @@ export function CategoryLandingPage() {
           公開中のテンプレートがありません。
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2">
           {orderedCategories.map((categoryId) => {
             const rows = categorized.get(categoryId) ?? [];
             const label = categoryTitleMap.get(categoryId) ?? categoryId;
             const listUrl = buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`);
             return (
-              <div key={categoryId} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
-                    <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
-                    <p className="text-xs text-slate-500">{rows.length} 件</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                      onClick={() => openInParentOrSelf(listUrl)}
-                    >
-                      親ページで開く
-                    </button>
-                  </div>
+              <div
+                key={categoryId}
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col gap-3"
+              >
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
+                  <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
+                  <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
-
-                {rows.length === 0 ? (
-                  <p className="py-3 text-sm text-slate-500">このカテゴリの公開テンプレートはありません。</p>
-                ) : (
-                  <ul className="divide-y divide-slate-100">
-                    {rows.map((row) => {
-                      const simPath = `/sim/${row.key}`;
-                      const simUrl = buildUrl(`${simPath}?cat=${encodeURIComponent(categoryId)}`);
-                      return (
-                        <li key={row.key} className="flex flex-wrap items-center justify-between gap-3 px-1 py-3">
-                          <div>
-                            <div className="text-base font-semibold text-slate-900">{row.name}</div>
-                            <div className="text-xs text-slate-500">{row.primaryTemplateKey}</div>
-                            <div className="mt-1 flex flex-wrap gap-1 text-[11px] text-slate-600">
-                              {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => (
-                                <span
-                                  key={cat}
-                                  className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5"
-                                >
-                                  {categoryTitleMap.get(cat) ?? cat}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <button
-                              type="button"
-                              className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-                              onClick={() => openInParentOrSelf(simUrl)}
-                            >
-                              親ページで開く
-                            </button>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    onClick={() => openInParentOrSelf(listUrl)}
+                  >
+                    このカテゴリを開く
+                  </button>
+                </div>
               </div>
             );
           })}
