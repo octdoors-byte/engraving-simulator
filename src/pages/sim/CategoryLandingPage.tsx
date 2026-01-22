@@ -57,6 +57,20 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
 const buildUrl = (path: string) =>
   typeof window !== "undefined" ? new URL(path, window.location.origin).toString() : path;
 
+function openInParentOrSelf(url: string) {
+  if (typeof window === "undefined") return;
+  try {
+    if (window.opener && !window.opener.closed) {
+      window.opener.location.href = url;
+      window.opener.focus();
+      return;
+    }
+  } catch (error) {
+    console.error("親ウィンドウの操作に失敗しました", error);
+  }
+  window.location.href = url;
+}
+
 export function CategoryLandingPage() {
   const settings = loadCommonSettings();
   const templates = useMemo(() => groupTemplates(listTemplates()), []);
@@ -135,9 +149,9 @@ export function CategoryLandingPage() {
                     <button
                       type="button"
                       className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                      onClick={() => window.open(listUrl, "_blank")}
+                      onClick={() => openInParentOrSelf(listUrl)}
                     >
-                      一覧を開く
+                      親ページで開く
                     </button>
                   </div>
                 </div>
@@ -169,9 +183,9 @@ export function CategoryLandingPage() {
                             <button
                               type="button"
                               className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-                              onClick={() => window.open(simUrl, "_blank")}
+                              onClick={() => openInParentOrSelf(simUrl)}
                             >
-                              公開ページを開く
+                              親ページで開く
                             </button>
                           </div>
                         </li>
