@@ -5,7 +5,7 @@ import { listTemplates, loadCommonSettings } from "@/storage/local";
 type TemplateRow = {
   name: string;
   categories: string[];
-  templateKey: string; // 公開URLで使うキー
+  templateKey: string; // 公開URLに使うキー
 };
 
 function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
@@ -14,7 +14,7 @@ function splitTemplateKey(templateKey: string): { baseKey: string; side: "front"
   return { baseKey: templateKey, side: null };
 }
 
-// 公開中のみをカテゴリごとにまとめ、front/backがあれば表側を優先してURLに使う
+// 公開中のみをカテゴリごとにまとめ、front/back があれば表側を優先して URL に使う
 function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
   const published = list.filter((tpl) => tpl.status === "published");
   const groupedByBase = new Map<string, TemplateSummary[]>();
@@ -92,9 +92,7 @@ export function CategoryLandingPage() {
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（公開URL集）</h1>
-        <p className="mt-4 text-sm text-slate-600">
-          各カテゴリに属する公開テンプレートのURLを、テンプレートごとに1行で確認・コピーできます。
-        </p>
+        <p className="mt-4 text-sm text-slate-600">テンプレート名・公開URL・コピー・開くを1行で確認できます。</p>
       </div>
 
       {orderedCategories.length === 0 ? (
@@ -118,12 +116,14 @@ export function CategoryLandingPage() {
                   </div>
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
+
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                  <div className="mb-2 hidden text-xs text-slate-500 sm:grid sm:grid-cols-[minmax(140px,180px)_1fr_auto] sm:items-center sm:gap-2">
+                  <div className="mb-2 hidden text-xs text-slate-500 sm:grid sm:grid-cols-[minmax(140px,220px)_1fr_auto] sm:items-center sm:gap-2">
                     <span className="font-medium text-slate-600">テンプレート名</span>
                     <span className="font-medium text-slate-600">公開URL</span>
                     <span className="font-medium text-slate-600">操作</span>
                   </div>
+
                   {rows.length === 0 ? (
                     <p className="text-xs text-slate-500">このカテゴリには公開中の商品がありません。</p>
                   ) : (
@@ -132,7 +132,7 @@ export function CategoryLandingPage() {
                         const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
                         return (
                           <li key={`${categoryId}-${row.templateKey}`}>
-                            <div className="grid grid-cols-1 items-center gap-2 overflow-x-auto whitespace-nowrap sm:grid-cols-[minmax(140px,180px)_1fr_auto]">
+                            <div className="grid grid-cols-1 items-center gap-2 overflow-x-auto whitespace-nowrap sm:grid-cols-[minmax(140px,220px)_1fr_auto]">
                               <div className="min-w-[140px] font-semibold text-slate-900">{row.name}</div>
                               <div className="flex-1 min-w-[220px] break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
                                 {url}
