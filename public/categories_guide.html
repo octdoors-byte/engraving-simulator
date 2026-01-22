@@ -5,170 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/guide-style.css" />
     <title>カテゴリ一覧ガイド | 名入れ刻印シミュレーター</title>
-    <style>
-      :root {
-        --primary: #2f80ed;
-        --secondary: #f2994a;
-        --bg-color: #f5f7fb;
-        --card-bg: #ffffff;
-        --text-color: #1f2937;
-        --muted-color: #6b7280;
-        --border-radius: 12px;
-        --spacing-large: 4rem;
-        --spacing-medium: 2rem;
-        --spacing-small: 1rem;
-      }
-
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        background: linear-gradient(120deg, #f5f7fb 0%, #eef2f7 100%);
-        color: var(--text-color);
-        font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 32px 16px 48px;
-      }
-
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-
-      .nav {
-        color: var(--muted-color);
-        font-size: 14px;
-        margin-bottom: 16px;
-      }
-      .nav a {
-        color: var(--primary);
-        text-decoration: none;
-        margin-right: 8px;
-      }
-
-      .card {
-        background: var(--card-bg);
-        border: 1px solid #e5e7eb;
-        border-radius: var(--border-radius);
-        box-shadow: 0 6px 18px rgba(17, 24, 39, 0.07);
-        padding: 24px;
-        margin-bottom: 18px;
-      }
-
-      h1 {
-        font-size: 26px;
-        margin-bottom: 12px;
-      }
-
-      h2 {
-        font-size: 18px;
-        margin-bottom: 8px;
-      }
-
-      p {
-        margin-bottom: 12px;
-        color: var(--muted-color);
-      }
-
-      ul,
-      ol {
-        margin: 8px 0 0;
-        padding-left: 20px;
-        color: var(--text-color);
-      }
-
-      code {
-        background: #e5e7eb;
-        padding: 2px 6px;
-        border-radius: 6px;
-        font-size: 90%;
-      }
-
-      .pill {
-        display: inline-block;
-        background: #e0f2fe;
-        color: #0369a1;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        margin-right: 6px;
-        margin-bottom: 4px;
-      }
-
-      .hero {
-        background: linear-gradient(135deg, #2563eb, #38bdf8);
-        color: #fff;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-      }
-      .hero h1 { margin: 0 0 8px; font-size: 26px; }
-      .hero p { margin: 0; color: #e2e8f0; }
-    </style>
   </head>
   <body>
-    <div class="container">
-      <div class="nav">
-        <span>他のガイド: </span>
-        <a href="/public_templates.html">公開テンプレ一覧</a> /
-        <a href="/template_management.html">テンプレート管理</a> /
-        <a href="/design_history.html">デザイン履歴</a> /
-        <a href="/basic_settings.html">基本設定</a>
-      </div>
+    <header class="nav-header">
+      <nav class="nav-inner">
+        <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
+        <a class="nav-item active" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/basic_settings.html">基本設定</a>
+      </nav>
+    </header>
 
-      <div class="hero">
+    <main class="container">
+      <section class="hero">
         <h1>カテゴリ一覧ガイド</h1>
-        <p>カテゴリ別公開URLページ（<code>/categories</code>）を初心者でも迷わず使えるようにまとめました。</p>
+        <p>カテゴリ別公開URLページ（/categories）の見方と共有方法をまとめました。</p>
         <div style="margin-top:10px;">
-          <span class="pill">対象: 公開中テンプレのみ</span>
-          <span class="pill">front/back は表面優先</span>
+          <span class="pill">公開中テンプレのみ</span>
+          <span class="pill">front/backは表面優先</span>
           <span class="pill">カラー対応（5色＋黒）</span>
         </div>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>ページ概要</h2>
         <ul>
           <li>カテゴリごとに表が分かれ、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
           <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> でカテゴリ絞り込みを保持。</li>
-          <li>表示対象は <strong>公開中</strong> のテンプレートのみ。front/back がある場合は表面を優先。</li>
-          <li>カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映されます。</li>
+          <li>公開中ステータスのみ表示。カテゴリカラーがあれば公開一覧のバッジにも反映。</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
-        <h2>使い方（お客様向け・3ステップ）</h2>
+      <section class="card">
+        <h2>使い方（3ステップ）</h2>
         <ol>
-          <li>見たいカテゴリの表を開く（見出しでカテゴリ名を確認）。</li>
-          <li>使いたいテンプレ行の「コピー」で公開URLをコピー。</li>
-          <li>「開く」でシミュレーターを新しいタブで表示し、そのままデザイン開始。</li>
+          <li>見たいカテゴリの表を探す（見出しでカテゴリ名を確認）。</li>
+          <li>行の「コピー」で公開URLをコピーして共有。</li>
+          <li>「開く」でシミュレーターを新しいタブで開き、すぐデザイン開始。</li>
         </ol>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>活用例</h2>
         <ul>
-          <li>ECモール別リンク集：楽天用/自社用などカテゴリで分けて、該当URLだけを共有。</li>
-          <li>取引先別マニュアル：取引先ごとにテンプレートを整理し、マニュアルやチャットに貼り付け。</li>
-          <li>社内検証リスト：テスト用カテゴリを作り、担当者が「コピー→開く」で動作確認を繰り返す。</li>
+          <li>ECモール別リンク集（楽天/自社など）をカテゴリで分けて共有。</li>
+          <li>取引先別マニュアルにカテゴリ別URLを貼り付けて案内。</li>
+          <li>社内検証用カテゴリを作り、「コピー→開く」で動作確認をルーチン化。</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>管理者メモ</h2>
         <ul>
-          <li>カテゴリ設定は <code>/admin/common</code> の「カテゴリ」で管理（最大3件）。</li>
-          <li>カラーは 5 色＋黒のプリセットから選択（追加時に自動割当）。</li>
-          <li>front/back テンプレートは表面を優先してURL生成。</li>
+          <li>カテゴリ設定は <code>/admin/common</code> で管理（最大3件、5色＋黒）。</li>
+          <li>front/backテンプレは表面を優先してURL生成。</li>
+          <li>公開状態にしないとカテゴリ一覧にも公開一覧にも出ません。</li>
         </ul>
-      </div>
-    </div>
+      </section>
+    </main>
   </body>
 </html>

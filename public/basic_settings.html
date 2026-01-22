@@ -5,147 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/guide-style.css" />
     <title>基本設定ガイド | 名入れ刻印シミュレーター</title>
-    <style>
-      :root {
-        --primary: #2f80ed;
-        --secondary: #f2994a;
-        --bg-color: #f8f9fa;
-        --card-bg: #ffffff;
-        --text-color: #333333;
-        --muted-color: #666666;
-        --border-radius: 12px;
-        --spacing-large: 4rem;
-        --spacing-medium: 2rem;
-        --spacing-small: 1rem;
-      }
-
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-      }
-
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 40px 20px;
-      }
-
-      /* Navigation */
-      .nav-header {
-        background: var(--card-bg);
-        border-bottom: 1px solid #eee;
-        padding: 1rem 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        margin-bottom: 2rem;
-      }
-      .nav-inner {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-      .nav-item {
-        color: var(--muted-color);
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 0.9rem;
-        padding: 0.5rem 0;
-        border-bottom: 2px solid transparent;
-      }
-      .nav-item.active {
-        color: var(--primary);
-        border-bottom-color: var(--primary);
-      }
-      .nav-item:hover {
-        color: var(--primary);
-      }
-
-      /* Hero Section */
-      .hero {
-        text-align: center;
-        padding: var(--spacing-large) 0;
-        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
-        border-radius: var(--border-radius);
-        margin-bottom: var(--spacing-medium);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
-      .hero h1 {
-        font-size: 2.4rem;
-        margin: 0;
-      }
-      .hero p {
-        color: var(--muted-color);
-        margin: 12px 0 0;
-        font-size: 1rem;
-      }
-
-      /* Card */
-      .card {
-        background: var(--card-bg);
-        border-radius: var(--border-radius);
-        padding: var(--spacing-medium);
-        margin-bottom: var(--spacing-medium);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        border: 1px solid #eee;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-        margin-bottom: 1rem;
-        color: var(--primary);
-      }
-      h3 {
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
-      }
-      p {
-        margin: 0 0 0.6rem;
-        color: var(--muted-color);
-      }
-      ul {
-        margin: 0.4rem 0 0 1.4rem;
-        padding: 0;
-        line-height: 1.8;
-      }
-      code {
-        background: #e5e7eb;
-        padding: 2px 6px;
-        border-radius: 6px;
-        font-size: 90%;
-      }
-
-      .pill {
-        display: inline-block;
-        background: #e0f2fe;
-        color: #0369a1;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        margin-right: 6px;
-        margin-bottom: 4px;
-      }
-
-      .section-grid {
-        display: grid;
-        gap: 16px;
-      }
-
-      .hint {
-        font-size: 0.9rem;
-        color: var(--muted-color);
-        margin-top: 6px;
-      }
-    </style>
   </head>
   <body>
     <header class="nav-header">
@@ -161,65 +20,42 @@
     <main class="container">
       <section class="hero">
         <h1>基本設定ガイド</h1>
-        <p>ロゴ・ヘッダー/フッター・共通説明・カテゴリ設定など、最初に押さえたい設定をまとめています。</p>
+        <p>ロゴ・共通説明・カテゴリ設定など、最初に押さえる設定をまとめました。</p>
       </section>
 
       <section class="card">
-        <h2>基本設定でできること</h2>
-        <div class="section-grid">
-          <div>
-            <h3>ブランドまわり</h3>
-            <ul>
-              <li>ロゴ画像設定（PNG/JPG）。</li>
-              <li>ヘッダー/フッターの文言と揃え位置、文字サイズ。</li>
-              <li>タイトル（公開一覧・共通説明の見出し）。</li>
-            </ul>
-          </div>
-          <div>
-            <h3>共通説明（/common）</h3>
-            <ul>
-              <li>本文・画像（最大5枚/2MB）・PDF（5MB）。</li>
-              <li>FAQ 文面の登録（テンプレートあり）。</li>
-              <li>レイアウト指定（画像の位置）。</li>
-            </ul>
-          </div>
-          <div>
-            <h3>カテゴリ設定</h3>
-            <ul>
-              <li>最大3件。タイトル・説明は任意（未入力なら「未設定」表示）。</li>
-              <li>カラーはプリセット5色＋黒から選択。追加時に自動割当。</li>
-              <li>公開一覧のバッジ色、カテゴリ一覧（/categories）に反映。</li>
-            </ul>
-          </div>
-        </div>
+        <h2>できること</h2>
+        <ul>
+          <li>ロゴ画像の設定、ヘッダー/フッター文言と揃え位置・サイズ。</li>
+          <li>共通説明（本文・画像最大5枚/2MB・PDF最大5MB・FAQ文面・レイアウト）。</li>
+          <li>カテゴリ設定（最大3件、タイトル/説明任意、カラーは5色＋黒から選択）。</li>
+        </ul>
       </section>
 
       <section class="card">
         <h2>画像・PDFアップロード</h2>
         <ul>
-          <li>画像（共通説明用）: 最大5枚、1枚あたり 2MB まで。</li>
-          <li>PDF（共通説明添付）: 1ファイル、5MB まで。</li>
-          <li>アップ後は必ず「保存する」ボタンで反映。</li>
+          <li>画像は最大5枚、1枚あたり2MBまで。PDFは5MBまで。</li>
+          <li>アップ後は「保存する」ボタンで反映。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>カテゴリ設定（カラー対応）</h2>
         <ul>
-          <li>「カテゴリ追加」で最大3件まで。タイトル・説明は任意。未入力は「未設定」表示。</li>
-          <li>カラーをクリックで選択（5色＋黒）。公開一覧バッジに反映。</li>
-          <li>公開中ステータスのテンプレだけがカテゴリ一覧（/categories）に表示。</li>
-          <li>front/back があるテンプレは表面優先で URL を生成し、<code>?cat=カテゴリID</code> を付与。</li>
+          <li>「カテゴリ追加」で最大3件。タイトル/説明は任意（未入力は「未設定」表示）。</li>
+          <li>カラーはプリセット5色＋黒からクリック選択。追加時は自動で次の色を割当。</li>
+          <li>公開中テンプレのみがカテゴリ一覧（/categories）と公開一覧のバッジに反映。</li>
+          <li>front/back付きは表面優先でURLを生成し、<code>?cat=カテゴリID</code>を付与。</li>
         </ul>
-        <p class="hint">ヒント: カラーを揃えるとカテゴリバッジの見分けが良くなります。</p>
       </section>
 
       <section class="card">
         <h2>バックアップ / 復元</h2>
         <ul>
-          <li>「バックアップを保存」で設定・テンプレ・デザインをJSON保存（localStorage/IndexedDB を含む）。</li>
+          <li>「バックアップを保存」で設定・テンプレ・デザインをJSON出力。</li>
           <li>「バックアップを復元」でJSONから上書き（現在のデータは置き換え）。</li>
-          <li>「保存データを初期化」は全削除するため、事前にバックアップ推奨。</li>
+          <li>初期化前にバックアップ取得を推奨。</li>
         </ul>
       </section>
 
@@ -227,8 +63,7 @@
         <h2>保存のコツ</h2>
         <ul>
           <li>入力・アップロード後は必ず「保存する」をクリック。</li>
-          <li>カテゴリ変更後は公開一覧/カテゴリ一覧で色と表示を確認。</li>
-          <li>大きな変更の前にバックアップを取っておくと安心です。</li>
+          <li>カテゴリ変更後は公開一覧/カテゴリ一覧で色・表示を確認。</li>
         </ul>
       </section>
     </main>
