@@ -14,6 +14,7 @@ function splitTemplateKey(templateKey: string): { baseKey: string; side: "front"
   return { baseKey: templateKey, side: null };
 }
 
+// 公開中のみをカテゴリごとにまとめ、front/backがあれば表側を優先してURLに使う
 function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
   const published = list.filter((tpl) => tpl.status === "published");
   const groupedByBase = new Map<string, TemplateSummary[]>();
@@ -87,74 +88,89 @@ export function CategoryLandingPage() {
     return result;
   }, [categorized, settings?.commonInfoCategories]);
 
-  const flatRows = useMemo(() => {
-    const rows: Array<{ categoryId: string; categoryLabel: string; row: TemplateRow }> = [];
-    orderedCategories.forEach((catId) => {
-      const list = categorized.get(catId) ?? [];
-      list.forEach((row) => rows.push({ categoryId: catId, categoryLabel: categoryTitleMap.get(catId) ?? catId, row }));
-    });
-    return rows;
-  }, [categorized, orderedCategories, categoryTitleMap]);
-
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（公開URL集）</h1>
-        <p className="mt-4 text-sm text-slate-600">テンプレート名・公開URL・コピー・開くを1行の表で一覧できます。</p>
+        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ別公開URL（お客様向け）</h1>
+        <p className="mt-4 text-sm text-slate-600">
+          カテゴリごとにテンプレート名・公開URL・コピー・開くボタンを1行で確認できます。カテゴリごとに表を分けています。
+        </p>
       </div>
 
-      {flatRows.length === 0 ? (
+      {orderedCategories.length === 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
           公開中のテンプレートがありません。
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
-              <tr>
-                <th className="px-4 py-3 text-left">カテゴリ</th>
-                <th className="px-4 py-3 text-left">テンプレート名</th>
-                <th className="px-4 py-3 text-left">公開URL</th>
-                <th className="px-4 py-3 text-left">操作</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {flatRows.map(({ categoryId, categoryLabel, row }) => {
-                const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
-                return (
-                  <tr key={`${categoryId}-${row.templateKey}`} className="whitespace-nowrap">
-                    <td className="px-4 py-2 text-slate-800">{categoryLabel}</td>
-                    <td className="px-4 py-2 font-semibold text-slate-900">{row.name}</td>
-                    <td className="px-4 py-2">
-                      <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
-                        {url}
-                      </div>
-                    </td>
-                    <td className="px-4 py-2">
-                      <div className="flex flex-wrap gap-1">
-                        <button
-                          type="button"
-                          className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                          onClick={() => navigator.clipboard.writeText(url)}
-                        >
-                          コピー
-                        </button>
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                        >
-                          開く
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        orderedCategories.map((categoryId) => {
+          const rows = categorized.get(categoryId) ?? [];
+          const label = categoryTitleMap.get(categoryId) ?? categoryId;
+          return (
+            <div key={categoryId} className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
+                  <h2 className="text-lg font-semibold text-slate-900">{label}</h2>
+                </div>
+                <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-100 text-sm">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
+                    <tr>
+                      <th className="px-4 py-3 text-left">テンプレート名</th>
+                      <th className="px-4 py-3 text-left">公開URL</th>
+                      <th className="px-4 py-3 text-left">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {rows.length === 0 ? (
+                      <tr>
+                        <td className="px-4 py-3 text-sm text-slate-500" colSpan={3}>
+                          このカテゴリには公開中の商品がありません。
+                        </td>
+                      </tr>
+                    ) : (
+                      rows.map((row) => {
+                        const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
+                        return (
+                          <tr key={`${categoryId}-${row.templateKey}`} className="whitespace-nowrap">
+                            <td className="px-4 py-2 font-semibold text-slate-900">{row.name}</td>
+                            <td className="px-4 py-2">
+                              <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                                {url}
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex flex-wrap gap-1">
+                                <button
+                                  type="button"
+                                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                                  onClick={() => navigator.clipboard.writeText(url)}
+                                >
+                                  コピー
+                                </button>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                                >
+                                  開く
+                                </a>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })
       )}
     </section>
   );
