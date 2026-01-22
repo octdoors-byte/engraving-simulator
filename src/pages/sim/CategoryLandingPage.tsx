@@ -123,14 +123,14 @@ export function CategoryLandingPage() {
                   {rows.length === 0 ? (
                     <p className="text-xs text-slate-500">このカテゴリには公開中の商品がありません。</p>
                   ) : (
-                    <ul className="space-y-3 text-sm text-slate-800">
+                    <ul className="space-y-2 text-sm text-slate-800">
                       {rows.map((row) => {
                         const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
                         return (
-                          <li key={`${categoryId}-${row.templateKey}`} className="space-y-1">
-                            <div className="font-semibold text-slate-900">{row.name}</div>
+                          <li key={`${categoryId}-${row.templateKey}`}>
                             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
-                              <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                              <div className="flex-1 font-semibold text-slate-900">{row.name}</div>
+                              <div className="flex-1 break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
                                 {url}
                               </div>
                               <div className="flex flex-wrap gap-1">
