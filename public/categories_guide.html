@@ -18,22 +18,37 @@
         --spacing-small: 1rem;
       }
 
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        margin: 0;
-        padding: var(--spacing-medium) var(--spacing-small);
-        background: var(--bg-color);
+        background-color: var(--bg-color);
         color: var(--text-color);
         font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
         line-height: 1.6;
+        margin: 0;
+        padding: 40px 20px;
       }
 
       .container {
-        max-width: 980px;
+        max-width: 1000px;
         margin: 0 auto;
+      }
+
+      .nav {
+        color: var(--muted-color);
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .nav a {
+        color: var(--primary);
+        text-decoration: none;
+        margin-right: 8px;
       }
 
       .card {
@@ -41,22 +56,22 @@
         border: 1px solid #e5e7eb;
         border-radius: var(--border-radius);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        padding: 20px;
+        padding: 24px;
         margin-bottom: 16px;
       }
 
       h1 {
         font-size: 26px;
-        margin: 0 0 12px;
+        margin-bottom: 12px;
       }
 
       h2 {
         font-size: 18px;
-        margin: 0 0 8px;
+        margin-bottom: 8px;
       }
 
       p {
-        margin: 0 0 12px;
+        margin-bottom: 12px;
         color: var(--muted-color);
       }
 
@@ -87,6 +102,14 @@
   </head>
   <body>
     <div class="container">
+      <div class="nav">
+        <span>他のガイド: </span>
+        <a href="/public_templates.html">公開テンプレ一覧</a> /
+        <a href="/template_management.html">テンプレート管理</a> /
+        <a href="/design_history.html">デザイン履歴</a> /
+        <a href="/basic_settings.html">基本設定</a>
+      </div>
+
       <div class="card">
         <h1>カテゴリ一覧ガイド</h1>
         <p>カテゴリ別公開URLの一覧ページ（<code>/categories</code>）の使い方と活用例をまとめました。</p>
@@ -100,7 +123,7 @@
         <ul>
           <li>カテゴリごとにテーブルを分割し、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
           <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> 形式でカテゴリ絞り込みを保持。</li>
-          <li>公開中ステータスのテンプレートのみ表示。カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映。</li>
+          <li>公開中ステータスのみ表示。カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映。</li>
         </ul>
       </div>
 
