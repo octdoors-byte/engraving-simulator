@@ -57,20 +57,6 @@ function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
 const buildUrl = (path: string) =>
   typeof window !== "undefined" ? new URL(path, window.location.origin).toString() : path;
 
-function openInParentOrSelf(url: string) {
-  if (typeof window === "undefined") return;
-  try {
-    if (window.opener && !window.opener.closed) {
-      window.opener.location.href = url;
-      window.opener.focus();
-      return;
-    }
-  } catch (error) {
-    console.error("親ウィンドウの操作に失敗しました", error);
-  }
-  window.location.href = url;
-}
-
 export function CategoryLandingPage() {
   const settings = loadCommonSettings();
   const templates = useMemo(() => groupTemplates(listTemplates()), []);
@@ -119,9 +105,9 @@ export function CategoryLandingPage() {
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ別URLまとめ</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（お客様向け）</h1>
         <p className="mt-4 text-sm text-slate-600">
-          お客様向けの「カテゴリごとの公開テンプレート一覧」へ進むためのページです。見せたいカテゴリのボタンを押すだけで、そのカテゴリの公開テンプレート一覧（/top?cat=...）に移動します。
+          ご案内したいカテゴリを選ぶと、そのカテゴリだけを表示する公開テンプレート一覧ページへ移動します。
         </p>
       </div>
 
@@ -146,13 +132,12 @@ export function CategoryLandingPage() {
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
+                  <a
+                    href={listUrl}
                     className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    onClick={() => openInParentOrSelf(listUrl)}
                   >
                     このカテゴリを開く
-                  </button>
+                  </a>
                 </div>
               </div>
             );
