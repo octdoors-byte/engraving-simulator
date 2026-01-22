@@ -31,15 +31,6 @@ type LogoBaseSize = { width: number; height: number };
 
 type ToastState = { message: string; tone?: "info" | "success" | "error" } | null;
 
-type TemplateSet = {
-  baseKey: string;
-  single?: Template;
-  front?: Template;
-  back?: Template;
-};
-
-type TemplateSide = "single" | "front" | "back";
-
 function isPlacementInside(placement: DesignPlacement, area: Template["engravingArea"]) {
   return (
     placement.x >= area.x &&
@@ -98,16 +89,6 @@ function initialPlacement(template: Template, logoSize: LogoBaseSize): DesignPla
   };
 }
 
-function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
-  if (templateKey.endsWith("_front")) {
-    return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
-  }
-  if (templateKey.endsWith("_back")) {
-    return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
-  }
-  return { baseKey: templateKey, side: null };
-}
-
 function isUsableTemplate(template: Template | null | undefined): template is Template {
   return Boolean(template && (template.status === "tested" || template.status === "published"));
 }
@@ -115,8 +96,6 @@ function isUsableTemplate(template: Template | null | undefined): template is Te
 export function SimPage() {
   const { templateKey } = useParams();
   const [template, setTemplate] = useState<Template | null>(null);
-  const [templateSet, setTemplateSet] = useState<TemplateSet | null>(null);
-  const [activeSide, setActiveSide] = useState<TemplateSide>("single");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
   const [phase, setPhase] = useState<SimPhase>("EMPTY");
@@ -152,68 +131,21 @@ export function SimPage() {
   const placementInitialized = useRef(false);
   const colorCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const baseKey = templateSet?.baseKey ?? template?.templateKey ?? "";
-  const hasSides = Boolean(templateSet?.front || templateSet?.back);
-  const frontAvailable = Boolean(templateSet?.front);
-  const backAvailable = Boolean(templateSet?.back);
-  const frontUsable = isUsableTemplate(templateSet?.front);
-  const backUsable = isUsableTemplate(templateSet?.back);
-
   useEffect(() => {
     if (!templateKey) {
       setErrorMessage("テンプレートIDが指定されていません。");
-      setTemplateSet(null);
       setTemplate(null);
       return;
     }
-    const direct = getTemplate(templateKey);
-    if (direct) {
-      setTemplateSet({ baseKey: templateKey, single: direct });
-      setActiveSide("single");
-      setTemplate(direct);
-      setErrorMessage(isUsableTemplate(direct) ? null : "このテンプレートは現在ご利用いただけません（未公開）。");
-      return;
-    }
-    const { baseKey } = splitTemplateKey(templateKey);
-    const front = getTemplate(`${baseKey}_front`);
-    const back = getTemplate(`${baseKey}_back`);
-    if (!front && !back) {
+    const current = getTemplate(templateKey);
+    if (!current) {
       setErrorMessage("テンプレートが見つかりません。");
-      setTemplateSet(null);
       setTemplate(null);
       return;
     }
-    setTemplateSet({ baseKey, front: front ?? undefined, back: back ?? undefined });
-    const nextSide = isUsableTemplate(front)
-      ? "front"
-      : isUsableTemplate(back)
-        ? "back"
-        : front
-          ? "front"
-          : "back";
-    setActiveSide(nextSide);
-    setErrorMessage(null);
+    setTemplate(current);
+    setErrorMessage(isUsableTemplate(current) ? null : "このテンプレートは現在ご利用いただけません（未公開）。");
   }, [templateKey]);
-
-  useEffect(() => {
-    if (!templateSet) return;
-    const next =
-      activeSide === "front"
-        ? templateSet.front ?? null
-        : activeSide === "back"
-          ? templateSet.back ?? null
-          : templateSet.single ?? null;
-    setTemplate(next);
-    if (next && !isUsableTemplate(next)) {
-      const hasUsable =
-        isUsableTemplate(templateSet.single) ||
-        isUsableTemplate(templateSet.front) ||
-        isUsableTemplate(templateSet.back);
-      setErrorMessage(hasUsable ? null : "このテンプレートは現在ご利用いただけません（未公開）。");
-      return;
-    }
-    setErrorMessage(null);
-  }, [activeSide, templateSet]);
 
   useEffect(() => {
     if (!template) return;
@@ -690,39 +622,6 @@ export function SimPage() {
 
       <header className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
         <div className="flex flex-wrap items-center gap-3" />
-        {hasSides && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-slate-400">表示面</span>
-            {frontAvailable && (
-              <button
-                type="button"
-                className={`rounded-full border px-3 py-1 text-xs ${
-                  activeSide === "front"
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 text-slate-600"
-                } ${frontUsable ? "" : "cursor-not-allowed opacity-40"}`}
-                disabled={!frontUsable}
-                onClick={() => setActiveSide("front")}
-              >
-                表{frontUsable ? "" : "（未公開）"}
-              </button>
-            )}
-            {backAvailable && (
-              <button
-                type="button"
-                className={`rounded-full border px-3 py-1 text-xs ${
-                  activeSide === "back"
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 text-slate-600"
-                } ${backUsable ? "" : "cursor-not-allowed opacity-40"}`}
-                disabled={!backUsable}
-                onClick={() => setActiveSide("back")}
-              >
-                裏{backUsable ? "" : "（未公開）"}
-              </button>
-            )}
-          </div>
-        )}
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-slate-900">{template.name}</h1>
           <HelpIcon guideUrl="/user-guide.html" title="使い方ガイドを見る" variant="button" />
