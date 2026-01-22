@@ -120,7 +120,6 @@ export function CategoryLandingPage() {
           {orderedCategories.map((categoryId) => {
             const rows = categorized.get(categoryId) ?? [];
             const label = categoryTitleMap.get(categoryId) ?? categoryId;
-            const listUrl = buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`);
             return (
               <div
                 key={categoryId}
@@ -130,14 +129,6 @@ export function CategoryLandingPage() {
                   <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
                   <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <a
-                    href={listUrl}
-                    className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                  >
-                    このカテゴリを開く
-                  </a>
                 </div>
                 {rows.length > 0 && (
                   <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
