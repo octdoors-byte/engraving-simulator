@@ -10,6 +10,7 @@ const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const MAX_PDF_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGES = 5;
 const MAX_CATEGORIES = 3;
+const CATEGORY_COLORS = ["#94a3b8", "#a78bfa", "#fbbf24", "#34d399", "#fb7185"];
 
 const FAQ_TEMPLATE = [
   "Q. 推奨ブラウザは？",
@@ -209,7 +210,11 @@ export function CommonInfoPage() {
       setToast({ message: `カテゴリは最大 ${MAX_CATEGORIES} 件までです。`, tone: "info" });
       return;
     }
-    const next = [...commonInfoCategories, { id: Math.random().toString(36).slice(2, 8), title: "", body: "" }];
+    const color = CATEGORY_COLORS[commonInfoCategories.length % CATEGORY_COLORS.length];
+    const next = [
+      ...commonInfoCategories,
+      { id: Math.random().toString(36).slice(2, 8), title: "", body: "", color }
+    ];
     handleChange("commonInfoCategories", next);
   };
 
@@ -323,15 +328,23 @@ export function CommonInfoPage() {
                     placeholder="カテゴリの説明やメモ（任意）"
                     className="h-20 w-full rounded border border-slate-200 px-3 py-2 text-sm"
                   />
-                  <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <label className="whitespace-nowrap">カラー</label>
-                    <input
-                      type="color"
-                      value={cat.color ?? "#94a3b8"}
-                      onChange={(e) => updateCategory(index, "color", e.target.value)}
-                      className="h-8 w-16 rounded border border-slate-200 bg-white"
-                    />
-                    <span className="text-[11px] text-slate-500">バッジ背景色</span>
+                  <div className="space-y-1 text-xs text-slate-600">
+                    <p className="font-semibold">カラー（5色から選択）</p>
+                    <div className="flex flex-wrap gap-2">
+                      {CATEGORY_COLORS.map((color) => {
+                        const selected = (cat.color ?? CATEGORY_COLORS[0]) === color;
+                        return (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`h-8 w-10 rounded border ${selected ? "ring-2 ring-sky-400" : "border-slate-200"}`}
+                            style={{ backgroundColor: color }}
+                            aria-label={`色 ${color}`}
+                            onClick={() => updateCategory(index, "color", color)}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
