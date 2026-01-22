@@ -22,7 +22,7 @@
 ### 3.2 テンプレート
 - `Template` / `TemplateSummary`: `templateKey`, `name`, `status (draft/tested/published/archive)`, `background`, `engravingArea`, `placementRules`, `pdf`, `paper?`, `logoSettings?`, `category?`, `categories?[]`, `comment?`, `updatedAt`.
 - 背景画像は IndexedDB（blob）に保存、fallback は localStorage。
-- 表/裏が必要な商品は、テンプレを別々に作成します（例: `xxx_front`, `xxx_back`）。公開一覧やカテゴリ一覧でも別テンプレとして表示されます。
+- 1つのテンプレートは「1面（1枚）」として扱います。
 
 ### 3.3 デザイン
 - `Design` / `DesignSummary`: `designId`, `templateKey`, `createdAt`, ロゴ情報、配置座標、生成PDFアセットID。
@@ -33,7 +33,7 @@
 - `color` 未指定の既存データはグレー系で表示。
 
 ### 4.2 公開テンプレ一覧 `/top`
-- 対象: `published` のみ（公開中のテンプレだけ表示）。表/裏がある場合もテンプレは別々に表示されます。
+- 対象: `published` のみ（公開中のテンプレだけ表示）。
 - カテゴリバッジ: 頭文字1文字＋指定色（未指定はグレー）。未設定は「未分類」扱い。
 - フィルタ: テキスト検索 / カテゴリチェックボックス。`?cat=` で初期カテゴリ指定可（複数）。
 - URL列: カテゴリごとに公開URLコピー（`/sim/{templateKey}?cat={カテゴリID}`）。
@@ -76,10 +76,9 @@
 - `color` 未指定データも動作（グレー表示）。
 - 大容量画像/PDFは上限あり: 画像2MB/枚×5、PDF 5MB。
 
-## 11. 表/裏（フロント/バック）の取り扱い
-- 基本は「片面（1枚）」運用です。
-- 表/裏が必要な場合は、テンプレを別々に作成し、別々の公開URLとして扱います。
-- 命名は自由ですが、区別しやすいように `*_front` / `*_back` を付ける運用がおすすめです（機能上の必須ではありません）。
+## 11. 1テンプレ=1面（1枚）
+- 本ツールは「1テンプレ=1面」で運用します（面の切り替え機能はありません）。
+- もし複数面が必要な場合は、面ごとにテンプレを別々に作成し、別URLとして扱います。
 
 ## 12. 今後の拡張候補
 - 管理側一覧へのカテゴリカラー表示バッジ。
