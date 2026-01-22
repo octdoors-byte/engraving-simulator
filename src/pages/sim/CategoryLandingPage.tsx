@@ -102,7 +102,7 @@ export function CategoryLandingPage() {
           公開中のテンプレートがありません。
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
           {orderedCategories.map((categoryId) => {
             const rows = categorized.get(categoryId) ?? [];
             const label = categoryTitleMap.get(categoryId) ?? categoryId;
@@ -111,9 +111,11 @@ export function CategoryLandingPage() {
                 key={categoryId}
                 className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
               >
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
-                  <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
+                <div className="flex items-baseline justify-between gap-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
+                    <h2 className="text-xl font-semibold text-slate-900">{label}</h2>
+                  </div>
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
