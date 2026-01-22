@@ -1,55 +1,86 @@
-# 仕様メモ（カテゴリ一覧・カラー対応を含む現行仕様）
+# システム仕様（最新版）
 
-## 目的
-お客様向け公開ページと管理機能で、カテゴリごとにテンプレートを探しやすくし、カテゴリ別のブランドカラーを反映できるようにする。
+## 1. 概要
+- 名入れ刻印シミュレーター（フロントのみ）。ブラウザ上でテンプレ登録→ロゴ配置→PDF（確認用/刻印用）生成まで完結。
+- 永続化はローカル（localStorage + IndexedDB）。サーバー不要。
+- 技術: Vite + React + react-router-dom。Tailwind でスタイリング。
 
-## 画面 / ルーティング
-- `/top` 公開テンプレート一覧（お客様入口）
-- `/sim/:templateKey` シミュレーター本体
-- `/categories` カテゴリ別公開URL一覧（お客様向け、カテゴリごとに表を分割）
-- `/common` 共通説明ページ
-- `/admin/templates` テンプレート管理
-- `/admin/designs` 発行履歴管理
-- `/admin/common` 共通設定（カテゴリマスター含む）
+## 2. 画面とルート
+- `/top` … 公開テンプレート一覧（お客様入口）
+- `/sim/:templateKey` … シミュレーター本体
+- `/categories` … カテゴリ別公開URL一覧（カテゴリごとに表を分割）
+- `/common` … お客様向け 共通説明ページ
+- `/admin/templates` … テンプレート管理
+- `/admin/designs` … 発行履歴管理
+- `/admin/common` … 共通設定（カテゴリマスター/共通説明/画像/FAQ/ロゴなど）
 
-## データ構造
-- `CommonSettings.commonInfoCategories`: `{ id: string, title: string, body?: string, color?: string }`
-  - 最大 3 件まで（定数 `MAX_CATEGORIES = 3`）。
-  - `color` 省略時はグレー系で表示。
+## 3. データ構造
+### 3.1 共通設定 `CommonSettings`
+- `commonInfoCategories`: `{ id: string, title: string, body?: string, color?: string }`（最大3件）
+- ほか: header/footer 文言・サイズ、ロゴ画像、共通説明（タイトル/本文/画像最大5枚/PDF最大5MB/FAQ）、表示レイアウトなど。
 
-## カテゴリカラー（基本設定）
-- 5 色プリセット（`CATEGORY_COLORS`）から選択。
-- 新規カテゴリ追加時にプリセット色を自動割当。
-- 既存データに `color` がない場合は従来色で表示。
+### 3.2 テンプレート
+- `Template` / `TemplateSummary`: `templateKey`, `name`, `status (draft/tested/published/archive)`, `background`, `engravingArea`, `placementRules`, `pdf`, `paper?`, `logoSettings?`, `category?`, `categories?[]`, `comment?`, `updatedAt`.
+- 背景画像は IndexedDB（blob）に保存、fallback は localStorage。
+- front/back キー（`*_front`, `*_back`）は同ベースでグループ化し、表面を優先。
 
-## 公開テンプレート一覧 `/top`
-- 表示対象: `status === "published"` のみ。
-- front/back 付きキーはベースキーでまとめ、表面を優先（なければ裏→そのほか）。
-- 名前: 表裏ペアがある場合は「○○（表/裏）」。
-- カテゴリバッジ: 頭文字 1 文字＋カテゴリカラー（未指定はグレー）。未設定カテゴリは「未分類」扱い。
-- フィルタ: 検索テキスト、カテゴリチェックボックス。`?cat=` クエリで初期カテゴリ選択可（複数可）。
-- URL列: カテゴリごとに公開URLをコピーできるボタン（`/sim/{key}?cat={カテゴリID}`）。
+### 3.3 デザイン
+- `Design` / `DesignSummary`: `designId`, `templateKey`, `createdAt`, ロゴ情報、配置座標、生成PDFアセットID。
 
-## カテゴリ一覧 `/categories`
-- カテゴリごとにテーブルを分割表示。
-- 行: テンプレート名 / 公開URL / 操作（コピー・開く）。
-- 公開URLは `/sim/{templateKey}?cat={カテゴリID}`。front/back は表面優先で生成。
-- 表示対象: 公開中テンプレのみ。各カテゴリ内で名前順ソート。
+## 4. カテゴリ機能
+### 4.1 カラー設定
+- 5色プリセット（`CATEGORY_COLORS`）から選択。新規カテゴリ追加時に自動割当。
+- `color` 未指定の既存データはグレー系で表示。
 
-## 基本設定でのカテゴリ管理
-- 入力項目: ID（自動生成）、タイトル、本文（任意）、カラー（5 色プリセット）。
-- ボタン: 追加（最大 3 件）、削除。
-- カラーはプリセットチップをクリックして選択。保存すると公開一覧・カテゴリ一覧のバッジ色に反映。
+### 4.2 公開テンプレ一覧 `/top`
+- 対象: `published` のみ。front/back は表を優先し「○○（表/裏）」名でまとめ。
+- カテゴリバッジ: 頭文字1文字＋指定色（未指定はグレー）。未設定は「未分類」扱い。
+- フィルタ: テキスト検索 / カテゴリチェックボックス。`?cat=` で初期カテゴリ指定可（複数）。
+- URL列: カテゴリごとに公開URLコピー（`/sim/{key}?cat={カテゴリID}`）。
 
-## 制限・注意
-- カテゴリ数は 3 まで。
-- カラーは 5 色固定（配列変更で拡張可）。
-- `color` 未指定の既存データはそのまま利用可能（グレー表示）。
-- データ保存先: localStorage（設定・テンプレ・デザイン）、IndexedDB（画像・PDF・バックアップ）。
+### 4.3 カテゴリ一覧 `/categories`
+- カテゴリごとに独立した表を表示（カテゴリ見出し付き）。
+- 行: テンプレート名 / 公開URL / コピー / 開く。
+- URLは `/sim/{templateKey}?cat={カテゴリID}`（front/back は表優先）。
+- カテゴリ内はテンプレ名で昇順ソート。対象は `published` のみ。
 
-## フロント/バック扱い
-- `_front` / `_back` キーは同一ベースキーでまとめ、表を優先して公開URLを生成。片面のみ登録されている場合はその面を使用。
+## 5. テンプレート管理 `/admin/templates`
+- 新規登録: `template.json` + 背景画像ドラッグ&ドロップ。サイズ差があれば自動補正。
+- 状態遷移: draft→tested→published→archive（archive は編集不可）。
+- 表示名・カテゴリ（複数）をダブルクリック編集。カテゴリはマスターから選択。
+- プレビュー: 背景画像（IndexedDBまたはfallback）を表示。
+- 削除: 紐づくデザインがある場合は不可（archive 推奨）。
+- ロゴ設定: モノクロ切替可。
 
-## 今後の拡張候補
-- 管理側一覧にもカテゴリカラーを表示するバッジを追加。
-- カラープリセットのカスタム（ユーザー定義パレット）対応。
+## 6. 発行履歴 `/admin/designs`
+- デザインID、テンプレートキー、日時で一覧・検索。
+- PDF（確認/刻印）、ロゴ、背景の再取得が可能。
+
+## 7. シミュレーター本体 `/sim/:templateKey`
+- 背景上にロゴを配置・拡大縮小・回転（設定依存）。配置範囲は `engravingArea`、`placementRules` に従う。
+- 透過色指定、モノクロ（テンプレ側許可時）。
+- PDF生成: 確認用/刻印用を生成し IndexedDB に保存、DL 可。
+- バリデーション: ロゴ最小サイズ（mm）、範囲内制約。
+
+## 8. 共通説明 `/common`
+- `CommonSettings` の本文・画像・FAQ を表示。レイアウトは `commonInfoLayout` に従う。
+
+## 9. 保存・バックアップ
+- localStorage: テンプレ/デザイン/共通設定/バックアップJSON。
+- IndexedDB `ksim_db`: 背景画像・ロゴ・生成PDF・自動バックアップ。
+- 手動/自動バックアップのエクスポート・復元を提供。
+
+## 10. 制限と注意
+- カテゴリ数: 最大3件。
+- カラー: プリセット5色（配列編集で拡張可）。
+- `color` 未指定データも動作（グレー表示）。
+- 大容量画像/PDFは上限あり: 画像2MB/枚×5、PDF 5MB。
+
+## 11. フロント/バック取り扱い
+- `_front` / `_back` は同ベースキーで統合し、表を優先。片面のみ登録ならその面を採用。
+
+## 12. 今後の拡張候補
+- 管理側一覧へのカテゴリカラー表示バッジ。
+- カラープリセットのユーザー定義化。
+- `/categories` にカテゴリ説明や共通リンク表示オプション。
+- chunk 分割・ビルドサイズ最適化（現状JS ~760KB gzip284KB）。
