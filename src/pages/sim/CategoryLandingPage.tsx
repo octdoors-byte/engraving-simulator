@@ -131,13 +131,23 @@ export function CategoryLandingPage() {
                               <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
                                 {url}
                               </div>
-                              <button
-                                type="button"
-                                className="self-start rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                                onClick={() => navigator.clipboard.writeText(url)}
-                              >
-                                URLをコピー
-                              </button>
+                              <div className="flex flex-wrap gap-1">
+                                <button
+                                  type="button"
+                                  className="self-start rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                                  onClick={() => navigator.clipboard.writeText(url)}
+                                >
+                                  コピー
+                                </button>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="self-start rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                                >
+                                  開く
+                                </a>
+                              </div>
                             </div>
                           </li>
                         );
