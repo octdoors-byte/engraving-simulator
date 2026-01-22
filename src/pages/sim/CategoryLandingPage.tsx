@@ -9,23 +9,9 @@ type TemplateRow = {
   templateKey: string;
 };
 
-function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
-  if (templateKey.endsWith("_front")) return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
-  if (templateKey.endsWith("_back")) return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
-  return { baseKey: templateKey, side: null };
-}
-
-// 公開中のみをカテゴリごとにまとめ、front/backがあれば表側を優先してURLに使う
+// 公開中のみをカテゴリごとにまとめて表示する
 function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
   const published = list.filter((tpl) => tpl.status === "published");
-  const groupedByBase = new Map<string, TemplateSummary[]>();
-  published.forEach((tpl) => {
-    const { baseKey, side } = splitTemplateKey(tpl.templateKey);
-    const key = side ? baseKey : tpl.templateKey;
-    const arr = groupedByBase.get(key) ?? [];
-    arr.push(tpl);
-    groupedByBase.set(key, arr);
-  });
 
   const result = new Map<string, TemplateRow[]>();
   const push = (cat: string, row: TemplateRow) => {
@@ -34,22 +20,13 @@ function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
     result.set(cat, list);
   };
 
-  groupedByBase.forEach((items) => {
-    const preferred =
-      items.find((i) => i.templateKey.endsWith("_front")) ??
-      items.find((i) => i.templateKey.endsWith("_back")) ??
-      items[0];
-    const categories = Array.from(
-      new Set(
-        items.flatMap((i) =>
-          i.categories && i.categories.length > 0 ? i.categories : i.category ? [i.category] : []
-        )
-      )
-    );
+  published.forEach((tpl) => {
+    const categories =
+      tpl.categories && tpl.categories.length > 0 ? tpl.categories : tpl.category ? [tpl.category] : [];
     const row: TemplateRow = {
-      name: items.length > 1 ? `${preferred.name}（表/裏）` : preferred.name,
+      name: tpl.name,
       categories,
-      templateKey: preferred.templateKey
+      templateKey: tpl.templateKey
     };
     if (categories.length === 0) {
       push("未分類", row);

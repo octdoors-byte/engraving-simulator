@@ -24,18 +24,7 @@ type TemplateRow = {
   comment?: string;
   paper: string;
   updatedAt: string;
-  primaryTemplateKey: string;
 };
-
-function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
-  if (templateKey.endsWith("_front")) {
-    return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
-  }
-  if (templateKey.endsWith("_back")) {
-    return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
-  }
-  return { baseKey: templateKey, side: null };
-}
 
 function formatPaperLabel(template: Template | null): string {
   if (!template) return "-";
@@ -49,40 +38,19 @@ function formatPaperLabel(template: Template | null): string {
   return isLandscape ? "297×210 mm" : "210×297 mm";
 }
 
-function getTemplateForRow(primaryTemplateKey: string): Template | null {
-  return getTemplate(primaryTemplateKey);
-}
-
 function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
   const publishedOnly = list.filter((template) => template.status === "published");
-  const map = new Map<string, TemplateSummary[]>();
-  publishedOnly.forEach((template) => {
-    const { baseKey, side } = splitTemplateKey(template.templateKey);
-    const key = side ? baseKey : template.templateKey;
-    const items = map.get(key) ?? [];
-    items.push(template);
-    map.set(key, items);
-  });
-  return Array.from(map.entries()).map(([key, items]) => {
-    const sorted = [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-    const preferred = items.find((item) => item.templateKey.endsWith("_front")) ?? items[0];
-    const categories = Array.from(
-      new Set(
-        items.flatMap((item) =>
-          item.categories && item.categories.length > 0 ? item.categories : item.category ? [item.category] : []
-        )
-      )
-    );
-    const name = items.length > 1 ? `${preferred.name}（表/裏）` : preferred.name;
-    const template = getTemplateForRow(preferred.templateKey);
+  return publishedOnly.map((summary) => {
+    const categories =
+      summary.categories && summary.categories.length > 0 ? summary.categories : summary.category ? [summary.category] : [];
+    const template = getTemplate(summary.templateKey);
     return {
-      key,
-      name,
+      key: summary.templateKey,
+      name: summary.name,
       categories,
-      comment: preferred.comment,
+      comment: summary.comment,
       paper: formatPaperLabel(template),
-      updatedAt: sorted[0]?.updatedAt ?? "",
-      primaryTemplateKey: preferred.templateKey
+      updatedAt: summary.updatedAt
     };
   });
 }
@@ -219,17 +187,12 @@ export function SimLandingPage() {
 
   const commitComment = (row: TemplateRow) => {
     const nextComment = editingComment.trim();
-    const all = listTemplates();
-    const targets = all.filter((item) => splitTemplateKey(item.templateKey).baseKey === row.key);
-    const base = targets.length ? targets : all.filter((item) => item.templateKey === row.primaryTemplateKey);
-    base.forEach((summary) => {
-      const template = getTemplate(summary.templateKey);
-      if (!template) return;
-      saveTemplate({
-        ...template,
-        comment: nextComment ? nextComment : undefined,
-        updatedAt: new Date().toISOString()
-      });
+    const template = getTemplate(row.key);
+    if (!template) return;
+    saveTemplate({
+      ...template,
+      comment: nextComment ? nextComment : undefined,
+      updatedAt: new Date().toISOString()
     });
     setEditingKey(null);
     refreshTemplates();
