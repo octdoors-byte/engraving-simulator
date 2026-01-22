@@ -155,7 +155,7 @@ export function SimLandingPage() {
   const categoryTitleMap = useMemo(() => {
     const map = new Map<string, string>();
     settings?.commonInfoCategories?.forEach((c) => {
-      if (c.id) map.set(c.id, c.title || c.id);
+      if (c.id) map.set(c.id, c.title?.trim() || "未設定");
     });
     return map;
   }, [settings?.commonInfoCategories]);
@@ -419,7 +419,7 @@ export function SimLandingPage() {
                                 <td key={col.key} className="px-2 text-slate-600" style={rowPaddingStyle}>
                                   <div className="flex flex-wrap gap-1">
                                     {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => {
-                                      const label = categoryTitleMap.get(cat) ?? cat;
+                                      const label = categoryTitleMap.get(cat) ?? "未設定";
                                       const short = label ? label[0] : "";
                                       const bg = categoryColorMap.get(cat);
                                       return (

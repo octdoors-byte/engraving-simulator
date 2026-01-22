@@ -211,9 +211,10 @@ export function CommonInfoPage() {
       return;
     }
     const color = CATEGORY_COLORS[commonInfoCategories.length % CATEGORY_COLORS.length];
+    const defaultTitle = `カテゴリ${commonInfoCategories.length + 1}`;
     const next = [
       ...commonInfoCategories,
-      { id: Math.random().toString(36).slice(2, 8), title: "", body: "", color }
+      { id: Math.random().toString(36).slice(2, 8), title: defaultTitle, body: "", color }
     ];
     handleChange("commonInfoCategories", next);
   };

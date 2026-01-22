@@ -72,7 +72,7 @@ export function CategoryLandingPage() {
   const categoryTitleMap = useMemo(() => {
     const map = new Map<string, string>();
     settings?.commonInfoCategories?.forEach((c) => {
-      if (c.id) map.set(c.id, c.title || c.id);
+      if (c.id) map.set(c.id, c.title?.trim() || "未設定");
     });
     map.set("未分類", "未分類");
     return map;
