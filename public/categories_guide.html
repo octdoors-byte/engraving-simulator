@@ -1,57 +1,135 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <title>カテゴリ一覧ガイド</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; background: #f8fafc; color: #0f172a; line-height: 1.6; }
-    h1, h2 { margin: 0 0 12px; }
-    h1 { font-size: 22px; }
-    h2 { font-size: 16px; }
-    section { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.04); }
-    ul { padding-left: 20px; margin: 8px 0; }
-    code { background: #e2e8f0; padding: 2px 5px; border-radius: 4px; font-size: 90%; }
-  </style>
-</head>
-<body>
-  <h1>カテゴリ一覧ガイド</h1>
-  <section>
-    <h2>ページ概要</h2>
-    <ul>
-      <li>URL: <code>/categories</code></li>
-      <li>カテゴリごとにテーブルを分割し、各行に「テンプレート名 / 公開URL / コピー / 開く」を表示します。</li>
-      <li>公開中のテンプレートのみ表示され、<code>?cat=カテゴリID</code> 付きのURLで開くようになります。</li>
-      <li>カテゴリカラーが設定されていれば公開一覧のバッジにも反映されます（黒も選択可）。</li>
-    </ul>
-  </section>
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カテゴリ一覧ガイド | 名入れ刻印シミュレーター</title>
+    <style>
+      :root {
+        --primary: #2f80ed;
+        --secondary: #f2994a;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --muted-color: #666666;
+        --border-radius: 12px;
+        --spacing-large: 4rem;
+        --spacing-medium: 2rem;
+        --spacing-small: 1rem;
+      }
 
-  <section>
-    <h2>使い方（お客様向け）</h2>
-    <ol>
-      <li>見たいカテゴリの表を探します（見出しにカテゴリ名が表示されます）。</li>
-      <li>行にある「コピー」ボタンで公開URLをコピーします。</li>
-      <li>「開く」ボタンで新しいタブでシミュレーターを開きます。</li>
-    </ol>
-  </section>
+      * {
+        box-sizing: border-box;
+      }
 
-  <section>
-    <h2>活用例</h2>
-    <ul>
-      <li>ECモール別リンク集として：楽天用/自社用などカテゴリを分け、該当URLだけをお客様に共有。</li>
-      <li>取引先別マニュアルとして：取引先ごとにテンプレートを整理し、コピーしたURLをマニュアルやチャットに貼る。</li>
-      <li>社内検証リストとして：テスト用カテゴリを作り、担当者が「コピー→開く」で動作確認を繰り返す。</li>
-    </ul>
-  </section>
+      body {
+        margin: 0;
+        padding: var(--spacing-medium) var(--spacing-small);
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+        line-height: 1.6;
+      }
 
-  <section>
-    <h2>管理者向けメモ</h2>
-    <ul>
-      <li>カテゴリは <code>/admin/common</code> の「カテゴリ」設定で追加・編集できます（最大3件）。</li>
-      <li>カラーは5色のプリセットから選択し、公開一覧バッジにも反映されます。</li>
-      <li>テンプレートが <strong>公開</strong> ステータスでないとカテゴリ一覧には出ません。</li>
-      <li>表裏両面テンプレート（<code>_front</code>/<code>_back</code>）は表面を優先してURL生成します。</li>
-    </ul>
-  </section>
-</body>
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid #e5e7eb;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      h1 {
+        font-size: 26px;
+        margin: 0 0 12px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin: 0 0 8px;
+      }
+
+      p {
+        margin: 0 0 12px;
+        color: var(--muted-color);
+      }
+
+      ul,
+      ol {
+        margin: 8px 0 0;
+        padding-left: 20px;
+        color: var(--text-color);
+      }
+
+      code {
+        background: #e5e7eb;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 90%;
+      }
+
+      .pill {
+        display: inline-block;
+        background: #eef2ff;
+        color: #4338ca;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        margin-right: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>カテゴリ一覧ガイド</h1>
+        <p>カテゴリ別公開URLの一覧ページ（<code>/categories</code>）の使い方と活用例をまとめました。</p>
+        <div>
+          <span class="pill">対象</span><span>公開中テンプレートのみ / front/back は表面優先</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>ページ概要</h2>
+        <ul>
+          <li>カテゴリごとにテーブルを分割し、行は「テンプレート名 / 公開URL / コピー / 開く」。</li>
+          <li>URLは <code>/sim/&lt;templateKey&gt;?cat=&lt;カテゴリID&gt;</code> 形式でカテゴリ絞り込みを保持。</li>
+          <li>公開中ステータスのテンプレートのみ表示。カテゴリカラー（5色＋黒）が設定されていれば公開一覧のバッジにも反映。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>使い方（お客様向け）</h2>
+        <ol>
+          <li>見たいカテゴリの表を確認する（見出しにカテゴリ名が表示）。</li>
+          <li>「コピー」で公開URLをコピーして共有する。</li>
+          <li>「開く」で新しいタブにシミュレーターを表示する。</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2>活用例</h2>
+        <ul>
+          <li>ECモール別リンク集：楽天用/自社用などカテゴリで分けて、該当URLだけを共有。</li>
+          <li>取引先別マニュアル：取引先ごとにテンプレートを整理し、マニュアルやチャットに貼り付け。</li>
+          <li>社内検証リスト：テスト用カテゴリを作り、担当者が「コピー→開く」で動作確認を繰り返す。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>管理者メモ</h2>
+        <ul>
+          <li>カテゴリ設定は <code>/admin/common</code> の「カテゴリ」で管理（最大3件）。</li>
+          <li>カラーは 5 色＋黒のプリセットから選択（追加時に自動割当）。</li>
+          <li>front/back テンプレートは表面を優先してURL生成。</li>
+        </ul>
+      </div>
+    </div>
+  </body>
 </html>
