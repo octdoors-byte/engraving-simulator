@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { TemplateSummary } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
+import { HelpIcon } from "@/components/common/HelpIcon";
 
 type TemplateRow = {
   name: string;
@@ -91,7 +92,10 @@ export function CategoryLandingPage() {
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ別公開URL（お客様向け）</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-semibold text-slate-900">カテゴリ別公開URL（お客様向け）</h1>
+          <HelpIcon guideUrl="/categories_guide.html" title="カテゴリ一覧ガイド" />
+        </div>
         <p className="mt-4 text-sm text-slate-600">
           カテゴリごとにテンプレート名・公開URL・コピー・開くボタンを1行で確認できます。カテゴリごとに表を分けています。
         </p>
