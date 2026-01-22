@@ -31,7 +31,7 @@
           <li>必要ファイルは「背景画像」と <code>template.json</code> の2つです。</li>
           <li>背景画像のサイズ（横×縦）を、JSON側にも同じように設定します。</li>
           <li>ロゴを置ける範囲（刻印範囲）を決めて、JSONに書き込みます。</li>
-          <li>表/裏がある場合は、キーを <code>xxx_front</code> / <code>xxx_back</code> にすると一覧でまとまりやすいです。</li>
+          <li>表/裏がある場合は、表用・裏用でテンプレを別々に作成します（例: <code>xxx_front</code> / <code>xxx_back</code> など）。</li>
         </ul>
       </section>
 
@@ -93,10 +93,8 @@
           <div class="faq-body">テンプレキーの重複、JSONと背景画像の組み合わせミスが多いです。ファイル名やキーを確認してください。</div>
         </details>
         <details class="faq">
-          <summary>表/裏を1行にまとめたいです</summary>
-          <div class="faq-body">
-            <code>xxx_front</code>/<code>xxx_back</code> のように同じベース名にすると、公開側で「○○（表/裏）」として見やすくまとまります。
-          </div>
+          <summary>表と裏は1つにまとめられますか？</summary>
+          <div class="faq-body">現状は表用・裏用は別テンプレとして扱います。公開URLも別になるので、必要な方をそれぞれ登録・公開してください。</div>
         </details>
         <details class="faq">
           <summary>何から作ればいいか分かりません</summary>
