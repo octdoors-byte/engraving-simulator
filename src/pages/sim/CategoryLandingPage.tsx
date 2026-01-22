@@ -127,16 +127,18 @@ export function CategoryLandingPage() {
                         return (
                           <li key={`${categoryId}-${row.templateKey}`} className="space-y-1">
                             <div className="font-semibold text-slate-900">{row.name}</div>
-                            <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
-                              {url}
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                              <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                                {url}
+                              </div>
+                              <button
+                                type="button"
+                                className="self-start rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                                onClick={() => navigator.clipboard.writeText(url)}
+                              >
+                                URLをコピー
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                              onClick={() => navigator.clipboard.writeText(url)}
-                            >
-                              URLをコピー
-                            </button>
                           </li>
                         );
                       })}
