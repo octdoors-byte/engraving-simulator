@@ -213,7 +213,7 @@ export function CommonInfoPage() {
     handleChange("commonInfoCategories", next);
   };
 
-  const updateCategory = (index: number, key: "title" | "body", value: string) => {
+  const updateCategory = (index: number, key: "title" | "body" | "color", value: string) => {
     const next = [...commonInfoCategories];
     if (!next[index]) return;
     next[index] = { ...next[index], [key]: value };

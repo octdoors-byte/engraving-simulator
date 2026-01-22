@@ -160,6 +160,14 @@ export function SimLandingPage() {
     return map;
   }, [settings?.commonInfoCategories]);
 
+  const categoryColorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    settings?.commonInfoCategories?.forEach((c) => {
+      if (c.id && c.color) map.set(c.id, c.color);
+    });
+    return map;
+  }, [settings?.commonInfoCategories]);
+
   const visibleColumns = columns.filter((col) => !hiddenColumns.has(col.key));
 
   const moveColumn = (direction: "left" | "right") => {
@@ -413,10 +421,12 @@ export function SimLandingPage() {
                                     {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => {
                                       const label = categoryTitleMap.get(cat) ?? cat;
                                       const short = label ? label[0] : "";
+                                      const bg = categoryColorMap.get(cat);
                                       return (
                                         <span
                                           key={cat}
-                                          className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700"
+                                          className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] text-slate-700"
+                                          style={bg ? { backgroundColor: bg, border: "1px solid #e2e8f0" } : undefined}
                                         >
                                           {short}
                                         </span>

@@ -123,5 +123,6 @@ export interface CommonSettings {
     id: string;
     title: string;
     body?: string;
+    color?: string;
   }>;
 }
