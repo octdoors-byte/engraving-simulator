@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item" href="/user-guide.html">お客様向け</a>
         <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item active" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -25,39 +27,80 @@
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>ロゴとヘッダー/フッターの文言をここで決めます。</li>
-          <li>共通説明（本文・画像・PDF・FAQ）の内容を入れます。</li>
-          <li>カテゴリを最大3件作り、色を選ぶと公開一覧のバッジに反映されます。</li>
+        <ul class="checklist">
+          <li>ロゴ・ヘッダー・フッターは「お客様が見るページの見た目」に関わります。</li>
+          <li>共通説明は「どのテンプレでも共通で見せたい説明文・画像・PDF・FAQ」をまとめる場所です。</li>
+          <li>カテゴリは「テンプレのグループ分け」です（最大3つ）。色は公開一覧の印に反映されます。</li>
+          <li>変更したら最後に必ず「保存する」を押します（押さないと反映されません）。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>ロゴ画像をセットし、タイトルやヘッダー/フッターを入力。</li>
-          <li>共通説明に本文・画像（最大5枚/2MB）・PDF（5MB）・FAQを登録。</li>
-          <li>カテゴリを追加（最大3件、色は5色＋黒から選択）して保存。</li>
-          <li>変更後は必ず「保存する」をクリック。</li>
+        <ol class="steps">
+          <li>
+            <strong>ロゴ・文言を入れる</strong>
+            <p>ロゴ画像、ページタイトル、ヘッダー/フッターの文章を入力します。</p>
+          </li>
+          <li>
+            <strong>共通説明を入れる</strong>
+            <p>本文・画像（最大5枚/2MB）・PDF（5MB）・FAQを登録します。</p>
+          </li>
+          <li>
+            <strong>カテゴリを作る</strong>
+            <p>カテゴリ名（最大3つ）と色（5色＋黒）を決めます。テンプレ管理で複数カテゴリを選べます。</p>
+          </li>
+          <li>
+            <strong>保存して反映を確認</strong>
+            <p>「保存する」後、公開テンプレ一覧やカテゴリ一覧で表示を確認します。</p>
+          </li>
         </ol>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>⬆️ アップロード: 画像やPDFを選択して追加。</li>
-          <li>💾 保存する: 入力内容を確定して反映。</li>
-          <li>⟳ 初期化/復元: バックアップやリセットを行う前に必ず内容を確認。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">⬆️</div>
+            <div class="icon-title">アップロード</div>
+            <div class="icon-desc">画像やPDFを選択して追加します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">➕</div>
+            <div class="icon-title">追加</div>
+            <div class="icon-desc">カテゴリ行やFAQ行を追加します（上限あり）。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">💾</div>
+            <div class="icon-title">保存する</div>
+            <div class="icon-desc">入力内容を確定して反映します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">⟳</div>
+            <div class="icon-title">初期化/復元</div>
+            <div class="icon-desc">バックアップやリセット系は、実行前に内容を必ず確認します。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>画像が反映されない</strong>: 2MBを超えていないか確認し、アップ後に「保存する」を押してください。</li>
-          <li><strong>カテゴリ色が出ない</strong>: 基本設定で色を選び、保存してから公開一覧を再読込してください。</li>
-          <li><strong>PDFが重い</strong>: 5MB以内にしてください。圧縮が必要な場合は解像度を下げて再保存してください。</li>
-        </ul>
+        <details class="faq">
+          <summary>画像が反映されません</summary>
+          <div class="faq-body">2MBを超えていないか確認し、アップロード後に「保存する」を押してください。</div>
+        </details>
+        <details class="faq">
+          <summary>カテゴリの色が出ません</summary>
+          <div class="faq-body">色を選んで「保存する」後、公開テンプレ一覧/カテゴリ一覧を再読み込みしてください。</div>
+        </details>
+        <details class="faq">
+          <summary>文字が変に見えます（文字化けっぽい）</summary>
+          <div class="faq-body">別ブラウザで確認し、文章を一度消してから再入力してみてください。長文は一気に貼り付けず、少しずつ入れると安定しやすいです。</div>
+        </details>
+        <details class="faq">
+          <summary>PDFが重いです</summary>
+          <div class="faq-body">5MB以内にしてください。必要ならPDFを圧縮してから登録してください。</div>
+        </details>
       </section>
     </main>
   </body>

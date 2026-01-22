@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item" href="/user-guide.html">お客様向け</a>
         <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item active" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -20,44 +22,82 @@
     <main class="container">
       <section class="hero">
         <h1>テンプレート作成ガイド</h1>
-        <p>template.json と背景画像を用意して、公開できるテンプレートを作る手順をまとめました。</p>
+        <p>背景画像と <code>template.json</code> を用意して、公開できるテンプレを作る手順です。</p>
       </section>
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>必要ファイルは「template.json」と背景画像の2つ。</li>
-          <li>背景サイズと engravingArea の座標を一致させる。</li>
-          <li>表裏を分けたいときはキーを <code>xxx_front</code> / <code>xxx_back</code> にする。</li>
+        <ul class="checklist">
+          <li>必要ファイルは「背景画像」と <code>template.json</code> の2つです。</li>
+          <li>背景画像のサイズ（横×縦）を、JSON側にも同じように設定します。</li>
+          <li>ロゴを置ける範囲（刻印範囲）を決めて、JSONに書き込みます。</li>
+          <li>表/裏がある場合は、キーを <code>xxx_front</code> / <code>xxx_back</code> にすると一覧でまとまりやすいです。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>背景画像を実寸で作成し、template.json に同じサイズを設定。</li>
-          <li>engravingArea や placementRules を用途に合わせて記入。</li>
-          <li>テンプレート管理画面で JSON + 背景を同時にドロップして登録。</li>
-          <li>公開したい場合は状態を published に変更。</li>
+        <ol class="steps">
+          <li>
+            <strong>背景画像を用意する</strong>
+            <p>まずは背景画像（下絵）を作ります。サイズ（横×縦）がテンプレの基準になります。</p>
+          </li>
+          <li>
+            <strong>template.json を作る</strong>
+            <p>背景のサイズと、ロゴを置ける範囲（刻印範囲）を入力します。迷ったら既存テンプレをコピーして編集すると早いです。</p>
+          </li>
+          <li>
+            <strong>登録して確認 → 公開</strong>
+            <p>テンプレート管理で「JSON＋背景」を登録し、プレビューでズレがないか確認してから公開中にします。</p>
+          </li>
         </ol>
+        <p class="note">用語メモ: <code>engravingArea</code> は「刻印範囲」、<code>canvasWidth/Height</code> は「背景の幅/高さ」です。</p>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>⬆️ ドロップエリア: JSON と背景を同時に登録。</li>
-          <li>🖼 プレビュー: 背景と座標が合っているか確認。</li>
-          <li>✅ 状態: draft/tested/published/archive を切替。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">🧩</div>
+            <div class="icon-title">template.json</div>
+            <div class="icon-desc">背景サイズと刻印範囲などの「設定ファイル」です。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🖼</div>
+            <div class="icon-title">背景画像</div>
+            <div class="icon-desc">お客様に見せる下絵（テンプレの土台）です。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">👀</div>
+            <div class="icon-title">プレビュー</div>
+            <div class="icon-desc">刻印範囲や配置が合っているか確認します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">✅</div>
+            <div class="icon-title">状態</div>
+            <div class="icon-desc">下書き/テスト済み/公開中/非表示を切り替えます。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>座標がズレる</strong>: 背景サイズと JSON の canvasWidth/Height が一致しているか再確認。</li>
-          <li><strong>登録エラーが出る</strong>: キー重複やファイル名不一致がないか確認。</li>
-          <li><strong>表裏を1行にまとめたい</strong>: <code>xxx_front</code>/<code>xxx_back</code> を同じベース名にすると公開一覧でまとまります。</li>
-        </ul>
+        <details class="faq">
+          <summary>刻印範囲がズレます</summary>
+          <div class="faq-body">
+            背景画像のサイズと <code>canvasWidth/Height</code> が一致しているか確認してください。まずは「同じサイズにする」が最重要です。
+          </div>
+        </details>
+        <details class="faq">
+          <summary>登録エラーが出ます</summary>
+          <div class="faq-body">テンプレキーの重複、JSONと背景画像の組み合わせミスが多いです。ファイル名やキーを確認してください。</div>
+        </details>
+        <details class="faq">
+          <summary>表/裏を1行にまとめたいです</summary>
+          <div class="faq-body">
+            <code>xxx_front</code>/<code>xxx_back</code> のように同じベース名にすると、公開側で「○○（表/裏）」として見やすくまとまります。
+          </div>
+        </details>
       </section>
     </main>
   </body>

@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item" href="/user-guide.html">お客様向け</a>
         <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item active" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -25,37 +27,66 @@
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>公開中のテンプレだけが表示されます。</li>
-          <li>カテゴリごとに表が分かれています。</li>
-          <li>各行の「コピー」でURLを共有、「開く」でそのままシミュレーターを開けます。</li>
+        <ul class="checklist">
+          <li>カテゴリ別に、公開中テンプレのURLをまとめて見られます。</li>
+          <li>各行の「コピー」でURLを共有、「開く」で動作確認できます。</li>
+          <li>カテゴリは基本設定で作成（最大3つ）し、テンプレ側で複数選べます。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>見たいカテゴリの表を選ぶ（見出しで確認）。</li>
-          <li>テンプレート行の「コピー」でURLをコピー。</li>
-          <li>必要なら「開く」で動作を確認してから共有する。</li>
+        <ol class="steps">
+          <li>
+            <strong>カテゴリを選ぶ</strong>
+            <p>見出しでカテゴリ名を確認し、目的の表を見つけます。</p>
+          </li>
+          <li>
+            <strong>URLを共有する</strong>
+            <p>テンプレの行で「コピー」を押してURLをコピーします。</p>
+          </li>
+          <li>
+            <strong>必要なら開いて確認</strong>
+            <p>「開く」でシミュレーターを開き、表示や操作に問題がないかチェックします。</p>
+          </li>
         </ol>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>📋 コピー: 公開URLをクリップボードへ。</li>
-          <li>🔗 開く: 新しいタブでシミュレーターを開く。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">📋</div>
+            <div class="icon-title">コピー</div>
+            <div class="icon-desc">カテゴリ別の公開URLをコピーします。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🔗</div>
+            <div class="icon-title">開く</div>
+            <div class="icon-desc">新しいタブでシミュレーターを開きます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🏷️</div>
+            <div class="icon-title">カテゴリ見出し</div>
+            <div class="icon-desc">そのカテゴリに属するテンプレだけが並びます。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>カテゴリに出てこない</strong>: テンプレが「公開中」になっているか確認してください。</li>
-          <li><strong>色が反映されない</strong>: 基本設定でカテゴリカラーを設定し保存してください。</li>
-          <li><strong>表裏あるテンプレ</strong>: 表面を優先したURLを表示しています。</li>
-        </ul>
+        <details class="faq">
+          <summary>カテゴリにテンプレが出てきません</summary>
+          <div class="faq-body">テンプレが「公開中」になっているか、テンプレ管理でそのカテゴリにチェックが入っているか確認してください。</div>
+        </details>
+        <details class="faq">
+          <summary>カテゴリの色が反映されません</summary>
+          <div class="faq-body">基本設定で色を選び、「保存する」後にページを再読み込みしてください。</div>
+        </details>
+        <details class="faq">
+          <summary>表/裏があるテンプレはどう表示されますか？</summary>
+          <div class="faq-body">表面（front）を優先してURLを表示します。必要ならテンプレ管理で裏面（back）も確認してください。</div>
+        </details>
       </section>
     </main>
   </body>

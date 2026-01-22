@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item active" href="/user-guide.html">お客様向け</a>
         <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -25,39 +27,76 @@
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>公開テンプレ一覧でデザインしたいテンプレートを選びます。</li>
-          <li>ロゴを置いて大きさや向きを調整するだけのシンプル操作。</li>
-          <li>最後にPDFを開いて仕上がりを確認できます。</li>
+        <ul class="checklist">
+          <li>まずはURLを開いて、デザインしたいテンプレを選びます。</li>
+          <li>ロゴをアップロードして、範囲内で位置・大きさを調整します。</li>
+          <li>最後にPDFで仕上がりを確認できます。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>公開テンプレ一覧（/top）からテンプレートを選択。</li>
-          <li>シミュレーターでロゴを配置・拡大縮小・回転（範囲内で）。</li>
-          <li>確認用PDFを開いて仕上がりをチェックし、OKなら保存・共有。</li>
+        <ol class="steps">
+          <li>
+            <strong>テンプレを開く</strong>
+            <p>お店から渡されたURLを開き、デザインしたいテンプレを選びます。</p>
+          </li>
+          <li>
+            <strong>ロゴを置いて調整</strong>
+            <p>ロゴをアップロードし、範囲の中で位置・大きさ・向きを整えます。</p>
+          </li>
+          <li>
+            <strong>PDFで確認</strong>
+            <p>確認用PDFを開き、仕上がりをチェックします。</p>
+          </li>
         </ol>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>⬆️ ロゴアップロード: 画像を選んで配置。</li>
-          <li>🔍 / ➕ / ➖: 拡大・縮小・リセット。</li>
-          <li>↻: 回転（許可されている場合）。</li>
-          <li>🖨 PDF: 確認用PDFを開く。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">⬆️</div>
+            <div class="icon-title">ロゴアップロード</div>
+            <div class="icon-desc">画像を選んで配置します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🖐️</div>
+            <div class="icon-title">移動</div>
+            <div class="icon-desc">ロゴをドラッグして位置を調整します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">➕➖</div>
+            <div class="icon-title">拡大/縮小</div>
+            <div class="icon-desc">ボタンで大きさを変えます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">↻</div>
+            <div class="icon-title">回転</div>
+            <div class="icon-desc">許可されている場合のみ回せます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🖨</div>
+            <div class="icon-title">PDF</div>
+            <div class="icon-desc">確認用PDFを開きます。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>ロゴが置けない</strong>: 指定範囲外にドラッグしていないか確認してください。</li>
-          <li><strong>モノクロにしたい</strong>: テンプレートで許可されている場合、モノクロ設定が有効になります。</li>
-          <li><strong>PDFが開かない</strong>: ブラウザのポップアップ許可を確認してください。</li>
-        </ul>
+        <details class="faq">
+          <summary>ロゴが動かせません</summary>
+          <div class="faq-body">ロゴが「範囲外」にはみ出す位置だと止まることがあります。いったん範囲の中に戻してから調整してください。</div>
+        </details>
+        <details class="faq">
+          <summary>ズーム（拡大）しても大丈夫ですか？</summary>
+          <div class="faq-body">画面の拡大は可能です。ロゴのサイズ調整は、画面のボタン（➕➖）で行うのがおすすめです。</div>
+        </details>
+        <details class="faq">
+          <summary>PDFが開きません</summary>
+          <div class="faq-body">ブラウザのポップアップ許可を確認してください。別ブラウザ（Chromeなど）で試すのも有効です。</div>
+        </details>
       </section>
     </main>
   </body>

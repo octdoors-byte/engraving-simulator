@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item" href="/user-guide.html">お客様向け</a>
         <a class="nav-item" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item active" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item active" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -25,39 +27,74 @@
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>登録は「template.json + 背景画像」を同時にドロップ。</li>
-          <li>状態は draft → tested → published → archive。公開一覧に出るのは published だけ。</li>
-          <li>カテゴリは複数選択可。公開バッジに色が反映されます。</li>
+        <ul class="checklist">
+          <li>新規登録は <code>template.json</code> と背景画像を「2つまとめて」ドロップします。</li>
+          <li>テンプレ名とカテゴリは、登録後にいつでも変更できます。</li>
+          <li>「公開中」にすると、お客様が見る一覧（公開テンプレ/カテゴリ一覧）に出ます。</li>
+          <li>状態は 下書き(draft) / テスト済み(tested) / 公開中(published) / 非表示(archive) です。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>新規登録で template.json と背景画像をアップロード。</li>
-          <li>表示名・カテゴリを編集（ダブルクリック）。</li>
-          <li>状態を published にして公開。不要なら archive で非表示。</li>
+        <ol class="steps">
+          <li>
+            <strong>登録する</strong>
+            <p><code>template.json</code> と背景画像を、まとめてドロップします。</p>
+          </li>
+          <li>
+            <strong>内容を整える</strong>
+            <p>テンプレ名・カテゴリを設定し、プレビューで見た目を確認します。</p>
+          </li>
+          <li>
+            <strong>公開する</strong>
+            <p>問題なければ状態を「公開中」にします（不要なら「非表示」に）。</p>
+          </li>
         </ol>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>⬆️ ドロップエリア: JSON と背景を同時に登録。</li>
-          <li>✅ 状態: draft/tested/published/archive を切替。</li>
-          <li>🖼 プレビュー: 背景画像を確認。</li>
-          <li>🗑 削除: デザインが紐づいていると削除不可（先にarchive推奨）。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">⬆️</div>
+            <div class="icon-title">ドロップエリア</div>
+            <div class="icon-desc">JSONと背景画像を同時に登録します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">✅</div>
+            <div class="icon-title">状態</div>
+            <div class="icon-desc">下書き/テスト済み/公開中/非表示を切り替えます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🖼</div>
+            <div class="icon-title">プレビュー</div>
+            <div class="icon-desc">背景や範囲が合っているか確認します。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🗑</div>
+            <div class="icon-title">削除</div>
+            <div class="icon-desc">履歴があると削除できないことがあります（非表示推奨）。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>登録できない</strong>: JSON と背景のファイル名が一致しているか、キーが重複していないか確認。</li>
-          <li><strong>サイズがずれる</strong>: 背景と engravingArea のサイズ差は自動補正されますが、プレビューで必ず確認。</li>
-          <li><strong>公開一覧に出ない</strong>: 状態が published か、カテゴリ未設定でフィルタされていないか確認。</li>
-        </ul>
+        <details class="faq">
+          <summary>登録できません</summary>
+          <div class="faq-body">
+            <code>template.json</code> と背景画像の「ペア」が合っているか、テンプレキーが他と重複していないかを確認してください。
+          </div>
+        </details>
+        <details class="faq">
+          <summary>公開テンプレ一覧に出ません</summary>
+          <div class="faq-body">状態が「公開中」になっているか、カテゴリで絞り込み中ではないか確認してください。</div>
+        </details>
+        <details class="faq">
+          <summary>削除できません</summary>
+          <div class="faq-body">すでにデザイン履歴が紐づいていると削除できません。まずは状態を「非表示(archive)」にするのがおすすめです。</div>
+        </details>
       </section>
     </main>
   </body>

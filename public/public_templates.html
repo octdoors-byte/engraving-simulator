@@ -8,11 +8,13 @@
   </head>
   <body>
     <header class="nav-header">
-      <nav class="nav-inner">
+      <nav class="nav-inner" aria-label="ガイド ナビゲーション">
+        <a class="nav-item" href="/user-guide.html">お客様向け</a>
         <a class="nav-item active" href="/public_templates.html">公開テンプレ一覧</a>
-        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
-        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/categories_guide.html">カテゴリ一覧</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/template_creation_guide.html">テンプレ作成</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
         <a class="nav-item" href="/basic_settings.html">基本設定</a>
       </nav>
     </header>
@@ -25,38 +27,76 @@
 
       <section class="card beginner">
         <h2>使い方のポイント</h2>
-        <ul>
-          <li>公開中ステータスのテンプレだけ表示されます。</li>
-          <li>検索ボックスで名前・ID・備考を部分一致で探せます。</li>
-          <li>カテゴリバッジは頭文字1文字＋設定色で表示されます。</li>
+        <ul class="checklist">
+          <li>ここには「公開中」のテンプレだけが表示されます。</li>
+          <li>検索でテンプレ名・テンプレID・備考から探せます（部分一致）。</li>
+          <li>カテゴリにチェックを入れると、そのカテゴリだけに絞れます。</li>
+          <li>URLの「コピー」で共有、「開く」で事前確認できます。</li>
         </ul>
       </section>
 
       <section class="card">
         <h2>基本の流れ</h2>
-        <ol>
-          <li>検索・カテゴリチェックで候補を絞る。</li>
-          <li>必要な列だけ表示／並び替えを調整する。</li>
-          <li>URL列のボタンで公開URLをコピーして共有する。</li>
+        <ol class="steps">
+          <li>
+            <strong>探す</strong>
+            <p>検索やカテゴリで、目的のテンプレを見つけます。</p>
+          </li>
+          <li>
+            <strong>URLを用意する</strong>
+            <p>行の「コピー」でURLをコピーします（お客様に送る用）。</p>
+          </li>
+          <li>
+            <strong>開いて確認する</strong>
+            <p>「開く」でシミュレーターを開き、表示崩れがないかチェックします。</p>
+          </li>
         </ol>
       </section>
 
       <section class="card">
         <h2>アイコン・ボタンの意味</h2>
-        <ul>
-          <li>📋 コピー: 公開URLをクリップボードへ。</li>
-          <li>⚙ 列設定: 表示する列や順番を変更。</li>
-          <li>🔍 検索: 入力したキーワードで絞り込み。</li>
-        </ul>
+        <div class="icon-grid">
+          <div class="icon-tile">
+            <div class="icon">📋</div>
+            <div class="icon-title">コピー</div>
+            <div class="icon-desc">公開URLをコピーします。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🔗</div>
+            <div class="icon-title">開く</div>
+            <div class="icon-desc">新しいタブでシミュレーターを開きます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🔍</div>
+            <div class="icon-title">検索</div>
+            <div class="icon-desc">キーワードで一覧を絞り込みます。</div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">🏷️</div>
+            <div class="icon-title">カテゴリ</div>
+            <div class="icon-desc">カテゴリチェックで表示を切り替えます。</div>
+          </div>
+        </div>
       </section>
 
       <section class="card">
         <h2>よくある質問</h2>
-        <ul>
-          <li><strong>テンプレが見つからない</strong>: 状態が「公開中」か、検索語が長すぎないか確認してください。</li>
-          <li><strong>カテゴリ色が違う</strong>: 基本設定で色を変更して保存後、ページを再読み込みしてください。</li>
-          <li><strong>front/back の扱い</strong>: 表面を優先して「○○（表/裏）」として1行にまとめています。</li>
-        </ul>
+        <details class="faq">
+          <summary>テンプレが見つかりません</summary>
+          <div class="faq-body">
+            「公開中」になっているか、検索語が長すぎないか確認してください。カテゴリで絞り込み中の場合は、チェックを外してみてください。
+          </div>
+        </details>
+        <details class="faq">
+          <summary>カテゴリの色が違います</summary>
+          <div class="faq-body">基本設定で色を選び直して「保存する」後、ページを再読み込みしてください。</div>
+        </details>
+        <details class="faq">
+          <summary>表/裏が2行に見えてしまいます</summary>
+          <div class="faq-body">
+            テンプレキーが <code>xxx_front</code> / <code>xxx_back</code> の形だと、一覧では「○○（表/裏）」としてまとまります。キーが別の形だと、別々に表示されることがあります。
+          </div>
+        </details>
       </section>
     </main>
   </body>
