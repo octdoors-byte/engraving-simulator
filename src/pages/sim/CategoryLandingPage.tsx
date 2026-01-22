@@ -139,6 +139,27 @@ export function CategoryLandingPage() {
                     このカテゴリを開く
                   </a>
                 </div>
+                {rows.length > 0 && (
+                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                    <p className="text-xs text-slate-500 mb-2">このカテゴリに含まれる公開テンプレート</p>
+                    <ul className="space-y-2 text-sm text-slate-800">
+                      {rows.map((row) => {
+                        const simUrl = buildUrl(`/sim/${row.key}?cat=${encodeURIComponent(categoryId)}`);
+                        return (
+                          <li key={row.key} className="flex items-center justify-between gap-2">
+                            <span>{row.name}</span>
+                            <a
+                              href={simUrl}
+                              className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-white"
+                            >
+                              開く
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
               </div>
             );
           })}
