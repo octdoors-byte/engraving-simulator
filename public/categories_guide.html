@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>カテゴリ一覧ガイド</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+    h1, h2 { margin: 0 0 12px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 16px; }
+    section { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.04); }
+    ul { padding-left: 20px; margin: 8px 0; }
+    code { background: #e2e8f0; padding: 2px 5px; border-radius: 4px; font-size: 90%; }
+  </style>
+</head>
+<body>
+  <h1>カテゴリ一覧ガイド</h1>
+  <section>
+    <h2>ページ概要</h2>
+    <ul>
+      <li>URL: <code>/categories</code></li>
+      <li>カテゴリごとにテーブルを分割し、各行に「テンプレート名 / 公開URL / コピー / 開く」を表示します。</li>
+      <li>公開中のテンプレートのみ表示され、<code>?cat=カテゴリID</code> 付きのURLで開くようになります。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>使い方（お客様向け）</h2>
+    <ol>
+      <li>見たいカテゴリの表を探します（見出しにカテゴリ名が表示されます）。</li>
+      <li>行にある「コピー」ボタンで公開URLをコピーします。</li>
+      <li>「開く」ボタンで新しいタブでシミュレーターを開きます。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>管理者向けメモ</h2>
+    <ul>
+      <li>カテゴリは <code>/admin/common</code> の「カテゴリ」設定で追加・編集できます（最大3件）。</li>
+      <li>カラーは5色のプリセットから選択し、公開一覧バッジにも反映されます。</li>
+      <li>テンプレートが <strong>公開</strong> ステータスでないとカテゴリ一覧には出ません。</li>
+      <li>表裏両面テンプレート（<code>_front</code>/<code>_back</code>）は表面を優先してURL生成します。</li>
+    </ul>
+  </section>
+</body>
+</html>
