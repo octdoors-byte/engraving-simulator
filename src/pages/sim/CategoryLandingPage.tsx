@@ -3,55 +3,62 @@ import type { TemplateSummary } from "@/domain/types";
 import { listTemplates, loadCommonSettings } from "@/storage/local";
 
 type TemplateRow = {
-  key: string;
   name: string;
   categories: string[];
-  primaryTemplateKey: string;
-  updatedAt: string;
+  templateKey: string; // 公開URLに使うキー
 };
 
 function splitTemplateKey(templateKey: string): { baseKey: string; side: "front" | "back" | null } {
-  if (templateKey.endsWith("_front")) {
-    return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
-  }
-  if (templateKey.endsWith("_back")) {
-    return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
-  }
+  if (templateKey.endsWith("_front")) return { baseKey: templateKey.slice(0, -"_front".length), side: "front" };
+  if (templateKey.endsWith("_back")) return { baseKey: templateKey.slice(0, -"_back".length), side: "back" };
   return { baseKey: templateKey, side: null };
 }
 
-function groupTemplates(list: TemplateSummary[]): TemplateRow[] {
-  const publishedOnly = list.filter((template) => template.status === "published");
-  const map = new Map<string, TemplateSummary[]>();
-  publishedOnly.forEach((template) => {
-    const { baseKey, side } = splitTemplateKey(template.templateKey);
-    const key = side ? baseKey : template.templateKey;
-    const items = map.get(key) ?? [];
-    items.push(template);
-    map.set(key, items);
+// 公開中のみをカテゴリごとにまとめ、front/backがあれば表側を優先してURLに使う
+function groupByCategory(list: TemplateSummary[]): Map<string, TemplateRow[]> {
+  const published = list.filter((tpl) => tpl.status === "published");
+  const groupedByBase = new Map<string, TemplateSummary[]>();
+  published.forEach((tpl) => {
+    const { baseKey, side } = splitTemplateKey(tpl.templateKey);
+    const key = side ? baseKey : tpl.templateKey;
+    const arr = groupedByBase.get(key) ?? [];
+    arr.push(tpl);
+    groupedByBase.set(key, arr);
   });
-  return Array.from(map.entries()).map(([key, items]) => {
-    const sorted = [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-    const preferred = items.find((item) => item.templateKey.endsWith("_front")) ?? items[0];
+
+  const result = new Map<string, TemplateRow[]>();
+  const push = (cat: string, row: TemplateRow) => {
+    const list = result.get(cat) ?? [];
+    list.push(row);
+    result.set(cat, list);
+  };
+
+  groupedByBase.forEach((items) => {
+    const preferred =
+      items.find((i) => i.templateKey.endsWith("_front")) ??
+      items.find((i) => i.templateKey.endsWith("_back")) ??
+      items[0];
     const categories = Array.from(
       new Set(
-        items.flatMap((item) =>
-          item.categories && item.categories.length > 0
-            ? item.categories
-            : item.category
-            ? [item.category]
-            : []
+        items.flatMap((i) =>
+          i.categories && i.categories.length > 0 ? i.categories : i.category ? [i.category] : []
         )
       )
     );
-    return {
-      key,
+    const row: TemplateRow = {
       name: items.length > 1 ? `${preferred.name}（表/裏）` : preferred.name,
       categories,
-      primaryTemplateKey: preferred.templateKey,
-      updatedAt: sorted[0]?.updatedAt ?? ""
+      templateKey: preferred.templateKey
     };
+    if (categories.length === 0) {
+      push("未分類", row);
+    } else {
+      categories.forEach((cat) => push(cat, row));
+    }
   });
+
+  result.forEach((rows) => rows.sort((a, b) => a.name.localeCompare(b.name)));
+  return result;
 }
 
 const buildUrl = (path: string) =>
@@ -59,55 +66,34 @@ const buildUrl = (path: string) =>
 
 export function CategoryLandingPage() {
   const settings = loadCommonSettings();
-  const templates = useMemo(() => groupTemplates(listTemplates()), []);
+  const categorized = useMemo(() => groupByCategory(listTemplates()), []);
 
   const categoryTitleMap = useMemo(() => {
     const map = new Map<string, string>();
     settings?.commonInfoCategories?.forEach((c) => {
-      if (c.id) {
-        map.set(c.id, c.title || c.id);
-      }
+      if (c.id) map.set(c.id, c.title || c.id);
     });
+    map.set("未分類", "未分類");
     return map;
   }, [settings?.commonInfoCategories]);
-
-  const categorized = useMemo(() => {
-    const buckets = new Map<string, TemplateRow[]>();
-    const push = (cat: string, row: TemplateRow) => {
-      const arr = buckets.get(cat) ?? [];
-      arr.push(row);
-      buckets.set(cat, arr);
-    };
-    templates.forEach((row) => {
-      if (row.categories.length === 0) {
-        push("未分類", row);
-        return;
-      }
-      row.categories.forEach((cat) => push(cat, row));
-    });
-    buckets.forEach((rows, key) => rows.sort((a, b) => a.name.localeCompare(b.name)));
-    return buckets;
-  }, [templates]);
 
   const orderedCategories = useMemo(() => {
     const masterOrder = settings?.commonInfoCategories?.map((c) => c.id).filter(Boolean) ?? [];
     const others = Array.from(categorized.keys()).filter(
-      (key) => key !== "未分類" && !masterOrder.includes(key)
+      (id) => id !== "未分類" && !masterOrder.includes(id)
     );
-    const result = [...masterOrder];
-    others.sort().forEach((id) => result.push(id));
-    if (categorized.has("未分類")) {
-      result.push("未分類");
-    }
+    others.sort();
+    const result = [...masterOrder, ...others];
+    if (categorized.has("未分類")) result.push("未分類");
     return result;
   }, [categorized, settings?.commonInfoCategories]);
 
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（お客様向け）</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">カテゴリ一覧（お客様向けURL集）</h1>
         <p className="mt-4 text-sm text-slate-600">
-          ご案内したいカテゴリを選ぶと、そのカテゴリだけを表示する公開テンプレート一覧ページへ移動します。
+          各カテゴリに属する公開テンプレートのURLを商品ごとに確認・コピーできます。
         </p>
       </div>
 
@@ -123,7 +109,7 @@ export function CategoryLandingPage() {
             return (
               <div
                 key={categoryId}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col gap-3"
+                className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
               >
                 <div>
                   <p className="text-xs uppercase tracking-wide text-slate-500">カテゴリ</p>
@@ -131,19 +117,31 @@ export function CategoryLandingPage() {
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500 mb-2">カテゴリ別公開URL</p>
-                  <div className="flex flex-col gap-2 text-sm text-slate-800">
-                    <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
-                      {buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`)}
-                    </div>
-                    <button
-                      type="button"
-                      className="w-fit rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
-                      onClick={() => navigator.clipboard.writeText(buildUrl(`/top?cat=${encodeURIComponent(categoryId)}`))}
-                    >
-                      URLをコピー
-                    </button>
-                  </div>
+                  <p className="mb-2 text-xs text-slate-500">商品ごとの公開URL</p>
+                  {rows.length === 0 ? (
+                    <p className="text-xs text-slate-500">このカテゴリには公開中の商品がありません。</p>
+                  ) : (
+                    <ul className="space-y-3 text-sm text-slate-800">
+                      {rows.map((row) => {
+                        const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
+                        return (
+                          <li key={`${categoryId}-${row.templateKey}`} className="space-y-1">
+                            <div className="font-semibold text-slate-900">{row.name}</div>
+                            <div className="break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+                              {url}
+                            </div>
+                            <button
+                              type="button"
+                              className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
+                              onClick={() => navigator.clipboard.writeText(url)}
+                            >
+                              URLをコピー
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
               </div>
             );
