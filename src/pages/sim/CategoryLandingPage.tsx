@@ -119,7 +119,11 @@ export function CategoryLandingPage() {
                   <p className="text-xs text-slate-500">公開テンプレート {rows.length} 件</p>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                  <p className="mb-2 text-xs text-slate-500">テンプレート名 / 公開URL / コピー / 開く</p>
+                  <div className="mb-2 hidden text-xs text-slate-500 sm:grid sm:grid-cols-[minmax(140px,180px)_1fr_auto] sm:items-center sm:gap-2">
+                    <span className="font-medium text-slate-600">テンプレート名</span>
+                    <span className="font-medium text-slate-600">公開URL</span>
+                    <span className="font-medium text-slate-600">操作</span>
+                  </div>
                   {rows.length === 0 ? (
                     <p className="text-xs text-slate-500">このカテゴリには公開中の商品がありません。</p>
                   ) : (
@@ -128,12 +132,12 @@ export function CategoryLandingPage() {
                         const url = buildUrl(`/sim/${row.templateKey}?cat=${encodeURIComponent(categoryId)}`);
                         return (
                           <li key={`${categoryId}-${row.templateKey}`}>
-                            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
-                              <div className="min-w-[140px] shrink-0 font-semibold text-slate-900">{row.name}</div>
+                            <div className="grid grid-cols-1 items-center gap-2 overflow-x-auto whitespace-nowrap sm:grid-cols-[minmax(140px,180px)_1fr_auto]">
+                              <div className="min-w-[140px] font-semibold text-slate-900">{row.name}</div>
                               <div className="flex-1 min-w-[220px] break-all rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
                                 {url}
                               </div>
-                              <div className="flex shrink-0 gap-1">
+                              <div className="flex flex-wrap justify-start gap-1 sm:justify-end">
                                 <button
                                   type="button"
                                   className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-white"
