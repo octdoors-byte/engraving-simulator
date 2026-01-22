@@ -104,16 +104,6 @@ export function CategoryLandingPage() {
     return result;
   }, [categorized, settings?.commonInfoCategories]);
 
-  const copyToClipboard = async (text: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      window.alert(`${label}をコピーしました`);
-    } catch (error) {
-      console.error(error);
-      window.alert(`${label}のコピーに失敗しました`);
-    }
-  };
-
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -145,9 +135,9 @@ export function CategoryLandingPage() {
                     <button
                       type="button"
                       className="rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                      onClick={() => copyToClipboard(listUrl, `${label} の一覧URL`)}
+                      onClick={() => window.open(listUrl, "_blank")}
                     >
-                      一覧URL
+                      一覧を開く
                     </button>
                   </div>
                 </div>
@@ -179,16 +169,9 @@ export function CategoryLandingPage() {
                             <button
                               type="button"
                               className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-                              onClick={() => copyToClipboard(simUrl, `${row.name} の公開URL`)}
-                            >
-                              公開URL
-                            </button>
-                            <button
-                              type="button"
-                              className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
                               onClick={() => window.open(simUrl, "_blank")}
                             >
-                              開く
+                              公開ページを開く
                             </button>
                           </div>
                         </li>
