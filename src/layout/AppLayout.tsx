@@ -8,7 +8,8 @@ const navItems = [
   { to: "/top", label: "公開テンプレート一覧", tone: "emerald" },
   { to: "/admin/templates", label: "テンプレート管理", tone: "amber" },
   { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" },
-  { to: "/admin/common", label: "基本設定", tone: "rose" }
+  { to: "/admin/common", label: "基本設定", tone: "rose" },
+  { to: "/categories", label: "カテゴリ別管理", tone: "sky" }
 ] as const;
 
 const navToneClass: Record<
@@ -30,6 +31,10 @@ const navToneClass: Record<
   rose: {
     active: "bg-rose-500 text-white shadow-sm",
     inactive: "border border-rose-200 text-rose-700 bg-white hover:bg-rose-50"
+  },
+  sky: {
+    active: "bg-sky-500 text-white shadow-sm",
+    inactive: "border border-sky-200 text-sky-700 bg-white hover:bg-sky-50"
   }
 };
 
