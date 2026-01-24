@@ -372,8 +372,9 @@ export function CommonInfoPage() {
           <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-xs font-semibold text-slate-600">ロゴ画像</label>
+              <label htmlFor="logoImage" className="text-xs font-semibold text-slate-600">ロゴ画像</label>
               <input
+                id="logoImage"
                 type="file"
                 accept="image/*"
                 className="mt-1 w-full text-xs"
@@ -391,8 +392,9 @@ export function CommonInfoPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-600">トップタイトル</label>
+              <label htmlFor="landingTitle" className="text-xs font-semibold text-slate-600">トップタイトル</label>
               <input
+                id="landingTitle"
                 type="text"
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.landingTitle ?? "デザインシミュレーター"}
@@ -400,8 +402,9 @@ export function CommonInfoPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-600">ヘッダーテキスト</label>
+              <label htmlFor="headerText" className="text-xs font-semibold text-slate-600">ヘッダーテキスト</label>
               <textarea
+                id="headerText"
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.headerText ?? ""}
@@ -409,8 +412,9 @@ export function CommonInfoPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-600">フッターテキスト</label>
+              <label htmlFor="footerText" className="text-xs font-semibold text-slate-600">フッターテキスト</label>
               <textarea
+                id="footerText"
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.footerText ?? ""}
@@ -419,8 +423,9 @@ export function CommonInfoPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-600">ヘッダー配置</label>
+                <label htmlFor="headerTextAlign" className="text-xs font-semibold text-slate-600">ヘッダー配置</label>
                 <select
+                  id="headerTextAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.headerTextAlign ?? "left"}
                   onChange={(event) => handleChange("headerTextAlign", event.target.value as CommonSettings["headerTextAlign"])}
@@ -431,8 +436,9 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">フッター配置</label>
+                <label htmlFor="footerTextAlign" className="text-xs font-semibold text-slate-600">フッター配置</label>
                 <select
+                  id="footerTextAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.footerTextAlign ?? "center"}
                   onChange={(event) => handleChange("footerTextAlign", event.target.value as CommonSettings["footerTextAlign"])}
@@ -443,8 +449,9 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">ロゴ配置</label>
+                <label htmlFor="logoAlign" className="text-xs font-semibold text-slate-600">ロゴ配置</label>
                 <select
+                  id="logoAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.logoAlign ?? "left"}
                   onChange={(event) => handleChange("logoAlign", event.target.value as CommonSettings["logoAlign"])}
@@ -455,8 +462,9 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">ロゴサイズ</label>
+                <label htmlFor="logoSize" className="text-xs font-semibold text-slate-600">ロゴサイズ</label>
                 <select
+                  id="logoSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.logoSize ?? "md"}
                   onChange={(event) => handleChange("logoSize", event.target.value as CommonSettings["logoSize"])}
@@ -467,8 +475,9 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">ヘッダー文字サイズ</label>
+                <label htmlFor="headerTextSize" className="text-xs font-semibold text-slate-600">ヘッダー文字サイズ</label>
                 <select
+                  id="headerTextSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.headerTextSize ?? "md"}
                   onChange={(event) => handleChange("headerTextSize", event.target.value as CommonSettings["headerTextSize"])}
@@ -479,8 +488,9 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600">フッター文字サイズ</label>
+                <label htmlFor="footerTextSize" className="text-xs font-semibold text-slate-600">フッター文字サイズ</label>
                 <select
+                  id="footerTextSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.footerTextSize ?? "md"}
                   onChange={(event) => handleChange("footerTextSize", event.target.value as CommonSettings["footerTextSize"])}
@@ -503,8 +513,9 @@ export function CommonInfoPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">タイトル</label>
+            <label htmlFor="commonInfoTitle" className="text-sm font-semibold text-slate-700">タイトル</label>
             <input
+              id="commonInfoTitle"
               type="text"
               className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
               value={settings.commonInfoTitle ?? ""}
@@ -513,8 +524,9 @@ export function CommonInfoPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">レイアウト</label>
+            <label htmlFor="commonInfoLayout" className="text-sm font-semibold text-slate-700">レイアウト</label>
             <select
+              id="commonInfoLayout"
               className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
               value={settings.commonInfoLayout ?? "imageTop"}
               onChange={(event) => handleChange("commonInfoLayout", event.target.value as CommonSettings["commonInfoLayout"])}
@@ -528,8 +540,9 @@ export function CommonInfoPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">本文</label>
+          <label htmlFor="commonInfoBody" className="text-sm font-semibold text-slate-700">本文</label>
           <textarea
+            id="commonInfoBody"
             className="h-32 w-full rounded border border-slate-200 px-3 py-2 text-sm"
             value={settings.commonInfoBody ?? ""}
             onChange={(event) => handleChange("commonInfoBody", event.target.value)}
@@ -538,7 +551,7 @@ export function CommonInfoPage() {
         </div>
 
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-slate-700">説明用画像（任意／2MB以下、最大5枚）</label>
+          <label htmlFor="commonInfoImages" className="text-sm font-semibold text-slate-700">説明用画像（任意／2MB以下、最大5枚）</label>
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
@@ -548,6 +561,7 @@ export function CommonInfoPage() {
               画像を選ぶ
             </button>
             <input
+              id="commonInfoImages"
               ref={imageInputRef}
               type="file"
               accept="image/*"
@@ -628,7 +642,7 @@ export function CommonInfoPage() {
         </div>
 
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-slate-700">補足資料（PDF）5MB以下</label>
+          <label htmlFor="commonInfoPdf" className="text-sm font-semibold text-slate-700">補足資料（PDF）5MB以下</label>
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
@@ -638,6 +652,7 @@ export function CommonInfoPage() {
               PDFを選ぶ
             </button>
             <input
+              id="commonInfoPdf"
               ref={pdfInputRef}
               type="file"
               accept="application/pdf"
@@ -693,7 +708,7 @@ export function CommonInfoPage() {
           <div className="flex flex-wrap gap-2">
             <a
               className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700"
-              href="/common?hideNav=1"
+              href={`${import.meta.env.BASE_URL || "/"}common?hideNav=1`}
               target="_blank"
               rel="noreferrer"
             >
@@ -717,7 +732,7 @@ export function CommonInfoPage() {
             <iframe
               key={previewKey}
               title="共通説明確認"
-              src="/common?hideNav=1"
+              src={`${import.meta.env.BASE_URL || "/"}common?hideNav=1`}
               className="h-full w-full rounded-xl"
             />
           </div>

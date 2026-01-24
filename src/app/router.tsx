@@ -10,12 +10,15 @@ import { SimLandingPage } from "@/pages/sim/SimLandingPage";
 import { SimPage } from "@/pages/sim/SimPage";
 import { CategoryLandingPage } from "@/pages/sim/CategoryLandingPage";
 
-export const appRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    errorElement: <PageNotFound />,
-    children: [
+const basePath = import.meta.env.BASE_URL || "/";
+
+export const appRouter = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <AppLayout />,
+      errorElement: <PageNotFound />,
+      children: [
       {
         index: true,
         element: <Navigate to="/top" replace />
@@ -62,4 +65,8 @@ export const appRouter = createBrowserRouter([
       }
     ]
   }
-]);
+  ],
+  {
+    basename: basePath
+  }
+);
