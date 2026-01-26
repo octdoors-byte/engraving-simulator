@@ -5,10 +5,10 @@ import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 const allNavItems = [
+  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" as const, isAdmin: true },
   { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const, isAdmin: false },
   { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const, isAdmin: true },
   { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const, isAdmin: false },
-  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" as const, isAdmin: true },
   { to: "/admin/common", label: "基本設定", tone: "rose" as const, isAdmin: true }
 ] as const;
 
