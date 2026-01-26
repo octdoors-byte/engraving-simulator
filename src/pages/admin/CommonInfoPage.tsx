@@ -33,6 +33,7 @@ export function CommonInfoPage() {
   const settingsRef = useRef<CommonSettings>(settings);
   const [isDirty, setIsDirty] = useState(false);
   const [hasBackup, setHasBackup] = useState(false);
+  const [dirtySections, setDirtySections] = useState<Set<string>>(new Set());
 
   const commonInfoCategories = settings.commonInfoCategories ?? [];
 
@@ -52,13 +53,16 @@ export function CommonInfoPage() {
     setHasBackup(!!backup);
   }, []);
 
-  const handleChange = useCallback(<K extends keyof CommonSettings>(key: K, value: CommonSettings[K]) => {
+  const handleChange = useCallback(<K extends keyof CommonSettings>(key: K, value: CommonSettings[K], section?: string) => {
     setSettings((prev) => {
       const next = { ...prev, [key]: value };
       settingsRef.current = next;
       return next;
     });
     setIsDirty(true);
+    if (section) {
+      setDirtySections((prev) => new Set(prev).add(section));
+    }
     setPreviewKey(Date.now());
   }, []);
 
@@ -91,8 +95,8 @@ export function CommonInfoPage() {
         .then((list) => {
           if (list.length === 0) return;
           const nextImages = [...current, ...list].slice(0, MAX_IMAGES);
-          handleChange("commonInfoImages", nextImages);
-          handleChange("commonInfoImage", undefined);
+          handleChange("commonInfoImages", nextImages, "commonInfo");
+          handleChange("commonInfoImage", undefined, "commonInfo");
           setToast({ message: `画像を${list.length}枚追加しました。`, tone: "success" });
         })
         .catch(() => setToast({ message: "画像の読み込みに失敗しました。", tone: "error" }));
@@ -102,8 +106,8 @@ export function CommonInfoPage() {
 
   const persistImages = useCallback(
     (next: string[]) => {
-      handleChange("commonInfoImages", next.slice(0, MAX_IMAGES));
-      handleChange("commonInfoImage", undefined);
+      handleChange("commonInfoImages", next.slice(0, MAX_IMAGES), "commonInfo");
+      handleChange("commonInfoImage", undefined, "commonInfo");
       setPreviewKey(Date.now());
     },
     [handleChange]
@@ -125,7 +129,7 @@ export function CommonInfoPage() {
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === "string") {
-          handleChange("commonInfoPdf", { name: file.name, dataUrl: reader.result });
+          handleChange("commonInfoPdf", { name: file.name, dataUrl: reader.result }, "commonInfo");
           setPreviewKey(Date.now());
           setToast({ message: "PDFを更新しました。", tone: "success" });
         }
@@ -152,7 +156,24 @@ export function CommonInfoPage() {
     setToast({ message: "保存しました。", tone: "success" });
     setPreviewKey(Date.now());
     setIsDirty(false);
+    setDirtySections(new Set());
   }, []);
+
+  const handleSectionSave = useCallback((section: string) => {
+    const latest = settingsRef.current;
+    saveCommonSettings(latest);
+    window.dispatchEvent(new CustomEvent("ksim:commonSettingsUpdated"));
+    setToast({ message: `${section}を保存しました。`, tone: "success" });
+    setPreviewKey(Date.now());
+    setDirtySections((prev) => {
+      const next = new Set(prev);
+      next.delete(section);
+      return next;
+    });
+    if (dirtySections.size === 1) {
+      setIsDirty(false);
+    }
+  }, [dirtySections]);
 
   const handleBackup = useCallback(() => {
     const current = settingsRef.current;
@@ -216,20 +237,24 @@ export function CommonInfoPage() {
       ...commonInfoCategories,
       { id: Math.random().toString(36).slice(2, 8), title: defaultTitle, body: "", color }
     ];
-    handleChange("commonInfoCategories", next);
+    handleChange("commonInfoCategories", next, "category");
   };
 
   const updateCategory = (index: number, key: "title" | "body" | "color", value: string) => {
     const next = [...commonInfoCategories];
     if (!next[index]) return;
     next[index] = { ...next[index], [key]: value };
-    handleChange("commonInfoCategories", next);
+    setSettings((prev) => {
+      const updated = { ...prev, commonInfoCategories: next };
+      settingsRef.current = updated;
+      return updated;
+    });
   };
 
   const removeCategory = (index: number) => {
     const next = [...commonInfoCategories];
     next.splice(index, 1);
-    handleChange("commonInfoCategories", next);
+    handleChange("commonInfoCategories", next, "category");
   };
 
   return (
@@ -280,13 +305,23 @@ export function CommonInfoPage() {
                   <input
                     type="text"
                     value={cat.title ?? ""}
-                    onChange={(e) => updateCategory(index, "title", e.target.value)}
+                    onChange={(e) => {
+                      const next = [...commonInfoCategories];
+                      if (!next[index]) return;
+                      next[index] = { ...next[index], title: e.target.value };
+                      handleChange("commonInfoCategories", next, "category");
+                    }}
                     placeholder="カテゴリ名（例: 楽天用、自社用）"
                     className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
                   />
                   <textarea
                     value={cat.body ?? ""}
-                    onChange={(e) => updateCategory(index, "body", e.target.value)}
+                    onChange={(e) => {
+                      const next = [...commonInfoCategories];
+                      if (!next[index]) return;
+                      next[index] = { ...next[index], body: e.target.value };
+                      handleChange("commonInfoCategories", next, "category");
+                    }}
                     placeholder="カテゴリの説明やメモ（任意）"
                     className="h-20 w-full rounded border border-slate-200 px-3 py-2 text-sm"
                   />
@@ -302,7 +337,12 @@ export function CommonInfoPage() {
                             className={`h-8 w-10 rounded border ${selected ? "ring-2 ring-sky-400" : "border-slate-200"}`}
                             style={{ backgroundColor: color }}
                             aria-label={`色 ${color}`}
-                            onClick={() => updateCategory(index, "color", color)}
+                            onClick={() => {
+                              const next = [...commonInfoCategories];
+                              if (!next[index]) return;
+                              next[index] = { ...next[index], color };
+                              handleChange("commonInfoCategories", next, "category");
+                            }}
                           />
                         );
                       })}
@@ -312,13 +352,39 @@ export function CommonInfoPage() {
               </div>
             ))}
           </div>
-          <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-            <span>※ 追加・編集後は下部の「保存する」を押して反映してください。</span>
+          <div className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2">
+            <span className="text-xs text-slate-600">※ 追加・編集後は「保存する」を押して反映してください。</span>
+            <button
+              type="button"
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                dirtySections.has("category")
+                  ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+              }`}
+              disabled={!dirtySections.has("category")}
+              onClick={() => handleSectionSave("カテゴリ設定")}
+            >
+              保存する
+            </button>
           </div>
         </div>
 
-        <div className="mt-4 space-y-2">
-          <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
+        <div className="mt-4 space-y-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
+            <button
+              type="button"
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                dirtySections.has("headerFooter")
+                  ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+              }`}
+              disabled={!dirtySections.has("headerFooter")}
+              onClick={() => handleSectionSave("ヘッダー/フッター設定")}
+            >
+              保存する
+            </button>
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label htmlFor="logoImage" className="text-xs font-semibold text-slate-600">ロゴ画像</label>
@@ -333,7 +399,7 @@ export function CommonInfoPage() {
                   const reader = new FileReader();
                   reader.onload = () => {
                     if (typeof reader.result === "string") {
-                      handleChange("logoImage", reader.result as string);
+                      handleChange("logoImage", reader.result as string, "headerFooter");
                     }
                   };
                   reader.readAsDataURL(file);
@@ -347,7 +413,7 @@ export function CommonInfoPage() {
                 type="text"
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 value={settings.landingTitle ?? "デザインシミュレーター"}
-                onChange={(event) => handleChange("landingTitle", event.target.value)}
+                onChange={(event) => handleChange("landingTitle", event.target.value, "headerFooter")}
               />
             </div>
             <div>
@@ -357,7 +423,7 @@ export function CommonInfoPage() {
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.headerText ?? ""}
-                onChange={(event) => handleChange("headerText", event.target.value)}
+                onChange={(event) => handleChange("headerText", event.target.value, "headerFooter")}
               />
             </div>
             <div>
@@ -367,7 +433,7 @@ export function CommonInfoPage() {
                 className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                 rows={2}
                 value={settings.footerText ?? ""}
-                onChange={(event) => handleChange("footerText", event.target.value)}
+                onChange={(event) => handleChange("footerText", event.target.value, "headerFooter")}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -377,7 +443,7 @@ export function CommonInfoPage() {
                   id="headerTextAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.headerTextAlign ?? "left"}
-                  onChange={(event) => handleChange("headerTextAlign", event.target.value as CommonSettings["headerTextAlign"])}
+                  onChange={(event) => handleChange("headerTextAlign", event.target.value as CommonSettings["headerTextAlign"], "headerFooter")}
                 >
                   <option value="left">左</option>
                   <option value="center">中央</option>
@@ -390,7 +456,7 @@ export function CommonInfoPage() {
                   id="footerTextAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.footerTextAlign ?? "center"}
-                  onChange={(event) => handleChange("footerTextAlign", event.target.value as CommonSettings["footerTextAlign"])}
+                  onChange={(event) => handleChange("footerTextAlign", event.target.value as CommonSettings["footerTextAlign"], "headerFooter")}
                 >
                   <option value="left">左</option>
                   <option value="center">中央</option>
@@ -403,7 +469,7 @@ export function CommonInfoPage() {
                   id="logoAlign"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.logoAlign ?? "left"}
-                  onChange={(event) => handleChange("logoAlign", event.target.value as CommonSettings["logoAlign"])}
+                  onChange={(event) => handleChange("logoAlign", event.target.value as CommonSettings["logoAlign"], "headerFooter")}
                 >
                   <option value="left">左</option>
                   <option value="center">中央</option>
@@ -416,7 +482,7 @@ export function CommonInfoPage() {
                   id="logoSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.logoSize ?? "md"}
-                  onChange={(event) => handleChange("logoSize", event.target.value as CommonSettings["logoSize"])}
+                  onChange={(event) => handleChange("logoSize", event.target.value as CommonSettings["logoSize"], "headerFooter")}
                 >
                   <option value="sm">小</option>
                   <option value="md">中</option>
@@ -429,7 +495,7 @@ export function CommonInfoPage() {
                   id="headerTextSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.headerTextSize ?? "md"}
-                  onChange={(event) => handleChange("headerTextSize", event.target.value as CommonSettings["headerTextSize"])}
+                  onChange={(event) => handleChange("headerTextSize", event.target.value as CommonSettings["headerTextSize"], "headerFooter")}
                 >
                   <option value="sm">小</option>
                   <option value="md">中</option>
@@ -442,7 +508,7 @@ export function CommonInfoPage() {
                   id="footerTextSize"
                   className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
                   value={settings.footerTextSize ?? "md"}
-                  onChange={(event) => handleChange("footerTextSize", event.target.value as CommonSettings["footerTextSize"])}
+                  onChange={(event) => handleChange("footerTextSize", event.target.value as CommonSettings["footerTextSize"], "headerFooter")}
                 >
                   <option value="sm">小</option>
                   <option value="md">中</option>
@@ -468,7 +534,7 @@ export function CommonInfoPage() {
               type="text"
               className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
               value={settings.commonInfoTitle ?? ""}
-              onChange={(event) => handleChange("commonInfoTitle", event.target.value)}
+              onChange={(event) => handleChange("commonInfoTitle", event.target.value, "commonInfo")}
               placeholder="ご利用前のご案内 など"
             />
           </div>
@@ -478,7 +544,7 @@ export function CommonInfoPage() {
               id="commonInfoLayout"
               className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
               value={settings.commonInfoLayout ?? "imageTop"}
-              onChange={(event) => handleChange("commonInfoLayout", event.target.value as CommonSettings["commonInfoLayout"])}
+              onChange={(event) => handleChange("commonInfoLayout", event.target.value as CommonSettings["commonInfoLayout"], "commonInfo")}
             >
               <option value="imageTop">画像を上 / テキストを下</option>
               <option value="imageBottom">テキストを上 / 画像を下</option>
@@ -494,7 +560,7 @@ export function CommonInfoPage() {
             id="commonInfoBody"
             className="h-32 w-full rounded border border-slate-200 px-3 py-2 text-sm"
             value={settings.commonInfoBody ?? ""}
-            onChange={(event) => handleChange("commonInfoBody", event.target.value)}
+            onChange={(event) => handleChange("commonInfoBody", event.target.value, "commonInfo")}
             placeholder="お客様に読んでほしい説明を入力してください。"
           />
         </div>
@@ -618,7 +684,7 @@ export function CommonInfoPage() {
                 <button
                   type="button"
                   className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                  onClick={() => handleChange("commonInfoPdf", undefined)}
+                  onClick={() => handleChange("commonInfoPdf", undefined, "commonInfo")}
                 >
                   削除
                 </button>
@@ -644,9 +710,23 @@ export function CommonInfoPage() {
           <textarea
             className="h-40 w-full rounded border border-slate-200 px-3 py-2 font-mono text-xs leading-relaxed text-slate-800"
             value={settings.commonInfoFaq ?? ""}
-            onChange={(event) => handleChange("commonInfoFaq", event.target.value)}
+            onChange={(event) => handleChange("commonInfoFaq", event.target.value, "commonInfo")}
           />
-          <p className="text-xs text-slate-500">※ 入力後は「保存する」を押して反映してください。</p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-slate-500">※ 入力後は「保存する」を押して反映してください。</p>
+            <button
+              type="button"
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                dirtySections.has("commonInfo")
+                  ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+              }`}
+              disabled={!dirtySections.has("commonInfo")}
+              onClick={() => handleSectionSave("共通説明")}
+            >
+              保存する
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
@@ -687,19 +767,19 @@ export function CommonInfoPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-slate-400 bg-slate-100 p-4">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className={`rounded-full border-2 px-5 py-2.5 text-sm font-bold transition ${
+              className={`rounded-full border-2 px-6 py-3 text-base font-bold transition ${
                 isDirty
-                  ? "border-slate-400 bg-white text-slate-800 hover:bg-slate-100 shadow-sm"
-                  : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                  ? "border-slate-500 bg-white text-slate-900 hover:bg-slate-50 shadow-md"
+                  : "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-400"
               }`}
               disabled={!isDirty}
               onClick={handleManualSave}
             >
-              保存する
+              全部で反映
             </button>
             <button
               type="button"
