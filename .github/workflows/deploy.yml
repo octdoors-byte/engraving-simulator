@@ -44,16 +44,34 @@ jobs:
           echo "Repository name: $REPO_NAME"
           echo "Full repository: ${{ github.repository }}"
 
-      - name: Build
-        env:
-          # リポジトリ名を取得してbaseパスを設定
-          # プロジェクトページの場合: /リポジトリ名/
-          # カスタムドメインやユーザーページの場合: / に変更可能
-          # リポジトリ名に日本語が含まれる場合もGitHubが適切に処理します
-          VITE_BASE_PATH: /${{ steps.repo.outputs.name }}/
+      - name: Create .env.production
         run: |
-          echo "Building with base path: $VITE_BASE_PATH"
+          BASE_PATH="/${{ steps.repo.outputs.name }}/"
+          echo "VITE_BASE_PATH=$BASE_PATH" > .env.production
+          echo "Created .env.production with VITE_BASE_PATH=$BASE_PATH"
+          cat .env.production
+
+      - name: Build
+        run: |
+          echo "Building with base path from .env.production"
           npm run build
+          # ビルド後の確認
+          echo "Verifying build output..."
+          if [ -f "dist/index.html" ]; then
+            echo "✅ dist/index.html exists"
+            BASE_PATH="/${{ steps.repo.outputs.name }}/"
+            # baseパスが正しく適用されているか確認
+            if grep -q "$BASE_PATH" dist/index.html; then
+              echo "✅ Base path $BASE_PATH found in index.html"
+            else
+              echo "⚠️  Warning: Base path $BASE_PATH not found in index.html"
+              echo "Checking for asset paths..."
+              grep -E "(href|src)=" dist/index.html | head -n 5
+            fi
+          else
+            echo "❌ dist/index.html not found!"
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
