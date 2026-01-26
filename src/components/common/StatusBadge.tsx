@@ -1,20 +1,21 @@
-﻿import type { TemplateStatus } from "@/domain/types";
+import type { TemplateStatus } from "@/domain/types";
 
-const statusMap: Record<TemplateStatus, { label: string; className: string }> = {
-  draft: { label: "下書き", className: "bg-orange-100 text-orange-700" },
-  tested: { label: "テスト済み", className: "bg-blue-100 text-blue-700" },
-  published: { label: "公開中", className: "bg-emerald-100 text-emerald-700" },
-  archive: { label: "アーカイブ", className: "bg-slate-200 text-slate-600" }
+const statusMap: Record<TemplateStatus, { label: string; className: string; icon: string }> = {
+  draft: { label: "下書き", className: "border-orange-300 bg-gradient-to-r from-orange-50 to-orange-100 text-orange-800", icon: "📝" },
+  tested: { label: "テスト済み", className: "border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800", icon: "✅" },
+  published: { label: "公開中", className: "border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-800", icon: "🚀" },
+  archive: { label: "アーカイブ", className: "border-slate-300 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700", icon: "📦" }
 };
 
 export function StatusBadge({ status }: { status: TemplateStatus }) {
   const config = statusMap[status];
   return (
     <span
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${config.className}`}
+      className={`inline-flex items-center gap-1.5 rounded-xl border-2 px-3 py-1.5 text-xs font-bold shadow-sm ${config.className}`}
       aria-label={`ステータス ${config.label}`}
     >
-      {config.label}
+      <span>{config.icon}</span>
+      <span>{config.label}</span>
     </span>
   );
 }

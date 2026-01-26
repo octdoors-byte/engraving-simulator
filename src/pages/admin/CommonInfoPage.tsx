@@ -233,112 +233,138 @@ export function CommonInfoPage() {
   };
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">基本設定</h1>
-          <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
+      {/* Hero Section with Gradient */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 p-8 shadow-xl">
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 shadow-lg">
+              <span className="text-2xl">⚙️</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">基本設定</h1>
+              <p className="text-sm text-slate-600 mt-1">トップメニューに共通説明を掲載するための設定</p>
+            </div>
+            <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
+          </div>
         </div>
-        <p className="mt-2 text-sm text-slate-600">トップメニューに共通説明を掲載するための設定です。</p>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
+      </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-2xl font-bold text-slate-900">設定管理</h2>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 mb-6">
           <button
             type="button"
-            className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+            className={`rounded-xl border-2 px-6 py-3 text-sm font-bold shadow-sm transition-all ${
               isDirty
-                ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+                ? "border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
+                : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
             }`}
             disabled={!isDirty}
             onClick={handleManualSave}
           >
-            保存する
+            💾 保存する
           </button>
           <button
             type="button"
-            className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-100"
+            className="rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-3 text-sm font-bold text-blue-700 shadow-sm transition-all hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 hover:shadow-md"
             onClick={handleBackup}
           >
-            バックアップを取る
+            📦 バックアップを取る
           </button>
           {hasBackup && (
             <button
               type="button"
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100"
+              className="rounded-xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 px-6 py-3 text-sm font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
               onClick={handleRestoreFromBackup}
             >
-              バックアップから復元
+              🔄 バックアップから復元
             </button>
           )}
           <button
             type="button"
-            className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100"
+            className="rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-amber-100 px-6 py-3 text-sm font-bold text-amber-700 shadow-sm transition-all hover:border-amber-400 hover:from-amber-100 hover:to-amber-200 hover:shadow-md"
             onClick={handleRestore}
           >
-            初期値に戻す
+            🔙 初期値に戻す
           </button>
-          <span className="text-xs text-slate-500">※ 「保存する」を押すと設定が反映されます。</span>
+          <span className="text-xs font-semibold text-slate-500">※ 「保存する」を押すと設定が反映されます。</span>
         </div>
 
         {/* カテゴリ設定（基本設定の上部） */}
-        <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="mt-6 space-y-4 rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-800">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
-              <span className="text-xs text-slate-500">共通説明をカテゴリごとに分けたい場合に使います。</span>
+              <span className="text-lg font-bold text-slate-900">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
+              <span className="text-xs text-slate-600 mt-1">共通説明をカテゴリごとに分けたい場合に使います。</span>
             </div>
             <button
               type="button"
-              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              className="rounded-xl border-2 border-slate-300 bg-gradient-to-r from-slate-50 to-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:from-slate-100 hover:to-white hover:shadow-md"
               onClick={addCategory}
             >
-              カテゴリを追加
+              ➕ カテゴリを追加
             </button>
           </div>
           {commonInfoCategories.length === 0 && (
-            <div className="rounded border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
-              まだカテゴリがありません。必要に応じて追加してください。
+            <div className="rounded-xl border-2 border-dashed border-slate-300 bg-gradient-to-r from-slate-50 to-white px-6 py-4 text-center">
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-3xl">📁</span>
+                <p className="text-sm font-semibold text-slate-600">まだカテゴリがありません</p>
+                <p className="text-xs text-slate-500">必要に応じて追加してください</p>
+              </div>
             </div>
           )}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {commonInfoCategories.map((cat, index) => (
-              <div key={cat.id ?? index} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-slate-800">カテゴリ {index + 1}</span>
+              <div key={cat.id ?? index} className="rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-md">
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-lg shadow-md">
+                      {index + 1}
+                    </div>
+                    <span className="text-base font-bold text-slate-900">カテゴリ {index + 1}</span>
+                  </div>
                   <button
                     type="button"
-                    className="rounded-full border border-rose-200 bg-white px-2 py-1 text-[11px] text-rose-600 hover:bg-rose-50"
+                    className="rounded-xl border-2 border-rose-300 bg-gradient-to-r from-rose-50 to-rose-100 px-4 py-2 text-xs font-bold text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:from-rose-100 hover:to-rose-200 hover:shadow-md"
                     onClick={() => removeCategory(index)}
                   >
-                    削除
+                    🗑️ 削除
                   </button>
                 </div>
-                <div className="mt-2 space-y-2">
+                <div className="space-y-3">
                   <input
                     type="text"
                     value={cat.title ?? ""}
                     onChange={(e) => updateCategory(index, "title", e.target.value)}
                     placeholder="カテゴリ名（例: 楽天用、自社用）"
-                    className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
+                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   />
                   <textarea
                     value={cat.body ?? ""}
                     onChange={(e) => updateCategory(index, "body", e.target.value)}
                     placeholder="カテゴリの説明やメモ（任意）"
-                    className="h-20 w-full rounded border border-slate-200 px-3 py-2 text-sm"
+                    className="h-24 w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   />
-                  <div className="space-y-1 text-xs text-slate-600">
-                    <p className="font-semibold">カラー（5色から選択）</p>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="space-y-2 rounded-xl border-2 border-slate-200 bg-white p-3">
+                    <p className="text-xs font-bold text-slate-700">カラー（5色から選択）</p>
+                    <div className="flex flex-wrap gap-3">
                       {CATEGORY_COLORS.map((color) => {
                         const selected = (cat.color ?? CATEGORY_COLORS[0]) === color;
                         return (
                           <button
                             key={color}
                             type="button"
-                            className={`h-8 w-10 rounded border ${selected ? "ring-2 ring-sky-400" : "border-slate-200"}`}
+                            className={`h-10 w-12 rounded-xl border-2 shadow-sm transition-all hover:scale-110 ${
+                              selected ? "ring-4 ring-rose-300 ring-offset-2 border-rose-400" : "border-slate-200 hover:border-slate-300"
+                            }`}
                             style={{ backgroundColor: color }}
                             aria-label={`色 ${color}`}
                             onClick={() => updateCategory(index, "color", color)}
@@ -368,16 +394,21 @@ export function CommonInfoPage() {
           </div>
         </div>
 
-        <div className="mt-4 space-y-2">
-          <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="mt-8 space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-lg shadow-md">
+              🎨
+            </div>
+            <p className="text-lg font-bold text-slate-900">ヘッダー/フッター・サイト共通設定</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <label htmlFor="logoImage" className="text-xs font-semibold text-slate-600">ロゴ画像</label>
+              <label htmlFor="logoImage" className="block text-sm font-bold text-slate-700 mb-2">ロゴ画像</label>
               <input
                 id="logoImage"
                 type="file"
                 accept="image/*"
-                className="mt-1 w-full text-xs"
+                className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                 onChange={(event) => {
                   const file = event.target.files?.[0] ?? null;
                   if (!file) return;
@@ -392,41 +423,41 @@ export function CommonInfoPage() {
               />
             </div>
             <div>
-              <label htmlFor="landingTitle" className="text-xs font-semibold text-slate-600">トップタイトル</label>
+              <label htmlFor="landingTitle" className="block text-sm font-bold text-slate-700 mb-2">トップタイトル</label>
               <input
                 id="landingTitle"
                 type="text"
-                className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                 value={settings.landingTitle ?? "デザインシミュレーター"}
                 onChange={(event) => handleChange("landingTitle", event.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="headerText" className="text-xs font-semibold text-slate-600">ヘッダーテキスト</label>
+              <label htmlFor="headerText" className="block text-sm font-bold text-slate-700 mb-2">ヘッダーテキスト</label>
               <textarea
                 id="headerText"
-                className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                rows={2}
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
+                rows={3}
                 value={settings.headerText ?? ""}
                 onChange={(event) => handleChange("headerText", event.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="footerText" className="text-xs font-semibold text-slate-600">フッターテキスト</label>
+              <label htmlFor="footerText" className="block text-sm font-bold text-slate-700 mb-2">フッターテキスト</label>
               <textarea
                 id="footerText"
-                className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                rows={2}
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
+                rows={3}
                 value={settings.footerText ?? ""}
                 onChange={(event) => handleChange("footerText", event.target.value)}
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="headerTextAlign" className="text-xs font-semibold text-slate-600">ヘッダー配置</label>
+                <label htmlFor="headerTextAlign" className="block text-sm font-bold text-slate-700 mb-2">ヘッダー配置</label>
                 <select
                   id="headerTextAlign"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.headerTextAlign ?? "left"}
                   onChange={(event) => handleChange("headerTextAlign", event.target.value as CommonSettings["headerTextAlign"])}
                 >
@@ -436,10 +467,10 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="footerTextAlign" className="text-xs font-semibold text-slate-600">フッター配置</label>
+                <label htmlFor="footerTextAlign" className="block text-sm font-bold text-slate-700 mb-2">フッター配置</label>
                 <select
                   id="footerTextAlign"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.footerTextAlign ?? "center"}
                   onChange={(event) => handleChange("footerTextAlign", event.target.value as CommonSettings["footerTextAlign"])}
                 >
@@ -449,10 +480,10 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="logoAlign" className="text-xs font-semibold text-slate-600">ロゴ配置</label>
+                <label htmlFor="logoAlign" className="block text-sm font-bold text-slate-700 mb-2">ロゴ配置</label>
                 <select
                   id="logoAlign"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.logoAlign ?? "left"}
                   onChange={(event) => handleChange("logoAlign", event.target.value as CommonSettings["logoAlign"])}
                 >
@@ -462,10 +493,10 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="logoSize" className="text-xs font-semibold text-slate-600">ロゴサイズ</label>
+                <label htmlFor="logoSize" className="block text-sm font-bold text-slate-700 mb-2">ロゴサイズ</label>
                 <select
                   id="logoSize"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.logoSize ?? "md"}
                   onChange={(event) => handleChange("logoSize", event.target.value as CommonSettings["logoSize"])}
                 >
@@ -475,10 +506,10 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="headerTextSize" className="text-xs font-semibold text-slate-600">ヘッダー文字サイズ</label>
+                <label htmlFor="headerTextSize" className="block text-sm font-bold text-slate-700 mb-2">ヘッダー文字サイズ</label>
                 <select
                   id="headerTextSize"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.headerTextSize ?? "md"}
                   onChange={(event) => handleChange("headerTextSize", event.target.value as CommonSettings["headerTextSize"])}
                 >
@@ -488,10 +519,10 @@ export function CommonInfoPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="footerTextSize" className="text-xs font-semibold text-slate-600">フッター文字サイズ</label>
+                <label htmlFor="footerTextSize" className="block text-sm font-bold text-slate-700 mb-2">フッター文字サイズ</label>
                 <select
                   id="footerTextSize"
-                  className="mt-1 w-full rounded border border-slate-200 px-2 py-1 text-xs"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                   value={settings.footerTextSize ?? "md"}
                   onChange={(event) => handleChange("footerTextSize", event.target.value as CommonSettings["footerTextSize"])}
                 >
@@ -505,9 +536,15 @@ export function CommonInfoPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold text-slate-900">共通説明（お客様向け）</h2>
+      <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 text-xl shadow-lg">
+            📄
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">共通説明（お客様向け）</h2>
+            <p className="text-sm text-slate-600 mt-1">お客様に表示される共通説明ページの設定</p>
+          </div>
           <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
         </div>
 

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Toast } from "@/components/common/Toast";
 import { HelpIcon } from "@/components/common/HelpIcon";
 import type { Design, TemplateSummary } from "@/domain/types";
@@ -326,57 +326,80 @@ export function AdminDesignsPage() {
   }, [designs]);
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">デザイン作成履歴</h1>
-          <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
+      {/* Hero Section with Gradient */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-100 p-8 shadow-xl">
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 shadow-lg">
+              <span className="text-2xl">🎨</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">デザイン作成履歴</h1>
+              <p className="text-sm text-slate-600 mt-1">作成済みのデザインを一覧で確認</p>
+            </div>
+            <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
+          </div>
         </div>
-        <p className="text-sm text-slate-500">作成済みのデザインを一覧で確認できます。詳細は？アイコンからご確認ください。</p>
-        <div className="mt-4 flex flex-wrap gap-3 text-xs">
-          <input
-            type="text"
-            className="rounded-full border border-slate-200 px-3 py-2"
-            placeholder="デザインIDで検索"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-          <select
-            className="rounded-full border border-slate-200 px-3 py-2"
-            value={templateFilter}
-            onChange={(event) => setTemplateFilter(event.target.value)}
-          >
-            <option value="">テンプレートIDで絞り込み</option>
-            {templateOptions.map((template) => (
-              <option key={template.templateKey} value={template.templateKey}>
-                {template.templateKey}
-              </option>
-            ))}
-          </select>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
+      </div>
+
+      {/* Search and Filter Section */}
+      <div className="rounded-3xl border-2 border-slate-200 bg-white p-6 shadow-2xl">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <input
+              type="text"
+              className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="🔍 デザインIDで検索"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <select
+              className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              value={templateFilter}
+              onChange={(event) => setTemplateFilter(event.target.value)}
+            >
+              <option value="">📋 テンプレートIDで絞り込み</option>
+              {templateOptions.map((template) => (
+                <option key={template.templateKey} value={template.templateKey}>
+                  {template.templateKey}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
             type="button"
-            className="rounded-full border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border-2 border-rose-300 bg-gradient-to-r from-rose-50 to-rose-100 px-6 py-3 text-sm font-bold text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:from-rose-100 hover:to-rose-200 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleBulkDelete}
             disabled={selectedIds.size === 0}
           >
-            選択したものを削除
+            🗑️ 選択したものを削除 ({selectedIds.size})
           </button>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="text-lg font-semibold text-slate-900">一覧</h2>
+      <div className="overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">一覧</h2>
+            <div className="flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2">
+              <span className="text-sm font-semibold text-indigo-800">全{filteredDesigns.length}件</span>
+            </div>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-gradient-to-r from-slate-50 to-slate-100 text-xs uppercase tracking-wide text-slate-600">
               <tr>
-                <th className="px-6 py-3 text-left">
+                <th className="px-6 py-4 text-left">
                   <input
                     type="checkbox"
+                    className="h-5 w-5 rounded border-2 border-slate-300 text-indigo-500 focus:ring-2 focus:ring-indigo-200"
                     checked={allSelected}
                     onChange={(event) => {
                       if (event.target.checked) {
@@ -388,26 +411,33 @@ export function AdminDesignsPage() {
                     aria-label="すべて選択"
                   />
                 </th>
-                <th className="px-6 py-3 text-left">プレビュー</th>
-                <th className="px-6 py-3 text-left">デザインID</th>
-                <th className="px-6 py-3 text-left">テンプレートID</th>
-                <th className="px-6 py-3 text-left">作成日</th>
-                <th className="px-6 py-3 text-left">PDF</th>
+                <th className="px-6 py-4 text-left font-bold">プレビュー</th>
+                <th className="px-6 py-4 text-left font-bold">デザインID</th>
+                <th className="px-6 py-4 text-left font-bold">テンプレートID</th>
+                <th className="px-6 py-4 text-left font-bold">作成日</th>
+                <th className="px-6 py-4 text-left font-bold">PDF</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {filteredDesigns.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={6}>
-                    デザイン作成履歴がありません。
+                  <td className="px-6 py-12 text-center text-sm text-slate-500" colSpan={6}>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
+                        📭
+                      </div>
+                      <p className="font-medium">デザイン作成履歴がありません</p>
+                      <p className="text-xs text-slate-400">シミュレーターでデザインを作成すると、ここに表示されます</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredDesigns.map((design) => (
-                  <tr key={design.designId}>
+                  <tr key={design.designId} className="transition-colors hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/30">
                     <td className="px-6 py-4">
                       <input
                         type="checkbox"
+                        className="h-5 w-5 rounded border-2 border-slate-300 text-indigo-500 focus:ring-2 focus:ring-indigo-200"
                         checked={selectedIds.has(design.designId)}
                         onChange={(event) => {
                           setSelectedIds((prev) => {
@@ -424,12 +454,12 @@ export function AdminDesignsPage() {
                       />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-50">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm transition-all hover:scale-105 hover:shadow-md">
                         {previewUrls[design.designId] ? (
                           <img
                             src={previewUrls[design.designId]}
                             alt={`${design.designId} のロゴ`}
-                            className="h-full w-full cursor-pointer object-contain transition hover:opacity-80"
+                            className="h-full w-full cursor-pointer object-contain transition-all hover:opacity-90"
                             onClick={() => {
                               setPreviewImageUrl(previewUrls[design.designId]);
                               setPreviewImageName(design.designId);
@@ -440,18 +470,24 @@ export function AdminDesignsPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">{design.designId}</td>
+                    <td className="px-6 py-4 font-mono text-sm font-semibold text-slate-900">{design.designId}</td>
                     <td className="px-6 py-4">
-                      {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
+                      <span className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                        getTemplate(design.templateKey)
+                          ? "border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-800"
+                          : "border border-slate-200 bg-slate-100 text-slate-500"
+                      }`}>
+                        {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
+                      </span>
                     </td>
-                    <td className="px-6 py-4">{formatDate(design.createdAt)}</td>
+                    <td className="px-6 py-4 text-sm text-slate-700">{formatDate(design.createdAt)}</td>
                     <td className="px-6 py-4">
                       <button
                         type="button"
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                        className="rounded-lg border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 to-indigo-100 px-4 py-2 text-xs font-bold text-indigo-700 shadow-sm transition-all hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 hover:shadow-md"
                         onClick={() => handlePreview(design, "confirm")}
                       >
-                        確認用PDF
+                        📄 確認用PDF
                       </button>
                     </td>
                   </tr>
@@ -462,39 +498,45 @@ export function AdminDesignsPage() {
         </div>
       </div>
       {previewUrl && previewInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
-              <span>
-                {previewInfo.designId} / 確認用
-              </span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 transition-all">
+          <div className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all">
+            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 text-lg shadow-md">
+                  📄
+                </div>
+                <div>
+                  <span className="text-lg font-bold text-slate-900">{previewInfo.designId}</span>
+                  <span className="ml-2 text-sm text-slate-600">/ 確認用PDF</span>
+                </div>
+              </div>
               <button
                 type="button"
-                className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                 onClick={handleClosePreview}
               >
-                閉じる
+                ✕ 閉じる
               </button>
             </div>
-            <div className="h-[70vh] bg-slate-50">
+            <div className="h-[70vh] bg-gradient-to-br from-slate-50 to-white">
               <object data={previewUrl} type="application/pdf" className="h-full w-full">
                 <p className="p-4 text-sm text-slate-500">PDFを表示できません。</p>
               </object>
             </div>
-            <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs">
-              <span className="text-slate-500">
-                {isPreviewLoading ? "確認画面を読み込み中..." : "確認画面を確認してからダウンロードできます。"}
+            <div className="flex items-center justify-between border-t border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+              <span className="text-sm text-slate-600">
+                {isPreviewLoading ? "⏳ 確認画面を読み込み中..." : "✓ 確認画面を確認してからダウンロードできます。"}
               </span>
               <button
                 type="button"
-                className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 font-semibold text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 px-6 py-2 text-sm font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!previewBlob}
                 onClick={() => {
                   if (!previewBlob || !previewInfo) return;
                   downloadBlob(previewBlob, `${previewInfo.designId}-confirm.pdf`);
                 }}
               >
-                ダウンロード
+                ⬇️ ダウンロード
               </button>
             </div>
           </div>
@@ -502,34 +544,39 @@ export function AdminDesignsPage() {
       )}
       {previewImageUrl && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 transition-all"
           onClick={() => {
             setPreviewImageUrl(null);
             setPreviewImageName(null);
           }}
         >
           <div
-            className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+            className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm">
-              <span className="font-semibold text-slate-900">{previewImageName}</span>
+            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 text-lg shadow-md">
+                  🖼️
+                </div>
+                <span className="text-lg font-bold text-slate-900">{previewImageName}</span>
+              </div>
               <button
                 type="button"
-                className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                 onClick={() => {
                   setPreviewImageUrl(null);
                   setPreviewImageName(null);
                 }}
               >
-                閉じる
+                ✕ 閉じる
               </button>
             </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-slate-50 p-8">
+            <div className="flex max-h-[80vh] items-center justify-center bg-gradient-to-br from-slate-50 to-white p-8">
               <img
                 src={previewImageUrl}
                 alt={previewImageName || "プレビュー"}
-                className="max-h-full max-w-full object-contain"
+                className="max-h-full max-w-full rounded-xl object-contain shadow-2xl"
               />
             </div>
           </div>
