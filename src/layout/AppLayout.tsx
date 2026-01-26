@@ -78,8 +78,10 @@ export function AppLayout() {
     location.pathname.startsWith("/sim/");
   
   // かわうそレザーのHPからアクセスする場合（/simulator/）は管理画面のリンクを非表示
+  // ただし、開発環境（localhost）では常に表示
   const basePath = import.meta.env.BASE_URL || "/";
-  const isSimulatorPath = basePath === "/simulator/";
+  const isProduction = import.meta.env.PROD;
+  const isSimulatorPath = basePath === "/simulator/" && isProduction;
   const navItems = isSimulatorPath
     ? allNavItems.filter((item) => !item.isAdmin)
     : allNavItems;
