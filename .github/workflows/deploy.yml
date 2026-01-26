@@ -170,3 +170,26 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      
+      - name: Verify deployment
+        run: |
+          echo "=========================================="
+          echo "デプロイ検証"
+          echo "=========================================="
+          DEPLOY_URL="${{ steps.deployment.outputs.page_url }}"
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL="https://${{ github.repository_owner }}.github.io/${{ steps.repo.outputs.name }}/"
+          fi
+          echo "デプロイURL: $DEPLOY_URL"
+          echo ""
+          echo "サイトへのアクセスを確認中..."
+          if curl -f -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL" | grep -q "200\|301\|302"; then
+            echo "✅ サイトは正常にアクセス可能です"
+            echo "デプロイが正常に完了しました"
+          else
+            echo "⚠️  サイトへのアクセス確認に失敗しました"
+            echo "数分待ってから再度確認してください"
+            echo "GitHub Pagesの反映には数分かかる場合があります"
+          fi
+          echo ""
+          echo "=========================================="
