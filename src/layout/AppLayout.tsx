@@ -12,7 +12,7 @@ const adminMenuItems = [
 ] as const;
 
 const allNavItems = [
-  { to: "/admin/designs", label: "発行履歴", tone: "indigo" as const, isAdmin: true, isHighlighted: true }
+  { to: "/admin/designs", label: "デザイン発行履歴", tone: "indigo" as const, isAdmin: true, isHighlighted: true }
 ] as const;
 
 const navToneClass: Record<
