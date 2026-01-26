@@ -34,6 +34,8 @@ export function CommonInfoPage() {
   const [isDirty, setIsDirty] = useState(false);
   const [hasBackup, setHasBackup] = useState(false);
   const [dirtySections, setDirtySections] = useState<Set<string>>(new Set());
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isHeaderFooterOpen, setIsHeaderFooterOpen] = useState(false);
 
   const commonInfoCategories = settings.commonInfoCategories ?? [];
 
@@ -269,20 +271,34 @@ export function CommonInfoPage() {
         <p className="mt-2 text-sm text-slate-600">トップメニューに共通説明を掲載するための設定です。</p>
 
         {/* カテゴリ設定（基本設定の上部） */}
-        <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-800">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
-              <span className="text-xs text-slate-500">共通説明をカテゴリごとに分けたい場合に使います。</span>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-slate-50 text-lg font-bold text-slate-700 transition hover:bg-slate-100"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                aria-label={isCategoryOpen ? "閉じる" : "開く"}
+              >
+                {isCategoryOpen ? "−" : "+"}
+              </button>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-slate-800">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
+                <span className="text-xs text-slate-500">共通説明をカテゴリごとに分けたい場合に使います。</span>
+              </div>
             </div>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-              onClick={addCategory}
-            >
-              カテゴリを追加
-            </button>
+            {isCategoryOpen && (
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                onClick={addCategory}
+              >
+                カテゴリを追加
+              </button>
+            )}
           </div>
+          {isCategoryOpen && (
+            <div className="space-y-3 border-t border-slate-200 p-4">
           {commonInfoCategories.length === 0 && (
             <div className="rounded border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
               まだカテゴリがありません。必要に応じて追加してください。
@@ -352,39 +368,55 @@ export function CommonInfoPage() {
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2">
-            <span className="text-xs text-slate-600">※ 追加・編集後は「保存する」を押して反映してください。</span>
-            <button
-              type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                dirtySections.has("category")
-                  ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
-              }`}
-              disabled={!dirtySections.has("category")}
-              onClick={() => handleSectionSave("カテゴリ設定")}
-            >
-              保存する
-            </button>
-          </div>
+              <div className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2">
+                <span className="text-xs text-slate-600">※ 追加・編集後は「保存する」を押して反映してください。</span>
+                <button
+                  type="button"
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                    dirtySections.has("category")
+                      ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                      : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+                  }`}
+                  disabled={!dirtySections.has("category")}
+                  onClick={() => handleSectionSave("カテゴリ設定")}
+                >
+                  保存する
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="mt-4 space-y-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
-            <button
-              type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                dirtySections.has("headerFooter")
-                  ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-                  : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
-              }`}
-              disabled={!dirtySections.has("headerFooter")}
-              onClick={() => handleSectionSave("ヘッダー/フッター設定")}
-            >
-              保存する
-            </button>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-slate-50 text-lg font-bold text-slate-700 transition hover:bg-slate-100"
+                onClick={() => setIsHeaderFooterOpen(!isHeaderFooterOpen)}
+                aria-label={isHeaderFooterOpen ? "閉じる" : "開く"}
+              >
+                {isHeaderFooterOpen ? "−" : "+"}
+              </button>
+              <p className="text-xs font-semibold text-slate-600">ヘッダー/フッター・サイト共通設定</p>
+            </div>
+            {isHeaderFooterOpen && (
+              <button
+                type="button"
+                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                  dirtySections.has("headerFooter")
+                    ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                    : "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-400"
+                }`}
+                disabled={!dirtySections.has("headerFooter")}
+                onClick={() => handleSectionSave("ヘッダー/フッター設定")}
+              >
+                保存する
+              </button>
+            )}
           </div>
+          {isHeaderFooterOpen && (
+            <div className="space-y-2 border-t border-slate-200 p-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label htmlFor="logoImage" className="text-xs font-semibold text-slate-600">ロゴ画像</label>
@@ -517,6 +549,8 @@ export function CommonInfoPage() {
               </div>
             </div>
           </div>
+            </div>
+          )}
         </div>
       </div>
 
