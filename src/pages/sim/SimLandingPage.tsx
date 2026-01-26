@@ -470,7 +470,8 @@ export function SimLandingPage() {
                               );
                             }
                         if (col.key === "info") {
-                          const infoUrl = `/common?next=${encodeURIComponent(simPath)}&hideNav=1`;
+                          const basePath = import.meta.env.BASE_URL || "/";
+                          const infoUrl = `${basePath}common?next=${encodeURIComponent(simPath)}&hideNav=1`;
                           const infoFullUrl =
                             typeof window !== "undefined"
                               ? new URL(infoUrl, window.location.origin).toString()

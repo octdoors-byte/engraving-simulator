@@ -1,0 +1,73 @@
+========================================
+WordPress統合用 .htaccess設定手順
+========================================
+
+【作業内容】
+サーバーのルートディレクトリ（/）の .htaccess を
+正しい設定に置き換えます。
+
+========================================
+手順
+========================================
+
+1. WinSCPでサーバーに接続
+
+2. サーバーのルートディレクトリ（/）に移動
+
+3. .htaccess ファイルを開く（または作成）
+
+4. 以下の内容をコピー＆ペースト：
+
+----------------------------------------
+# WordPress + /admin/ 統合用 .htaccess設定
+
+# /admin/ はWordPressのリライト対象から除外
+# この設定は WordPress の設定より前に配置すること
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^admin/ - [L]
+</IfModule>
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+----------------------------------------
+
+5. 保存
+
+6. ファイル権限を 644 に設定
+
+========================================
+注意事項
+========================================
+
+- /admin/ の除外設定は、WordPressの設定より前に配置すること
+- RewriteEngine On は1回だけ記述する（重複しない）
+- WordPressの設定（# BEGIN WordPress 〜 # END WordPress）が正しく残っているか確認
+
+========================================
+確認
+========================================
+
+設定後、以下を確認：
+
+1. ホームページが表示される
+   https://kawauso-leather.com/
+
+2. WordPressの管理画面にアクセスできる
+   https://kawauso-leather.com/wp-admin/
+
+3. 編集画面が表示される
+
+4. /admin/ 配下が動作する
+   https://kawauso-leather.com/admin/templates
+
+========================================

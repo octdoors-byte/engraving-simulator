@@ -1,0 +1,67 @@
+name: Build for Integration
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**'
+      - 'vite.config.ts'
+      - 'package.json'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create .env.production
+        run: echo "VITE_BASE_PATH=/simulator/" > .env.production
+      
+      - name: Build for integration
+        run: npm run build:integrated
+        env:
+          VITE_BASE_PATH: /simulator/
+      
+      - name: Verify build output
+        run: |
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ dist/index.htmlが作成されていません"
+            exit 1
+          fi
+          if grep -q "/simulator/assets" dist/index.html; then
+            echo "✅ パスが正しく設定されています"
+          else
+            echo "⚠️  警告: パスが /simulator/assets/ になっていません"
+            exit 1
+          fi
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-integrated
+          path: dist/
+          retention-days: 7
+      
+      - name: Summary
+        run: |
+          echo "## ビルド結果" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ ビルドが正常に完了しました" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 成果物: dist-integrated" >> $GITHUB_STEP_SUMMARY

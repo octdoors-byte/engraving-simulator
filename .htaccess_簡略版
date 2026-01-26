@@ -1,0 +1,27 @@
+# かわうそレザー統合用 .htaccess設定（簡略版）
+# /simulator/ ディレクトリ用の設定
+
+# SPAのルーティング対応
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # ファイルが存在しない場合、index.htmlにリダイレクト
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . index.html [L]
+</IfModule>
+
+# ディレクトリインデックスの無効化
+Options -Indexes
+
+# 静的ファイルのキャッシュ設定
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>

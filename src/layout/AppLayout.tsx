@@ -4,16 +4,16 @@ import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-const navItems = [
-  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" },
-  { to: "/categories", label: "カテゴリ一覧", tone: "sky" },
-  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" },
-  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" },
-  { to: "/admin/common", label: "基本設定", tone: "rose" }
+const allNavItems = [
+  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const, isAdmin: false },
+  { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const, isAdmin: false },
+  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const, isAdmin: true },
+  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" as const, isAdmin: true },
+  { to: "/admin/common", label: "基本設定", tone: "rose" as const, isAdmin: true }
 ] as const;
 
 const navToneClass: Record<
-  typeof navItems[number]["tone"],
+  typeof allNavItems[number]["tone"],
   { active: string; inactive: string }
 > = {
   emerald: {
@@ -76,6 +76,13 @@ export function AppLayout() {
   const hideNav =
     new URLSearchParams(location.search).get("hideNav") === "1" ||
     location.pathname.startsWith("/sim/");
+  
+  // かわうそレザーのHPからアクセスする場合（/simulator/）は管理画面のリンクを非表示
+  const basePath = import.meta.env.BASE_URL || "/";
+  const isSimulatorPath = basePath === "/simulator/";
+  const navItems = isSimulatorPath
+    ? allNavItems.filter((item) => !item.isAdmin)
+    : allNavItems;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">

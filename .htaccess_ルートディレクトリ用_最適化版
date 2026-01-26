@@ -1,0 +1,34 @@
+# ============================================
+# かわうそレザー統合用 .htaccess
+# サーバーのルートディレクトリ（/）用
+# 最適化版（RewriteEngine Onを1回だけ記述）
+# ============================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # /simulator/ はWordPressのリライト対象から除外
+    # この設定は WordPress の設定より前に配置すること
+    RewriteRule ^simulator/ - [L]
+    
+    # /admin 配下をシミュレーターへ（実ファイル/実フォルダが無いときだけ）
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^admin(/.*)?$ /simulator/index.html [L]
+    
+    # /common もシミュレーターへ（実ファイル/実フォルダが無いときだけ）
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^common$ /simulator/index.html [L]
+    
+    # WordPressの設定
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
+
+# BEGIN WordPress（互換性のため残す）
+# 上記のRewriteRuleで既に処理されているため、このセクションは実質的に無効
+# END WordPress

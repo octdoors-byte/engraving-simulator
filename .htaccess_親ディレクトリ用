@@ -1,0 +1,11 @@
+# かわうそレザー統合用 .htaccess設定
+# /kawauso-leather/ ディレクトリ用（親ディレクトリ）
+
+# /simulator/ へのアクセスを許可
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # /simulator/ へのアクセスを処理
+    RewriteRule ^simulator/(.*)$ simulator/$1 [L]
+</IfModule>

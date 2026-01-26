@@ -7,3 +7,7 @@ desktop.ini
 test-results
 playwright-report
 qa-report
+.deploy.env
+.env
+.env.local
+.env.production

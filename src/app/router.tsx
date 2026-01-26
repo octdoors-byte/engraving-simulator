@@ -14,11 +14,11 @@ const basePath = import.meta.env.BASE_URL || "/";
 
 export const appRouter = createBrowserRouter(
   [
-    {
-      path: "/",
-      element: <AppLayout />,
-      errorElement: <PageNotFound />,
-      children: [
+  {
+    path: "/",
+    element: <AppLayout />,
+    errorElement: <PageNotFound />,
+    children: [
       {
         index: true,
         element: <Navigate to="/top" replace />

@@ -1,0 +1,42 @@
+FTPサーバーにアップロードするファイル一覧
+========================================
+
+【重要】統合用にビルドしてからアップロードしてください
+（統合用ビルド実行.bat を実行）
+
+アップロード先: /simulator/ または /public_html/simulator/
+
+========================================
+アップロードするファイル（dist/フォルダの中身すべて）
+========================================
+
+【必須ファイル】
+- index.html
+- basic_settings.html
+- design_history.html
+- public_templates.html
+- template_creation_guide.html
+- template_management.html
+- user-guide.html
+
+【必須フォルダ】
+- assets/
+  - certificate-cover-a4.png
+  - index-xxx.js（複数ファイル）
+  - index-xxx.css（複数ファイル）
+
+- guide-shots/
+  - common-consent.png
+  - common-template.png
+  - sim-pdf-card.png
+  - sim-pdf.png
+  - sim-template.png
+  - sim-trim-card.png
+  - sim-upload-card.png
+  - sim-upload.png
+
+========================================
+アップロード後の確認
+========================================
+
+https://あなたのドメイン/simulator/ にアクセスして動作確認

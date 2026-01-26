@@ -1,0 +1,24 @@
+# ============================================
+# かわうそレザー統合用 .htaccess
+# WordPress + /simulator/ 除外設定
+# ============================================
+
+# /simulator/ はWordPressのリライト対象から除外
+# この設定は WordPress の設定より前に配置すること
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^simulator/ - [L]
+</IfModule>
+
+# BEGIN WordPress
+# WordPressの設定（既存の設定をそのまま維持）
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
