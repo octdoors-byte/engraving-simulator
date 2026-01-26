@@ -7,6 +7,35 @@
 - GitHubアカウントを持っていること
 - リポジトリがGitHubにプッシュされていること
 
+## リモートリポジトリの設定（初回のみ）
+
+GitHubリポジトリがまだ作成されていない場合、またはリモートが設定されていない場合：
+
+### 1. GitHubでリポジトリを作成
+
+1. GitHubにログイン
+2. 右上の「+」→「New repository」をクリック
+3. リポジトリ名を入力（例: `engraving-simulator`）
+4. 「Create repository」をクリック
+
+### 2. リモートリポジトリを設定
+
+```bash
+# リモートを追加（YOUR_USERNAMEとYOUR_REPO_NAMEを実際の値に置き換えてください）
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+
+# またはSSHを使用する場合
+git remote add origin git@github.com:YOUR_USERNAME/YOUR_REPO_NAME.git
+```
+
+### 3. 初回プッシュ
+
+```bash
+git push -u origin master
+```
+
+**注意**: ブランチ名が `main` の場合は `master` を `main` に置き換えてください。
+
 ## デプロイ手順
 
 ### 1. GitHub Pagesの有効化
