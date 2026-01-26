@@ -83,35 +83,56 @@ jobs:
       - name: Create 404.html for SPA routing
         run: |
           # GitHub PagesでSPAのルーティングを有効にするため、404.htmlを作成
-          # 404.htmlはindex.htmlのコピーで、存在しないルートにアクセスしたときに
-          # GitHub Pagesが404.htmlを返し、React Routerが正しくルーティングを処理できる
           if [ -f "dist/index.html" ]; then
             BASE_PATH="/${{ steps.repo.outputs.name }}/"
-            # index.htmlをコピー
+            
+            # index.htmlにクエリパラメータ形式のURLを処理するスクリプトを追加
+            cat > /tmp/spa-handler.js << 'SPAEOF'
+<script>
+(function() {
+  var l = window.location;
+  var search = l.search;
+  if (search && search.startsWith('?/')) {
+    var path = search.slice(2).replace(/~and~/g, '&');
+    var queryIndex = path.indexOf('&');
+    var basePath = l.pathname.split('/').slice(0, 2).join('/') + '/';
+    var newPath = basePath + (queryIndex !== -1 ? path.slice(0, queryIndex) : path);
+    var query = queryIndex !== -1 ? '?' + path.slice(queryIndex + 1).replace(/~and~/g, '&') : '';
+    window.history.replaceState({}, '', newPath + query + l.hash);
+  }
+})();
+</script>
+SPAEOF
+            # </head>タグの直前にSPAハンドラーを挿入
+            sed -i "/<\/head>/r /tmp/spa-handler.js" dist/index.html
+            
+            # index.htmlをコピーして404.htmlを作成
             cp dist/index.html dist/404.html
-            # リダイレクトスクリプトを作成（baseパスを考慮）
-            REDIRECT_SCRIPT="<script>
-            (function() {
-              var basePath = '$BASE_PATH';
-              var l = window.location;
-              var pathname = l.pathname;
-              
-              // baseパス以降のパスを取得
-              if (pathname.startsWith(basePath)) {
-                var pathAfterBase = pathname.slice(basePath.length - 1);
-                // クエリパラメータ形式でリダイレクト
-                l.replace(
-                  l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-                  basePath + '?/' + pathAfterBase.replace(/&/g, '~and~') +
-                  (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-                  l.hash
-                );
-              }
-            })();
-            </script>"
-            # </head>タグの直前にスクリプトを挿入
-            sed -i "s|</head>|$REDIRECT_SCRIPT</head>|" dist/404.html
-            echo "✅ Created dist/404.html for SPA routing with base path: $BASE_PATH"
+            
+            # 404.html用のリダイレクトスクリプトを作成（baseパスを考慮）
+            cat > /tmp/redirect.js << EOF
+<script>
+(function() {
+  var basePath = '$BASE_PATH';
+  var l = window.location;
+  var pathname = l.pathname;
+  
+  if (pathname.startsWith(basePath)) {
+    var pathAfterBase = pathname.slice(basePath.length - 1);
+    var redirectUrl = basePath + '?/' + pathAfterBase.replace(/&/g, '~and~');
+    if (l.search && !l.search.startsWith('?/')) {
+      redirectUrl += '&' + l.search.slice(1).replace(/&/g, '~and~');
+    }
+    redirectUrl += l.hash;
+    l.replace(redirectUrl);
+  }
+})();
+</script>
+EOF
+            # </head>タグの直前にリダイレクトスクリプトを挿入
+            sed -i "/<\/head>/r /tmp/redirect.js" dist/404.html
+            
+            echo "✅ Created dist/404.html and added SPA routing scripts with base path: $BASE_PATH"
           else
             echo "❌ dist/index.html not found, cannot create 404.html"
             exit 1
