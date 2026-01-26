@@ -329,21 +329,21 @@ export function AdminDesignsPage() {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section with Gradient */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-100 p-8 shadow-xl">
+      {/* Hero Section - Premium Design without Gradient */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmMWY1ZjkiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 shadow-lg">
-              <span className="text-2xl">🎨</span>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500 text-3xl shadow-lg">
+              🎨
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">デザイン作成履歴</h1>
-              <p className="text-sm text-slate-600 mt-1">作成済みのデザインを一覧で確認</p>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight">デザイン作成履歴</h1>
+              <p className="text-base text-slate-700 mt-1 font-medium">作成済みのデザインを一覧で確認</p>
             </div>
             <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
           </div>
         </div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       </div>
 
       {/* Search and Filter Section */}
@@ -352,7 +352,7 @@ export function AdminDesignsPage() {
           <div className="flex-1 min-w-[200px]">
             <input
               type="text"
-              className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               placeholder="🔍 デザインIDで検索"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -360,7 +360,7 @@ export function AdminDesignsPage() {
           </div>
           <div className="flex-1 min-w-[200px]">
             <select
-              className="w-full rounded-xl border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               value={templateFilter}
               onChange={(event) => setTemplateFilter(event.target.value)}
             >
@@ -374,7 +374,7 @@ export function AdminDesignsPage() {
           </div>
           <button
             type="button"
-            className="rounded-xl border-2 border-rose-300 bg-gradient-to-r from-rose-50 to-rose-100 px-6 py-3 text-sm font-bold text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:from-rose-100 hover:to-rose-200 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border-2 border-rose-300 bg-rose-50 px-6 py-3 text-sm font-black text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleBulkDelete}
             disabled={selectedIds.size === 0}
           >
@@ -384,17 +384,17 @@ export function AdminDesignsPage() {
       </div>
 
       <div className="overflow-hidden rounded-3xl bg-white shadow-2xl">
-        <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6">
+        <div className="border-b-2 border-slate-200 bg-slate-100 px-8 py-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-slate-900">一覧</h2>
-            <div className="flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2">
-              <span className="text-sm font-semibold text-indigo-800">全{filteredDesigns.length}件</span>
+            <h2 className="text-2xl font-black text-slate-900">一覧</h2>
+            <div className="flex items-center gap-2 rounded-xl border-2 border-indigo-300 bg-indigo-50 px-4 py-2">
+              <span className="text-sm font-black text-indigo-900">全{filteredDesigns.length}件</span>
             </div>
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-gradient-to-r from-slate-50 to-slate-100 text-xs uppercase tracking-wide text-slate-600">
+          <table className="min-w-full divide-y divide-slate-200 text-sm">
+            <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-700">
               <tr>
                 <th className="px-6 py-4 text-left">
                   <input
@@ -433,7 +433,7 @@ export function AdminDesignsPage() {
                 </tr>
               ) : (
                 filteredDesigns.map((design) => (
-                  <tr key={design.designId} className="transition-colors hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/30">
+                  <tr key={design.designId} className="transition-colors hover:bg-indigo-50/50">
                     <td className="px-6 py-4">
                       <input
                         type="checkbox"
@@ -454,7 +454,7 @@ export function AdminDesignsPage() {
                       />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm transition-all hover:scale-105 hover:shadow-md">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:scale-105 hover:shadow-md">
                         {previewUrls[design.designId] ? (
                           <img
                             src={previewUrls[design.designId]}
@@ -472,19 +472,19 @@ export function AdminDesignsPage() {
                     </td>
                     <td className="px-6 py-4 font-mono text-sm font-semibold text-slate-900">{design.designId}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                      <span className={`inline-flex items-center rounded-lg border-2 px-3 py-1.5 text-xs font-bold ${
                         getTemplate(design.templateKey)
-                          ? "border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-800"
-                          : "border border-slate-200 bg-slate-100 text-slate-500"
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                          : "border-slate-300 bg-slate-100 text-slate-500"
                       }`}>
                         {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-700">{formatDate(design.createdAt)}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-slate-700">{formatDate(design.createdAt)}</td>
                     <td className="px-6 py-4">
                       <button
                         type="button"
-                        className="rounded-lg border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 to-indigo-100 px-4 py-2 text-xs font-bold text-indigo-700 shadow-sm transition-all hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 hover:shadow-md"
+                        className="rounded-lg border-2 border-indigo-300 bg-indigo-50 px-4 py-2 text-xs font-black text-indigo-700 shadow-sm transition-all hover:border-indigo-400 hover:bg-indigo-100 hover:shadow-md"
                         onClick={() => handlePreview(design, "confirm")}
                       >
                         📄 確認用PDF
@@ -500,36 +500,36 @@ export function AdminDesignsPage() {
       {previewUrl && previewInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 transition-all">
           <div className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all">
-            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+            <div className="flex items-center justify-between border-b-2 border-slate-200 bg-slate-100 px-6 py-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 text-lg shadow-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-lg shadow-md">
                   📄
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-slate-900">{previewInfo.designId}</span>
-                  <span className="ml-2 text-sm text-slate-600">/ 確認用PDF</span>
+                  <span className="text-lg font-black text-slate-900">{previewInfo.designId}</span>
+                  <span className="ml-2 text-sm font-semibold text-slate-600">/ 確認用PDF</span>
                 </div>
               </div>
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
+                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                 onClick={handleClosePreview}
               >
                 ✕ 閉じる
               </button>
             </div>
-            <div className="h-[70vh] bg-gradient-to-br from-slate-50 to-white">
+            <div className="h-[70vh] bg-white">
               <object data={previewUrl} type="application/pdf" className="h-full w-full">
                 <p className="p-4 text-sm text-slate-500">PDFを表示できません。</p>
               </object>
             </div>
-            <div className="flex items-center justify-between border-t border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
-              <span className="text-sm text-slate-600">
+            <div className="flex items-center justify-between border-t-2 border-slate-200 bg-slate-100 px-6 py-4">
+              <span className="text-sm font-semibold text-slate-700">
                 {isPreviewLoading ? "⏳ 確認画面を読み込み中..." : "✓ 確認画面を確認してからダウンロードできます。"}
               </span>
               <button
                 type="button"
-                className="rounded-xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 px-6 py-2 text-sm font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl border-2 border-emerald-300 bg-emerald-50 px-6 py-2 text-sm font-black text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!previewBlob}
                 onClick={() => {
                   if (!previewBlob || !previewInfo) return;
@@ -554,16 +554,16 @@ export function AdminDesignsPage() {
             className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+            <div className="flex items-center justify-between border-b-2 border-slate-200 bg-slate-100 px-6 py-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 text-lg shadow-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-lg shadow-md">
                   🖼️
                 </div>
-                <span className="text-lg font-bold text-slate-900">{previewImageName}</span>
+                <span className="text-lg font-black text-slate-900">{previewImageName}</span>
               </div>
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
+                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                 onClick={() => {
                   setPreviewImageUrl(null);
                   setPreviewImageName(null);
@@ -572,7 +572,7 @@ export function AdminDesignsPage() {
                 ✕ 閉じる
               </button>
             </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-gradient-to-br from-slate-50 to-white p-8">
+            <div className="flex max-h-[80vh] items-center justify-center bg-white p-8">
               <img
                 src={previewImageUrl}
                 alt={previewImageName || "プレビュー"}

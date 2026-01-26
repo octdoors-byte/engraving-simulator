@@ -527,32 +527,31 @@ const cancelEditing = useCallback(() => {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section with Gradient */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 p-8 shadow-xl">
+      {/* Hero Section - Premium Design without Gradient */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmMWY1ZjkiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
-              <span className="text-2xl">📋</span>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500 text-3xl shadow-lg">
+              📋
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">テンプレート管理</h1>
-              <p className="text-sm text-slate-600 mt-1">デザインテンプレートの一元管理</p>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight">テンプレート管理</h1>
+              <p className="text-base text-slate-700 mt-1 font-medium">デザインテンプレートの一元管理</p>
             </div>
             <HelpIcon guideUrl="/template_management.html" title="テンプレート管理の操作ガイド" />
           </div>
         </div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       </div>
 
-      {/* Upload Area - Premium Design */}
-      <div className="group relative overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 hover:shadow-3xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-transparent to-orange-50/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      {/* Upload Area - Premium Design without Gradient */}
+      <div className="group relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white shadow-2xl transition-all duration-300 hover:shadow-3xl">
         <div className="relative p-8">
           <div
             className={`flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed px-8 py-16 text-base transition-all duration-300 ${
               isDragging
-                ? "border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 scale-[1.02] shadow-lg"
-                : "border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:border-amber-300 hover:bg-gradient-to-br hover:from-amber-50/30 hover:to-orange-50/30"
+                ? "border-amber-400 bg-amber-50 scale-[1.02] shadow-xl"
+                : "border-slate-200 bg-white hover:border-amber-300 hover:bg-amber-50/50"
             }`}
             role="button"
             tabIndex={0}
@@ -574,7 +573,7 @@ const cancelEditing = useCallback(() => {
               handleTemplateFiles(event.dataTransfer.files);
             }}
           >
-            <div className={`flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-4xl shadow-xl transition-all duration-300 ${isDragging ? "scale-110 rotate-12" : "group-hover:scale-105"}`}>
+            <div className={`flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-500 text-4xl shadow-xl transition-all duration-300 ${isDragging ? "scale-110 rotate-12" : "group-hover:scale-105"}`}>
               ⬆️
             </div>
             <div className="text-center">
@@ -583,7 +582,7 @@ const cancelEditing = useCallback(() => {
               <p className="text-xs text-slate-500 mt-1">template.json と背景画像の2ファイルが必要です</p>
             </div>
             {(pendingJsonFile || pendingImageFile) && (
-              <div className="mt-4 w-full max-w-md rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-4 shadow-md">
+              <div className="mt-4 w-full max-w-md rounded-xl border-2 border-amber-300 bg-amber-50 p-4 shadow-md">
                 <div className="space-y-2">
                   {pendingJsonFile && (
                     <div className="flex items-center gap-2 text-sm font-semibold text-amber-800">
@@ -617,7 +616,7 @@ const cancelEditing = useCallback(() => {
       </div>
 
       <div className="overflow-hidden rounded-3xl bg-white shadow-2xl">
-        <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6">
+        <div className="border-b-2 border-slate-200 bg-slate-100 px-8 py-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold text-slate-900">テンプレート一覧</h2>
@@ -632,7 +631,7 @@ const cancelEditing = useCallback(() => {
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-gradient-to-r from-slate-50 to-slate-100 text-xs uppercase tracking-wide text-slate-600">
+            <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-700">
               <tr>
                 {columns.map((col) => (
                   <th key={col.key} className="px-6 py-4 text-left font-bold">
@@ -657,9 +656,9 @@ const cancelEditing = useCallback(() => {
                 </tr>
               ) : (
                 templates.map((template) => (
-                  <tr key={template.templateKey} className="transition-colors hover:bg-gradient-to-r hover:from-amber-50/30 hover:to-orange-50/30">
+                  <tr key={template.templateKey} className="transition-colors hover:bg-amber-50/50">
                     <td className="px-6 py-4">
-                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm transition-all hover:scale-105 hover:shadow-md">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:scale-105 hover:shadow-md">
                         {templatePreviewUrls[template.templateKey] ? (
                           <img
                             src={templatePreviewUrls[template.templateKey]}
@@ -705,7 +704,7 @@ const cancelEditing = useCallback(() => {
                                 return (
                                   <label key={opt.value} className={`inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-semibold shadow-sm transition-all cursor-pointer ${
                                     checked
-                                      ? "border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900"
+                                      ? "border-amber-400 bg-amber-50 text-amber-900"
                                       : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                                   }`}>
                                     <input
@@ -730,14 +729,14 @@ const cancelEditing = useCallback(() => {
                           <div className="flex gap-2">
                             <button
                               type="button"
-                              className="rounded-lg border-2 border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 px-4 py-2 text-xs font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
+                              className="rounded-lg border-2 border-emerald-300 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md"
                               onClick={() => commitTemplateMeta(template.templateKey)}
                             >
                               ✓ 保存
                             </button>
                             <button
                               type="button"
-                              className="rounded-lg border-2 border-slate-200 bg-gradient-to-r from-slate-50 to-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:from-slate-100 hover:to-white hover:shadow-md"
+                              className="rounded-lg border-2 border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                               onClick={cancelEditing}
                             >
                               ✕ キャンセル
@@ -786,7 +785,7 @@ const cancelEditing = useCallback(() => {
                             className={
                               template.status === "archive"
                                 ? "inline-flex items-center rounded-xl border-2 border-slate-200 bg-slate-100 px-4 py-2 text-slate-500 font-semibold"
-                                : "inline-flex items-center rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-2 text-amber-900 font-bold shadow-sm hover:border-amber-400 hover:from-amber-100 hover:to-orange-100 hover:shadow-md transition-all cursor-pointer"
+                                : "inline-flex items-center rounded-xl border-2 border-amber-300 bg-amber-50 px-4 py-2 text-amber-900 font-bold shadow-sm hover:border-amber-400 hover:bg-amber-100 hover:shadow-md transition-all cursor-pointer"
                             }
                           >
                             {template.name}
@@ -800,7 +799,7 @@ const cancelEditing = useCallback(() => {
                             ).map((cat) => (
                               <span
                                 key={cat}
-                                className="inline-flex items-center rounded-lg border border-slate-200 bg-gradient-to-r from-slate-50 to-white px-3 py-1.5 font-semibold text-slate-700 shadow-sm"
+                                className="inline-flex items-center rounded-lg border-2 border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-700 shadow-sm"
                               >
                                 {categoryLabelMap.get(cat) ?? cat}
                               </span>
@@ -817,7 +816,7 @@ const cancelEditing = useCallback(() => {
                       <div className="flex flex-col gap-3">
                         <StatusBadge status={template.status} />
                         <select
-                          className="rounded-lg border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:shadow-md focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="rounded-lg border-2 border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:shadow-md focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           value={template.status}
                           disabled={template.status === "archive"}
                           onChange={(event) =>
@@ -852,9 +851,9 @@ const cancelEditing = useCallback(() => {
                     <td className="px-6 py-4">{formatUpdatedAt(template.updatedAt)}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          className="rounded-lg border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition-all hover:border-blue-300 hover:from-blue-100 hover:to-blue-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            <button
+                              type="button"
+                              className="rounded-lg border-2 border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm transition-all hover:border-blue-400 hover:bg-blue-100 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={template.status === "archive"}
                           onClick={() => {
                             if (template.status === "draft") {
@@ -867,7 +866,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded-lg border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm transition-all hover:border-emerald-300 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
+                          className="rounded-lg border-2 border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md"
                           onClick={() =>
                             window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844")
                           }
@@ -876,7 +875,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100 px-3 py-1.5 text-xs font-semibold text-purple-700 shadow-sm transition-all hover:border-purple-300 hover:from-purple-100 hover:to-purple-200 hover:shadow-md"
+                          className="rounded-lg border-2 border-purple-300 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700 shadow-sm transition-all hover:border-purple-400 hover:bg-purple-100 hover:shadow-md"
                           onClick={() =>
                             window.open(`/sim/${template.templateKey}`, "_blank", "width=1280,height=720")
                           }
@@ -885,7 +884,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded-lg border-2 border-rose-200 bg-gradient-to-r from-rose-50 to-rose-100 px-3 py-1.5 text-xs font-semibold text-rose-700 shadow-sm transition-all hover:border-rose-300 hover:from-rose-100 hover:to-rose-200 hover:shadow-md"
+                          className="rounded-lg border-2 border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-100 hover:shadow-md"
                           onClick={() => handleDelete(template.templateKey)}
                         >
                           🗑️ 削除
@@ -909,19 +908,19 @@ const cancelEditing = useCallback(() => {
           }}
         >
           <div
-            className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all"
+            className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl border-2 border-slate-200 bg-white shadow-2xl transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+            <div className="flex items-center justify-between border-b-2 border-slate-200 bg-slate-100 px-6 py-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-lg shadow-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-lg shadow-md">
                   🖼️
                 </div>
-                <span className="text-lg font-bold text-slate-900">{previewImageName}</span>
+                <span className="text-lg font-black text-slate-900">{previewImageName}</span>
               </div>
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
+                className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
                 onClick={() => {
                   setPreviewImageUrl(null);
                   setPreviewImageName(null);
@@ -930,7 +929,7 @@ const cancelEditing = useCallback(() => {
                 ✕ 閉じる
               </button>
             </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-gradient-to-br from-slate-50 to-white p-8">
+            <div className="flex max-h-[80vh] items-center justify-center bg-white p-8">
               <img
                 src={previewImageUrl}
                 alt={previewImageName || "プレビュー"}

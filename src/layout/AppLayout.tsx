@@ -87,8 +87,8 @@ export function AppLayout() {
     : allNavItems;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 text-slate-900">
-      <header className="border-b-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 shadow-lg">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="border-b-2 border-slate-200 bg-white shadow-lg">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between">
           <div className={`flex items-center gap-4 ${logoAlign}`}>
             {settings?.logoImage && (
@@ -138,7 +138,7 @@ export function AppLayout() {
           <Outlet />
         </ErrorBoundary>
       </main>
-      <footer className="border-t-2 border-slate-200 bg-gradient-to-r from-white to-slate-50 shadow-lg">
+      <footer className="border-t-2 border-slate-200 bg-white shadow-lg">
         <div
           className={`mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-xs text-slate-600 ${footerItemsAlign}`}
         >

@@ -236,21 +236,21 @@ export function CommonInfoPage() {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section with Gradient */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 p-8 shadow-xl">
+      {/* Hero Section - Premium Design without Gradient */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmMWY1ZjkiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 shadow-lg">
-              <span className="text-2xl">⚙️</span>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500 text-3xl shadow-lg">
+              ⚙️
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">基本設定</h1>
-              <p className="text-sm text-slate-600 mt-1">トップメニューに共通説明を掲載するための設定</p>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight">基本設定</h1>
+              <p className="text-base text-slate-700 mt-1 font-medium">トップメニューに共通説明を掲載するための設定</p>
             </div>
             <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
           </div>
         </div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       </div>
 
       <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
@@ -261,9 +261,9 @@ export function CommonInfoPage() {
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <button
             type="button"
-            className={`rounded-xl border-2 px-6 py-3 text-sm font-bold shadow-sm transition-all ${
+            className={`rounded-xl border-2 px-6 py-3 text-sm font-black shadow-sm transition-all ${
               isDirty
-                ? "border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
+                ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md"
                 : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
             }`}
             disabled={!isDirty}
@@ -273,7 +273,7 @@ export function CommonInfoPage() {
           </button>
           <button
             type="button"
-            className="rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-3 text-sm font-bold text-blue-700 shadow-sm transition-all hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 hover:shadow-md"
+            className="rounded-xl border-2 border-blue-300 bg-blue-50 px-6 py-3 text-sm font-black text-blue-700 shadow-sm transition-all hover:border-blue-400 hover:bg-blue-100 hover:shadow-md"
             onClick={handleBackup}
           >
             📦 バックアップを取る
@@ -281,7 +281,7 @@ export function CommonInfoPage() {
           {hasBackup && (
             <button
               type="button"
-              className="rounded-xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 px-6 py-3 text-sm font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 hover:shadow-md"
+              className="rounded-xl border-2 border-emerald-300 bg-emerald-50 px-6 py-3 text-sm font-black text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md"
               onClick={handleRestoreFromBackup}
             >
               🔄 バックアップから復元
@@ -289,7 +289,7 @@ export function CommonInfoPage() {
           )}
           <button
             type="button"
-            className="rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-amber-100 px-6 py-3 text-sm font-bold text-amber-700 shadow-sm transition-all hover:border-amber-400 hover:from-amber-100 hover:to-amber-200 hover:shadow-md"
+            className="rounded-xl border-2 border-amber-300 bg-amber-50 px-6 py-3 text-sm font-black text-amber-700 shadow-sm transition-all hover:border-amber-400 hover:bg-amber-100 hover:shadow-md"
             onClick={handleRestore}
           >
             🔙 初期値に戻す
@@ -298,7 +298,7 @@ export function CommonInfoPage() {
         </div>
 
         {/* カテゴリ設定（基本設定の上部） */}
-        <div className="mt-6 space-y-4 rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-lg">
+        <div className="mt-6 space-y-4 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-lg font-bold text-slate-900">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
@@ -323,17 +323,17 @@ export function CommonInfoPage() {
           )}
           <div className="space-y-4">
             {commonInfoCategories.map((cat, index) => (
-              <div key={cat.id ?? index} className="rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-md">
+              <div key={cat.id ?? index} className="rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-md">
                 <div className="flex items-center justify-between gap-2 mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-lg shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500 text-lg font-black text-white shadow-md">
                       {index + 1}
                     </div>
-                    <span className="text-base font-bold text-slate-900">カテゴリ {index + 1}</span>
+                    <span className="text-base font-black text-slate-900">カテゴリ {index + 1}</span>
                   </div>
                   <button
                     type="button"
-                    className="rounded-xl border-2 border-rose-300 bg-gradient-to-r from-rose-50 to-rose-100 px-4 py-2 text-xs font-bold text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:from-rose-100 hover:to-rose-200 hover:shadow-md"
+                    className="rounded-xl border-2 border-rose-300 bg-rose-50 px-4 py-2 text-xs font-black text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-100 hover:shadow-md"
                     onClick={() => removeCategory(index)}
                   >
                     🗑️ 削除
@@ -537,13 +537,13 @@ export function CommonInfoPage() {
       </div>
 
       <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 text-xl shadow-lg">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500 text-3xl shadow-lg">
             📄
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">共通説明（お客様向け）</h2>
-            <p className="text-sm text-slate-600 mt-1">お客様に表示される共通説明ページの設定</p>
+            <h2 className="text-3xl font-black text-slate-900">共通説明（お客様向け）</h2>
+            <p className="text-base text-slate-700 mt-1 font-medium">お客様に表示される共通説明ページの設定</p>
           </div>
           <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
         </div>
