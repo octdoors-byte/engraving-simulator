@@ -527,25 +527,32 @@ const cancelEditing = useCallback(() => {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section - Modern Business Design */}
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900 mb-1">テンプレート管理</h1>
-            <p className="text-sm text-slate-600">デザインテンプレートの一元管理</p>
+      {/* Hero Section - Refined Business Design */}
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-8 shadow-md">
+        <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+        <div className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-12 bg-slate-400 rounded-full"></div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Template Management</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">テンプレート管理</h1>
+              <p className="text-base text-slate-600 leading-relaxed">デザインテンプレートの一元管理</p>
+            </div>
+            <HelpIcon guideUrl="/template_management.html" title="テンプレート管理の操作ガイド" />
           </div>
-          <HelpIcon guideUrl="/template_management.html" title="テンプレート管理の操作ガイド" />
         </div>
       </div>
 
-      {/* Upload Area - Modern Business Design */}
-      <div className="group relative overflow-hidden rounded border border-slate-200 bg-white shadow-sm transition-all duration-300">
-        <div className="relative p-6">
+      {/* Upload Area - Refined Business Design */}
+      <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-md transition-all duration-300">
+        <div className="relative p-8">
           <div
-            className={`flex flex-col items-center justify-center gap-4 rounded border border-dashed px-6 py-12 text-sm transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-5 rounded-lg border-2 border-dashed px-8 py-16 text-base transition-all duration-300 ${
               isDragging
-                ? "border-amber-400 bg-amber-50"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                ? "border-amber-400 bg-amber-50/80 shadow-lg"
+                : "border-slate-200 bg-slate-50/30 hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-sm"
             }`}
             role="button"
             tabIndex={0}
@@ -576,7 +583,7 @@ const cancelEditing = useCallback(() => {
               <p className="text-xs text-slate-500 mt-1">template.json と背景画像の2ファイルが必要です</p>
             </div>
             {(pendingJsonFile || pendingImageFile) && (
-              <div className="mt-4 w-full max-w-md rounded border border-amber-300 bg-amber-50 p-3">
+              <div className="mt-6 w-full max-w-md rounded-lg border border-amber-300 bg-amber-50/80 p-4 shadow-sm">
                 <div className="space-y-2">
                   {pendingJsonFile && (
                     <div className="flex items-center gap-2 text-sm font-semibold text-amber-800">
@@ -650,9 +657,9 @@ const cancelEditing = useCallback(() => {
                 </tr>
               ) : (
                 templates.map((template) => (
-                  <tr key={template.templateKey} className="transition-colors hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-white transition-all hover:border-slate-300">
+                  <tr key={template.templateKey} className="transition-all hover:bg-slate-50/80 border-b border-slate-100">
+                    <td className="px-6 py-4">
+                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow">
                         {templatePreviewUrls[template.templateKey] ? (
                           <img
                             src={templatePreviewUrls[template.templateKey]}
@@ -696,10 +703,10 @@ const cancelEditing = useCallback(() => {
                               {categoryOptions.map((opt) => {
                                 const checked = editingCategories.includes(opt.value);
                                 return (
-                                  <label key={opt.value} className={`inline-flex items-center gap-2 rounded border px-2.5 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                                  <label key={opt.value} className={`inline-flex items-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold shadow-sm transition-all cursor-pointer ${
                                     checked
-                                      ? "border-slate-400 bg-slate-100 text-slate-900"
-                                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                                      ? "border-slate-400 bg-slate-100 text-slate-900 shadow"
+                                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:shadow"
                                   }`}>
                                     <input
                                       type="checkbox"
@@ -723,14 +730,14 @@ const cancelEditing = useCallback(() => {
                           <div className="flex gap-2">
                             <button
                               type="button"
-                              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                               onClick={() => commitTemplateMeta(template.templateKey)}
                             >
                               保存
                             </button>
                             <button
                               type="button"
-                              className="rounded border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
+                              className="rounded-md border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow"
                               onClick={cancelEditing}
                             >
                               キャンセル
@@ -778,8 +785,8 @@ const cancelEditing = useCallback(() => {
                           <span
                             className={
                               template.status === "archive"
-                                ? "inline-flex items-center rounded border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs text-slate-600 font-medium"
-                                : "inline-flex items-center rounded border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 font-medium hover:border-slate-400 hover:bg-slate-50 transition-all cursor-pointer"
+                                ? "inline-flex items-center rounded-md border border-slate-300 bg-slate-100 px-3 py-1.5 text-xs text-slate-600 font-semibold shadow-sm"
+                                : "inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 font-semibold shadow-sm hover:border-slate-400 hover:bg-slate-50 hover:shadow transition-all cursor-pointer"
                             }
                           >
                             {template.name}
@@ -793,7 +800,7 @@ const cancelEditing = useCallback(() => {
                             ).map((cat) => (
                               <span
                                 key={cat}
-                                className="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-700"
+                                className="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm"
                               >
                                 {categoryLabelMap.get(cat) ?? cat}
                               </span>
@@ -810,7 +817,7 @@ const cancelEditing = useCallback(() => {
                       <div className="flex flex-col gap-3">
                         <StatusBadge status={template.status} />
                         <select
-                          className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-all hover:border-slate-300 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:shadow focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           value={template.status}
                           disabled={template.status === "archive"}
                           onChange={(event) =>
@@ -847,7 +854,7 @@ const cancelEditing = useCallback(() => {
                       <div className="flex flex-wrap gap-2">
                             <button
                               type="button"
-                              className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={template.status === "archive"}
                           onClick={() => {
                             if (template.status === "draft") {
@@ -860,7 +867,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                          className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                           onClick={() =>
                             window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844")
                           }
@@ -869,7 +876,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                          className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                           onClick={() =>
                             window.open(`/sim/${template.templateKey}`, "_blank", "width=1280,height=720")
                           }
@@ -878,7 +885,7 @@ const cancelEditing = useCallback(() => {
                         </button>
                         <button
                           type="button"
-                          className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                          className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                           onClick={() => handleDelete(template.templateKey)}
                         >
                           🗑️ 削除
@@ -905,11 +912,11 @@ const cancelEditing = useCallback(() => {
             className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl border-2 border-slate-200 bg-white shadow-2xl transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
-              <span className="text-sm font-semibold text-slate-900">{previewImageName}</span>
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-100/80 backdrop-blur-sm px-6 py-4">
+              <span className="text-base font-bold text-slate-900">{previewImageName}</span>
               <button
                 type="button"
-                className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                className="rounded-md border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                 onClick={() => {
                   setPreviewImageUrl(null);
                   setPreviewImageName(null);
@@ -918,7 +925,7 @@ const cancelEditing = useCallback(() => {
                 閉じる
               </button>
             </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-white p-6">
+            <div className="flex max-h-[80vh] items-center justify-center bg-white p-8">
               <img
                 src={previewImageUrl}
                 alt={previewImageName || "プレビュー"}

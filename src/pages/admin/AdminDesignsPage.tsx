@@ -329,14 +329,21 @@ export function AdminDesignsPage() {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section - Modern Business Design */}
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900 mb-1">デザイン作成履歴</h1>
-            <p className="text-sm text-slate-600">作成済みのデザインを一覧で確認</p>
+      {/* Hero Section - Refined Business Design */}
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-8 shadow-md">
+        <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+        <div className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-12 bg-slate-400 rounded-full"></div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Design History</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">デザイン作成履歴</h1>
+              <p className="text-base text-slate-600 leading-relaxed">作成済みのデザインを一覧で確認</p>
+            </div>
+            <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
           </div>
-          <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
         </div>
       </div>
 
@@ -378,17 +385,20 @@ export function AdminDesignsPage() {
       </div>
 
       <div className="overflow-hidden rounded-3xl bg-white shadow-2xl">
-        <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+        <div className="border-b border-slate-200 bg-slate-100/80 backdrop-blur-sm px-6 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">一覧</h2>
-            <div className="flex items-center gap-1.5 rounded border border-slate-300 bg-white px-2.5 py-1">
-              <span className="text-xs font-semibold text-slate-700">全{filteredDesigns.length}件</span>
+            <div className="flex items-center gap-2">
+              <div className="h-0.5 w-6 bg-slate-400 rounded-full"></div>
+              <h2 className="text-xl font-bold text-slate-900">一覧</h2>
+            </div>
+            <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3.5 py-1.5 shadow-sm">
+              <span className="text-sm font-bold text-slate-800">全{filteredDesigns.length}件</span>
             </div>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-700">
+            <thead className="bg-slate-100/80 backdrop-blur-sm text-xs uppercase tracking-wider text-slate-700">
               <tr>
                 <th className="px-6 py-4 text-left">
                   <input
@@ -427,11 +437,11 @@ export function AdminDesignsPage() {
                 </tr>
               ) : (
                 filteredDesigns.map((design) => (
-                  <tr key={design.designId} className="transition-colors hover:bg-slate-50">
-                    <td className="px-4 py-3">
+                  <tr key={design.designId} className="transition-all hover:bg-slate-50/80 border-b border-slate-100">
+                    <td className="px-6 py-4">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border border-slate-300 text-slate-600 focus:ring-1 focus:ring-slate-200"
+                        className="h-4 w-4 rounded border border-slate-300 text-slate-600 focus:ring-2 focus:ring-slate-200"
                         checked={selectedIds.has(design.designId)}
                         onChange={(event) => {
                           setSelectedIds((prev) => {
@@ -447,8 +457,8 @@ export function AdminDesignsPage() {
                         aria-label={`${design.designId} を選択`}
                       />
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-slate-200 bg-white transition-all hover:border-slate-300">
+                    <td className="px-6 py-4">
+                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow">
                         {previewUrls[design.designId] ? (
                           <img
                             src={previewUrls[design.designId]}
@@ -465,8 +475,8 @@ export function AdminDesignsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 font-mono text-sm font-semibold text-slate-900">{design.designId}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium ${
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center rounded-md border px-3 py-1.5 text-xs font-semibold shadow-sm ${
                         getTemplate(design.templateKey)
                           ? "border-slate-300 bg-slate-100 text-slate-700"
                           : "border-slate-300 bg-slate-100 text-slate-500"
@@ -474,11 +484,11 @@ export function AdminDesignsPage() {
                         {getTemplate(design.templateKey) ? design.templateKey : "テンプレートなし"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{formatDate(design.createdAt)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4 text-sm font-medium text-slate-600">{formatDate(design.createdAt)}</td>
+                    <td className="px-6 py-4">
                       <button
                         type="button"
-                        className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                         onClick={() => handlePreview(design, "confirm")}
                       >
                         確認用PDF
@@ -543,11 +553,11 @@ export function AdminDesignsPage() {
             className="flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
-              <span className="text-sm font-semibold text-slate-900">{previewImageName}</span>
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-100/80 backdrop-blur-sm px-6 py-4">
+              <span className="text-base font-bold text-slate-900">{previewImageName}</span>
               <button
                 type="button"
-                className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                className="rounded-md border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                 onClick={() => {
                   setPreviewImageUrl(null);
                   setPreviewImageName(null);
@@ -556,7 +566,7 @@ export function AdminDesignsPage() {
                 閉じる
               </button>
             </div>
-            <div className="flex max-h-[80vh] items-center justify-center bg-white p-6">
+            <div className="flex max-h-[80vh] items-center justify-center bg-white p-8">
               <img
                 src={previewImageUrl}
                 alt={previewImageName || "プレビュー"}

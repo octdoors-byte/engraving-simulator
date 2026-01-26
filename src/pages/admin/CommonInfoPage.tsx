@@ -236,14 +236,21 @@ export function CommonInfoPage() {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section - Modern Business Design */}
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900 mb-1">基本設定</h1>
-            <p className="text-sm text-slate-600">トップメニューに共通説明を掲載するための設定</p>
+      {/* Hero Section - Refined Business Design */}
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-8 shadow-md">
+        <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+        <div className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-12 bg-slate-400 rounded-full"></div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Basic Settings</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">基本設定</h1>
+              <p className="text-base text-slate-600 leading-relaxed">トップメニューに共通説明を掲載するための設定</p>
+            </div>
+            <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
           </div>
-          <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
         </div>
       </div>
 
@@ -292,7 +299,7 @@ export function CommonInfoPage() {
         </div>
 
         {/* カテゴリ設定（基本設定の上部） */}
-        <div className="mt-4 space-y-3 rounded border border-slate-200 bg-white p-4">
+        <div className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-lg font-bold text-slate-900">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
@@ -317,12 +324,15 @@ export function CommonInfoPage() {
           )}
           <div className="space-y-4">
             {commonInfoCategories.map((cat, index) => (
-              <div key={cat.id ?? index} className="rounded border border-slate-200 bg-white p-4">
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-sm font-semibold text-slate-900">カテゴリ {index + 1}</span>
+              <div key={cat.id ?? index} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-0.5 w-4 bg-slate-400 rounded-full"></div>
+                    <span className="text-sm font-bold text-slate-900">カテゴリ {index + 1}</span>
+                  </div>
                   <button
                     type="button"
-                    className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
                     onClick={() => removeCategory(index)}
                   >
                     削除
@@ -525,13 +535,20 @@ export function CommonInfoPage() {
         </div>
       </div>
 
-      <div className="rounded border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-1">共通説明（お客様向け）</h2>
-            <p className="text-sm text-slate-600">お客様に表示される共通説明ページの設定</p>
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-8 shadow-md space-y-6">
+        <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+        <div className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-12 bg-slate-400 rounded-full"></div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Common Info</span>
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">共通説明（お客様向け）</h2>
+              <p className="text-base text-slate-600 leading-relaxed">お客様に表示される共通説明ページの設定</p>
+            </div>
+            <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
           </div>
-          <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
