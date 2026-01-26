@@ -243,40 +243,34 @@ export function SimLandingPage() {
 
   return (
     <section className="space-y-8">
-      {/* Hero Section - Premium Design without Gradient */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmMWY1ZjkiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-3xl shadow-lg">
-              📋
-            </div>
-            <div className="flex-1">
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">公開テンプレート一覧</h1>
-              <p className="text-base text-slate-700 font-medium">
-                テンプレート一覧から使いたいテンプレートを選び、公開URLでシミュレーターを開きます
-              </p>
-            </div>
-            <HelpIcon guideUrl="/public_templates.html" title="公開テンプレート一覧の操作ガイド" />
+      {/* Hero Section - Modern Business Design */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h1 className="text-2xl font-semibold text-slate-900 mb-2">公開テンプレート一覧</h1>
+            <p className="text-sm text-slate-600">
+              テンプレート一覧から使いたいテンプレートを選び、公開URLでシミュレーターを開きます
+            </p>
           </div>
+          <HelpIcon guideUrl="/public_templates.html" title="公開テンプレート一覧の操作ガイド" />
         </div>
       </div>
 
-      <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
-        <div className="mb-6">
-          <p className="text-lg font-bold text-slate-900 mb-1">テンプレート選択</p>
-          <p className="text-sm text-slate-600">公開中のテンプレートだけ利用できます</p>
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <p className="text-sm font-medium text-slate-900 mb-1">テンプレート選択</p>
+          <p className="text-xs text-slate-500">公開中のテンプレートだけ利用できます</p>
         </div>
-        <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div className="space-y-4">
-            {/* Controls Section - Premium Design */}
-            <div className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-5 shadow-lg">
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-4 text-base">
+        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+          <div className="space-y-3">
+            {/* Controls Section - Modern Business Design */}
+            <div className="rounded border border-slate-200 bg-slate-50 p-4">
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-3 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-700">🔄 並び替え</span>
+                    <span className="text-xs font-medium text-slate-600">並び替え</span>
                     <select
-                      className="rounded-xl border-2 border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all hover:border-slate-400 hover:shadow-md focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                      className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 transition-all hover:border-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-200"
                       value={sortKey}
                       onChange={(event) => setSortKey(event.target.value as typeof sortKey)}
                     >
@@ -286,27 +280,27 @@ export function SimLandingPage() {
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-700">📏 文字サイズ</span>
-                    <label className="inline-flex items-center gap-3">
+                    <span className="text-xs font-medium text-slate-600">文字サイズ</span>
+                    <label className="inline-flex items-center gap-2">
                       <input
                         type="range"
                         min={12}
                         max={22}
                         value={tableFontSizePx}
                         onChange={(event) => setTableFontSizePx(Number(event.target.value))}
-                        className="w-24"
+                        className="w-20"
                       />
-                      <span className="text-sm font-bold text-slate-900 w-10">{tableFontSizePx}px</span>
+                      <span className="text-xs font-medium text-slate-700 w-8">{tableFontSizePx}px</span>
                     </label>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 pt-2 border-t-2 border-slate-200">
-                  <span className="text-sm font-bold text-slate-700">👁️ 表示列</span>
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                  <span className="text-xs font-medium text-slate-600">表示列</span>
                   {columns.map((col) => (
-                    <label key={col.key} className="inline-flex items-center gap-2 rounded-lg border-2 border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:shadow-md cursor-pointer">
+                    <label key={col.key} className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 cursor-pointer">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-2 border-slate-300 text-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                        className="h-3.5 w-3.5 rounded border border-slate-300 text-slate-600 focus:ring-1 focus:ring-slate-200"
                         checked={!hiddenColumns.has(col.key)}
                         onChange={(event) => {
                           setHiddenColumns((prev) => {
@@ -324,49 +318,44 @@ export function SimLandingPage() {
                     </label>
                   ))}
                 </div>
-                <p className="text-xs text-slate-500 font-medium">💡 列名をドラッグで並び替えできます</p>
+                <p className="text-xs text-slate-500">列名をドラッグで並び替えできます</p>
               </div>
             </div>
 
-            {/* Search Section - Premium Design */}
-            <div className="rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-lg">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            {/* Search Section - Modern Business Design */}
+            <div className="rounded border border-slate-200 bg-white p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <div className="flex-1">
                   <input
                     type="text"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="🔍 テンプレート名・ID・備考を検索"
-                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-5 py-3 text-base font-semibold text-slate-900 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                    placeholder="テンプレート名・ID・備考を検索"
+                    className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-all focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-200"
                   />
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border-2 border-emerald-200 bg-emerald-50 px-4 py-2.5">
-                  <span className="text-sm font-black text-emerald-900">{filteredTemplates.length}</span>
-                  <span className="text-xs font-semibold text-emerald-700">/</span>
-                  <span className="text-sm font-bold text-emerald-800">全 {templates.length} 件</span>
+                <div className="flex items-center gap-1.5 rounded border border-slate-300 bg-slate-50 px-3 py-1.5">
+                  <span className="text-xs font-semibold text-slate-700">{filteredTemplates.length}</span>
+                  <span className="text-xs text-slate-500">/</span>
+                  <span className="text-xs font-medium text-slate-600">全 {templates.length} 件</span>
                 </div>
               </div>
             </div>
 
             {sortedTemplates.length === 0 ? (
-              <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 text-4xl">
-                    📭
-                  </div>
-                  <p className="text-lg font-bold text-slate-700">条件に合うテンプレートがありません</p>
-                  <p className="text-sm text-slate-500">検索条件を変更してください</p>
-                </div>
+              <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <p className="text-sm font-medium text-slate-600">条件に合うテンプレートがありません</p>
+                <p className="text-xs text-slate-500 mt-1">検索条件を変更してください</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border-2 border-slate-200 bg-white shadow-xl">
+              <div className="overflow-x-auto rounded border border-slate-200 bg-white">
             <table className="min-w-full divide-y divide-slate-200" style={{ fontSize: tableFontSizePx, tableLayout: "auto" }}>
-                  <thead className="bg-slate-100 uppercase tracking-wide">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide">
                     <tr>
                       {visibleColumns.map((col) => (
                     <th
                       key={col.key}
-                      className={`px-4 py-4 text-left font-black text-slate-700 ${draggingKey === col.key ? "bg-slate-200" : ""}`}
+                      className={`px-4 py-3 text-left font-semibold text-slate-700 ${draggingKey === col.key ? "bg-slate-100" : ""}`}
                       draggable
                       style={{ width: columnWidths[col.key], minWidth: 10 }}
                           onDragStart={(event) => {
@@ -390,7 +379,7 @@ export function SimLandingPage() {
                             <span
                               role="separator"
                               aria-label="列幅の調整"
-                              className="ml-auto h-6 w-1.5 shrink-0 cursor-col-resize rounded-full bg-slate-400 transition-all hover:bg-slate-600"
+                              className="ml-auto h-5 w-1 shrink-0 cursor-col-resize rounded bg-slate-300 transition-all hover:bg-slate-500"
                               onMouseDown={(event) => handleResizeStart(event, col.key)}
                             />
                           </div>
@@ -408,17 +397,15 @@ export function SimLandingPage() {
                           {visibleColumns.map((col) => {
                             if (col.key === "name") {
                               return (
-                                <td key={col.key} className="px-4 font-bold text-slate-900" style={rowPaddingStyle}>
-                                  <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
-                                    {row.name}
-                                  </span>
+                                <td key={col.key} className="px-4 font-medium text-slate-900" style={rowPaddingStyle}>
+                                  {row.name}
                                 </td>
                               );
                             }
                             if (col.key === "category") {
                               return (
                                 <td key={col.key} className="px-4" style={rowPaddingStyle}>
-                                  <div className="flex flex-wrap gap-2">
+                                  <div className="flex flex-wrap gap-1.5">
                                     {(row.categories.length > 0 ? row.categories : ["未分類"]).map((cat) => {
                                       const label = categoryTitleMap.get(cat) ?? "未設定";
                                       const short = label ? label[0] : "";
@@ -426,11 +413,11 @@ export function SimLandingPage() {
                                       return (
                                         <span
                                           key={cat}
-                                          className="inline-flex items-center justify-center h-8 w-8 rounded-xl border-2 border-slate-300 text-xs font-black shadow-sm transition-all hover:scale-110 hover:shadow-md"
+                                          className="inline-flex items-center justify-center h-6 w-6 rounded border border-slate-300 text-xs font-medium transition-colors"
                                           style={
                                             bg
                                               ? { backgroundColor: bg, color: "#ffffff", borderColor: bg }
-                                              : { backgroundColor: "#f1f5f9", color: "#475569", borderColor: "#cbd5e1" }
+                                              : { backgroundColor: "#f8fafc", color: "#475569", borderColor: "#cbd5e1" }
                                           }
                                           title={label}
                                         >
@@ -456,7 +443,7 @@ export function SimLandingPage() {
                                     <input
                                       ref={commentInputRef}
                                       type="text"
-                                      className="w-full rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-2 text-base font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+                                      className="w-full rounded border border-amber-300 bg-amber-50 px-2 py-1 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-200"
                                       style={{ fontSize: tableFontSizePx }}
                                       value={editingComment}
                                       onChange={(event) => setEditingComment(event.target.value)}
@@ -476,7 +463,7 @@ export function SimLandingPage() {
                                     <div
                                       role="button"
                                       tabIndex={0}
-                                      className="cursor-pointer rounded-xl border-2 border-amber-200 bg-amber-50 px-4 py-2 font-medium text-slate-700 shadow-sm transition-all hover:border-amber-300 hover:bg-amber-100 hover:shadow-md"
+                                      className="cursor-pointer rounded border border-amber-200 bg-amber-50 px-2 py-1 text-sm text-slate-700 transition-all hover:border-amber-300 hover:bg-amber-100"
                                       onDoubleClick={() => {
                                         setEditingKey(row.key);
                                         setEditingComment(row.comment ?? "");
@@ -496,17 +483,15 @@ export function SimLandingPage() {
                             }
                             if (col.key === "paper") {
                               return (
-                            <td key={col.key} className="px-4 font-semibold text-slate-700" style={rowPaddingStyle}>
-                                  <span className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm">
-                                    {row.paper}
-                                  </span>
+                            <td key={col.key} className="px-4 text-sm text-slate-600" style={rowPaddingStyle}>
+                                  {row.paper}
                                 </td>
                               );
                             }
                             if (col.key === "templateKey") {
                               return (
                             <td key={col.key} className="px-4" style={rowPaddingStyle}>
-                                  <span className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-mono text-sm font-bold text-slate-700 shadow-sm">
+                                  <span className="font-mono text-xs text-slate-600">
                                     {row.key}
                                   </span>
                                 </td>
@@ -523,10 +508,10 @@ export function SimLandingPage() {
                             <td key={col.key} className="px-4" style={rowPaddingStyle}>
                               <button
                                 type="button"
-                                className="inline-flex items-center gap-2 rounded-xl border-2 border-sky-300 bg-sky-50 px-4 py-2 text-xs font-bold text-sky-700 shadow-sm transition-all hover:border-sky-400 hover:bg-sky-100 hover:shadow-md"
+                                className="inline-flex items-center rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
                                 onClick={() => copyToClipboard(infoFullUrl, "共通説明URL")}
                               >
-                                📄 共通説明URL
+                                共通説明URL
                               </button>
                             </td>
                           );
@@ -535,7 +520,7 @@ export function SimLandingPage() {
                         const cats = row.categories.length > 0 ? row.categories : ["default"];
                         return (
                           <td key={col.key} className="px-4" style={rowPaddingStyle}>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               {cats.map((cat) => {
                                 const label = categoryTitleMap.get(cat) ?? cat;
                                 const url =
@@ -546,11 +531,11 @@ export function SimLandingPage() {
                                   <button
                                     key={cat}
                                     type="button"
-                                    className="inline-flex items-center gap-1.5 rounded-xl border-2 border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-100 hover:shadow-md"
+                                    className="inline-flex items-center rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
                                     onClick={() => copyToClipboard(url, `公開URL(${label})`)}
                                     title={`${label} のURLをコピー`}
                                   >
-                                    🔗 {label}
+                                    {label}
                                   </button>
                                 );
                               })}
@@ -567,33 +552,33 @@ export function SimLandingPage() {
             )}
           </div>
 
-          {/* Category Filter Section - Premium Design */}
-          <div className="rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-xl">
-            <div className="mb-5">
-              <h3 className="text-xl font-black text-slate-900 mb-1">🔍 検索・カテゴリ</h3>
-              <p className="text-xs text-slate-600 font-medium">カテゴリで絞り込み</p>
+          {/* Category Filter Section - Modern Business Design */}
+          <div className="rounded border border-slate-200 bg-white p-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold text-slate-900 mb-1">検索・カテゴリ</h3>
+              <p className="text-xs text-slate-500">カテゴリで絞り込み</p>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {categoryList.length === 0 ? (
-                <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center">
-                  <p className="text-sm font-semibold text-slate-500">カテゴリがありません</p>
+                <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-3 text-center">
+                  <p className="text-xs text-slate-500">カテゴリがありません</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {categoryList.map(([category, count]) => {
                     const key = category;
                     const checked = selectedCategories.has(key);
                     const label = categoryTitleMap.get(key) ?? key;
                     return (
-                      <label key={key} className={`flex items-center justify-between rounded-xl border-2 px-4 py-3 text-sm font-semibold shadow-sm transition-all cursor-pointer ${
+                      <label key={key} className={`flex items-center justify-between rounded border px-3 py-2 text-xs font-medium transition-all cursor-pointer ${
                         checked
-                          ? "border-emerald-400 bg-emerald-50 text-emerald-900"
-                          : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:shadow-md"
+                          ? "border-slate-400 bg-slate-100 text-slate-900"
+                          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       }`}>
-                        <span className="flex items-center gap-3">
+                        <span className="flex items-center gap-2">
                           <input
                             type="checkbox"
-                            className="h-5 w-5 rounded border-2 border-slate-300 text-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                            className="h-3.5 w-3.5 rounded border border-slate-300 text-slate-600 focus:ring-1 focus:ring-slate-200"
                             checked={checked}
                             onChange={() => {
                               setSelectedCategories((prev) => {
@@ -607,10 +592,10 @@ export function SimLandingPage() {
                               });
                             }}
                           />
-                          <span className="font-bold">{label}</span>
+                          <span>{label}</span>
                         </span>
-                        <span className={`rounded-full px-3 py-1 text-xs font-black ${
-                          checked ? "bg-emerald-200 text-emerald-900" : "bg-slate-200 text-slate-700"
+                        <span className={`rounded px-2 py-0.5 text-xs font-medium ${
+                          checked ? "bg-slate-200 text-slate-700" : "bg-slate-100 text-slate-600"
                         }`}>{count}</span>
                       </label>
                     );
@@ -620,10 +605,10 @@ export function SimLandingPage() {
               {selectedCategories.size > 0 && (
                 <button
                   type="button"
-                  className="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow-md"
+                  className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
                   onClick={() => setSelectedCategories(new Set())}
                 >
-                  ✕ カテゴリ選択をクリア
+                  カテゴリ選択をクリア
                 </button>
               )}
             </div>

@@ -236,20 +236,14 @@ export function CommonInfoPage() {
     <section className="space-y-8">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      {/* Hero Section - Premium Design without Gradient */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmMWY1ZjkiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500 text-3xl shadow-lg">
-              ⚙️
-            </div>
-            <div>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight">基本設定</h1>
-              <p className="text-base text-slate-700 mt-1 font-medium">トップメニューに共通説明を掲載するための設定</p>
-            </div>
-            <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
+      {/* Hero Section - Modern Business Design */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900 mb-1">基本設定</h1>
+            <p className="text-sm text-slate-600">トップメニューに共通説明を掲載するための設定</p>
           </div>
+          <HelpIcon guideUrl="/basic_settings.html" title="基本設定の操作ガイド" />
         </div>
       </div>
 
@@ -298,7 +292,7 @@ export function CommonInfoPage() {
         </div>
 
         {/* カテゴリ設定（基本設定の上部） */}
-        <div className="mt-6 space-y-4 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-lg">
+        <div className="mt-4 space-y-3 rounded border border-slate-200 bg-white p-4">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-lg font-bold text-slate-900">カテゴリ設定（最大 {MAX_CATEGORIES} 件）</span>
@@ -323,20 +317,15 @@ export function CommonInfoPage() {
           )}
           <div className="space-y-4">
             {commonInfoCategories.map((cat, index) => (
-              <div key={cat.id ?? index} className="rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-md">
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500 text-lg font-black text-white shadow-md">
-                      {index + 1}
-                    </div>
-                    <span className="text-base font-black text-slate-900">カテゴリ {index + 1}</span>
-                  </div>
+              <div key={cat.id ?? index} className="rounded border border-slate-200 bg-white p-4">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="text-sm font-semibold text-slate-900">カテゴリ {index + 1}</span>
                   <button
                     type="button"
-                    className="rounded-xl border-2 border-rose-300 bg-rose-50 px-4 py-2 text-xs font-black text-rose-700 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-100 hover:shadow-md"
+                    className="rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-50"
                     onClick={() => removeCategory(index)}
                   >
-                    🗑️ 削除
+                    削除
                   </button>
                 </div>
                 <div className="space-y-3">
@@ -536,14 +525,11 @@ export function CommonInfoPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border-2 border-slate-200 bg-white p-8 shadow-2xl space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500 text-3xl shadow-lg">
-            📄
-          </div>
+      <div className="rounded border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-3xl font-black text-slate-900">共通説明（お客様向け）</h2>
-            <p className="text-base text-slate-700 mt-1 font-medium">お客様に表示される共通説明ページの設定</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-1">共通説明（お客様向け）</h2>
+            <p className="text-sm text-slate-600">お客様に表示される共通説明ページの設定</p>
           </div>
           <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
         </div>
