@@ -44,29 +44,36 @@ jobs:
           echo "Repository name: $REPO_NAME"
           echo "Full repository: ${{ github.repository }}"
 
-      - name: Create .env.production
-        run: |
-          BASE_PATH="/${{ steps.repo.outputs.name }}/"
-          echo "VITE_BASE_PATH=$BASE_PATH" > .env.production
-          echo "Created .env.production with VITE_BASE_PATH=$BASE_PATH"
-          cat .env.production
-
       - name: Build
+        env:
+          # リポジトリ名を取得してbaseパスを設定
+          VITE_BASE_PATH: /${{ steps.repo.outputs.name }}/
         run: |
-          echo "Building with base path from .env.production"
-          npm run build
+          echo "Building with base path: $VITE_BASE_PATH"
+          # 環境変数が正しく設定されているか確認
+          echo "VITE_BASE_PATH=$VITE_BASE_PATH"
+          # ビルド実行（環境変数を直接指定）
+          VITE_BASE_PATH="$VITE_BASE_PATH" npm run build
           # ビルド後の確認
           echo "Verifying build output..."
           if [ -f "dist/index.html" ]; then
             echo "✅ dist/index.html exists"
-            BASE_PATH="/${{ steps.repo.outputs.name }}/"
+            EXPECTED_BASE="/${{ steps.repo.outputs.name }}/"
+            echo "Expected base path: $EXPECTED_BASE"
+            echo "Checking index.html for base path..."
             # baseパスが正しく適用されているか確認
-            if grep -q "$BASE_PATH" dist/index.html; then
-              echo "✅ Base path $BASE_PATH found in index.html"
+            if grep -q "$EXPECTED_BASE" dist/index.html; then
+              echo "✅ Base path $EXPECTED_BASE found in index.html"
+              echo "Sample lines with base path:"
+              grep "$EXPECTED_BASE" dist/index.html | head -n 3
             else
-              echo "⚠️  Warning: Base path $BASE_PATH not found in index.html"
-              echo "Checking for asset paths..."
-              grep -E "(href|src)=" dist/index.html | head -n 5
+              echo "⚠️  Warning: Base path $EXPECTED_BASE not found in index.html"
+              echo "Checking for asset paths in index.html:"
+              grep -E "(href|src)=" dist/index.html | head -n 10
+              echo ""
+              echo "Checking vite.config.ts base setting..."
+              echo "First 20 lines of dist/index.html:"
+              head -n 20 dist/index.html
             fi
           else
             echo "❌ dist/index.html not found!"
