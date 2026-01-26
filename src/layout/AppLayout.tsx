@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
+const adminMenuItems = [
+  { to: "/admin/common", label: "基本設定", tone: "rose" as const },
+  { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const },
+  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const },
+  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const }
+] as const;
+
 const allNavItems = [
-  { to: "/admin/designs", label: "発行履歴", tone: "indigo" as const, isAdmin: true, isHighlighted: true },
-  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const, isAdmin: false },
-  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const, isAdmin: true },
-  { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const, isAdmin: false },
-  { to: "/admin/common", label: "基本設定", tone: "rose" as const, isAdmin: true }
+  { to: "/admin/designs", label: "発行履歴", tone: "indigo" as const, isAdmin: true, isHighlighted: true }
 ] as const;
 
 const navToneClass: Record<
@@ -58,6 +61,8 @@ const alignItemsClass: Record<"left" | "center" | "right", string> = {
 
 export function AppLayout() {
   const [settings, setSettings] = useState<CommonSettings | null>(null);
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const adminMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -67,6 +72,20 @@ export function AppLayout() {
     window.addEventListener("ksim:commonSettingsUpdated", handler as EventListener);
     return () => window.removeEventListener("ksim:commonSettingsUpdated", handler as EventListener);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (adminMenuRef.current && !adminMenuRef.current.contains(event.target as Node)) {
+        setIsAdminMenuOpen(false);
+      }
+    };
+    if (isAdminMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isAdminMenuOpen]);
 
   const logoAlign = alignClass[settings?.logoAlign ?? "left"];
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
@@ -116,6 +135,54 @@ export function AppLayout() {
           </div>
           {!hideNav && (
             <nav className="flex flex-wrap items-center gap-3 text-sm">
+              {/* 管理画面ドロップダウン */}
+              {!isSimulatorPath && (
+                <div ref={adminMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                    className={`rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2 ${
+                      adminMenuItems.some(item => location.pathname === item.to || 
+                        (item.to === "/top" && location.pathname === "/"))
+                        ? "bg-slate-700 text-white scale-105 shadow-md"
+                        : "border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:scale-105 hover:shadow-md"
+                    }`}
+                  >
+                    管理画面
+                    <span className="ml-2 inline-block transition-transform duration-200" style={{ transform: isAdminMenuOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+                      ▼
+                    </span>
+                  </button>
+                  {isAdminMenuOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-56 rounded-xl border-2 border-slate-200 bg-white shadow-lg z-50">
+                      <div className="py-2">
+                        {adminMenuItems.map((item) => {
+                          const isActive = location.pathname === item.to || (item.to === "/top" && location.pathname === "/");
+                          return (
+                            <NavLink
+                              key={item.to}
+                              to={item.to}
+                              end={item.to === "/top"}
+                              onClick={() => setIsAdminMenuOpen(false)}
+                              className={({ isActive: navIsActive }) =>
+                                [
+                                  "block px-4 py-2.5 text-sm font-semibold transition-colors",
+                                  navIsActive || isActive
+                                    ? `${navToneClass[item.tone].active}`
+                                    : `${navToneClass[item.tone].inactive} hover:bg-slate-50`
+                                ].join(" ")
+                              }
+                            >
+                              {item.label}
+                            </NavLink>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* 発行履歴 */}
               {navItems.map((item) => {
                 const isHighlighted = "isHighlighted" in item && item.isHighlighted;
                 return (
