@@ -779,7 +779,7 @@ export function CommonInfoPage() {
               disabled={!isDirty}
               onClick={handleManualSave}
             >
-              全部で反映
+              すべて保存
             </button>
             <button
               type="button"
