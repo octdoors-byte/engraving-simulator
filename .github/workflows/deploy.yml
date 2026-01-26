@@ -94,11 +94,15 @@ jobs:
   var search = l.search;
   if (search && search.startsWith('?/')) {
     var path = search.slice(2).replace(/~and~/g, '&');
+    // パスとクエリパラメータを分離
     var queryIndex = path.indexOf('&');
     var basePath = l.pathname.split('/').slice(0, 2).join('/') + '/';
-    var newPath = basePath + (queryIndex !== -1 ? path.slice(0, queryIndex) : path);
-    var query = queryIndex !== -1 ? '?' + path.slice(queryIndex + 1).replace(/~and~/g, '&') : '';
-    window.history.replaceState({}, '', newPath + query + l.hash);
+    var routePath = queryIndex !== -1 ? path.slice(0, queryIndex) : path;
+    var queryParams = queryIndex !== -1 ? path.slice(queryIndex + 1).replace(/~and~/g, '&') : '';
+    // URLを正しい形式に変換
+    var newPath = basePath + routePath;
+    var newQuery = queryParams ? '?' + queryParams : '';
+    window.history.replaceState({}, '', newPath + newQuery + l.hash);
   }
 })();
 </script>
@@ -109,7 +113,7 @@ SPAEOF
             # index.htmlをコピーして404.htmlを作成
             cp dist/index.html dist/404.html
             
-            # 404.html用のリダイレクトスクリプトを作成（baseパスを考慮）
+            # 404.html用のリダイレクトスクリプトを作成（baseパスとクエリパラメータを考慮）
             cat > /tmp/redirect.js << EOF
 <script>
 (function() {
@@ -117,9 +121,12 @@ SPAEOF
   var l = window.location;
   var pathname = l.pathname;
   
+  // baseパスで始まるパスのみ処理
   if (pathname.startsWith(basePath)) {
     var pathAfterBase = pathname.slice(basePath.length - 1);
+    // クエリパラメータ形式でリダイレクト
     var redirectUrl = basePath + '?/' + pathAfterBase.replace(/&/g, '~and~');
+    // 既存のクエリパラメータ（?/で始まらないもの）を追加
     if (l.search && !l.search.startsWith('?/')) {
       redirectUrl += '&' + l.search.slice(1).replace(/&/g, '~and~');
     }
