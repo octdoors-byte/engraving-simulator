@@ -756,21 +756,26 @@ export function SimPage() {
             </div>
           </div>
 
-          {/* 作成ボタンと情報 */}
-          <div className="space-y-3 rounded-lg border border-sky-200 bg-sky-50 px-4 py-4 shadow-sm">
-            <div className="text-center">
-              <p className="text-base font-bold text-slate-900 mb-1">デザインを作成</p>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                確認画面を表示して、問題なければデザインIDを作成します
+          {/* 作成ボタンと情報 - 最後の工程を強調 */}
+          <div className="space-y-3 rounded-lg border-2 border-emerald-300 bg-emerald-50 px-5 py-5 shadow-lg">
+            <div className="text-center mb-3">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-600 text-sm font-bold text-white shadow-md">
+                  4
+                </div>
+                <p className="text-base font-bold text-emerald-900">デザインIDを発行</p>
+              </div>
+              <p className="text-xs text-emerald-800 leading-relaxed font-medium">
+                最後のステップです。確認画面を表示して、問題なければデザインIDを作成します
               </p>
             </div>
             <button
               type="button"
-              className="w-full rounded-md border-2 border-sky-400 bg-sky-500 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-sky-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-sky-500"
+              className="w-full rounded-md border-2 border-emerald-500 bg-emerald-600 px-5 py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-emerald-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 disabled:hover:scale-100"
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
-              {isIssuing ? "作成中..." : "確認画面を表示"}
+              {isIssuing ? "作成中..." : "✓ 確認画面を表示してデザインIDを発行"}
             </button>
 
             {/* サイズチェック */}
@@ -807,16 +812,19 @@ export function SimPage() {
             )}
 
             {/* デザインID表示 */}
-            <div className="rounded-md border border-sky-300 bg-white px-4 py-3 shadow-md">
-              <p className="text-xs font-bold text-sky-800 mb-2">デザインID</p>
+            <div className="rounded-md border-2 border-emerald-300 bg-emerald-50 px-4 py-4 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1 w-6 bg-emerald-400 rounded-full"></div>
+                <p className="text-xs font-bold text-emerald-900 uppercase tracking-wide">発行されたデザインID</p>
+              </div>
               {issuedDesignId ? (
-                <div className="space-y-2">
-                  <div className="rounded-md border border-sky-300 bg-sky-100 px-3 py-3 text-center text-base font-bold tracking-wider text-slate-900 shadow-sm">
+                <div className="space-y-3">
+                  <div className="rounded-md border-2 border-emerald-400 bg-emerald-100 px-4 py-4 text-center text-lg font-bold tracking-wider text-slate-900 shadow-sm">
                     {issuedDesignId}
                   </div>
                   <button
                     type="button"
-                    className="w-full rounded-md border border-sky-300 bg-sky-200 px-3 py-2 text-xs font-semibold text-slate-900 shadow-sm transition-all hover:border-sky-400 hover:bg-sky-300 hover:shadow"
+                    className="w-full rounded-md border border-emerald-400 bg-emerald-200 px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-sm transition-all hover:border-emerald-500 hover:bg-emerald-300 hover:shadow"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(issuedDesignId);
@@ -827,11 +835,11 @@ export function SimPage() {
                       }
                     }}
                   >
-                    デザインIDをコピー
+                    📋 デザインIDをコピー
                   </button>
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 text-center py-2">作成後に表示されます</p>
+                <p className="text-sm text-emerald-700 text-center py-3 font-medium">デザインID発行後に表示されます</p>
               )}
             </div>
           </div>
@@ -924,11 +932,11 @@ export function SimPage() {
               </button>
               <button
                 type="button"
-                className="rounded-md border-2 border-amber-400 bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-md transition-all hover:bg-amber-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
+                className="rounded-md border-2 border-emerald-500 bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-lg transition-all hover:bg-emerald-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 disabled:hover:scale-100"
                 onClick={finalizeIssue}
                 disabled={isIssuing}
               >
-                {isIssuing ? "作成中..." : "デザインIDを作成"}
+                {isIssuing ? "作成中..." : "✓ デザインIDを発行する"}
               </button>
             </div>
           </div>
