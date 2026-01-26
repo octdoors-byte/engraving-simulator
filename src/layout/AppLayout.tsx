@@ -72,7 +72,11 @@ export function AppLayout() {
   const headerAlign = alignClass[settings?.headerTextAlign ?? "left"];
   const footerAlign = alignClass[settings?.footerTextAlign ?? "center"];
   const footerItemsAlign = alignItemsClass[settings?.footerTextAlign ?? "center"];
-  const logoHeight = settings?.logoSize === "lg" ? "h-16 md:h-20" : settings?.logoSize === "md" ? "h-12" : "h-9";
+  const logoSizeClass = settings?.logoSize === "lg" 
+    ? "h-16 md:h-20 max-h-20" 
+    : settings?.logoSize === "md" 
+    ? "h-12 max-h-12" 
+    : "h-9 max-h-9";
   const hideNav =
     new URLSearchParams(location.search).get("hideNav") === "1" ||
     location.pathname.startsWith("/sim/");
@@ -93,7 +97,12 @@ export function AppLayout() {
           <div className={`flex items-center gap-4 ${logoAlign}`}>
             {settings?.logoImage && (
               <div className="rounded-xl border-2 border-slate-200 bg-white p-2 shadow-md">
-                <img src={settings.logoImage} alt="ロゴ" className={`${logoHeight} w-auto`} />
+                <img 
+                  src={settings.logoImage} 
+                  alt="ロゴ" 
+                  className={`${logoSizeClass} w-auto object-contain`}
+                  style={{ maxWidth: "none" }}
+                />
               </div>
             )}
             <div>
