@@ -33,6 +33,46 @@ pnpm build
 pnpm preview
 ```
 
+## 統合用ビルド（簡単）
+
+```bash
+# 最も簡単な方法（推奨）
+npm run build:integrated
+
+# クリーンビルド（古いファイルを削除してからビルド）
+npm run build:integrated:clean
+```
+
+詳細は [BUILD_GUIDE.md](./BUILD_GUIDE.md) を参照してください。
+
+## サーバーへのデプロイ
+
+詳細な手順は [DEPLOY.md](./DEPLOY.md) を参照してください。
+
+### クイックスタート（Node.jsサーバー）
+
+```bash
+# 依存関係のインストール
+pnpm install
+
+# ビルド
+pnpm build
+
+# サーバー起動
+pnpm start
+```
+
+サーバーはデフォルトで `http://localhost:3000` で起動します。
+
+### その他のデプロイ方法
+
+- **GitHub Pages**: 自動デプロイに対応（[GITHUB_PAGES_DEPLOY.md](./GITHUB_PAGES_DEPLOY.md) を参照）
+- **Nginx**: 静的ファイルとして配信
+- **Docker**: `docker-compose up` で起動
+- **PM2/systemd**: プロセス管理ツールを使用
+
+詳細は [DEPLOY.md](./DEPLOY.md) を参照してください。
+
 ## テスト
 ```bash
 pnpm test
