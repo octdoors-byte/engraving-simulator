@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Dropzone } from "@/components/sim/Dropzone";
@@ -6,7 +6,6 @@ import { CropModal } from "@/components/sim/CropModal";
 import { StageCanvas } from "@/components/sim/StageCanvas";
 import { Toast } from "@/components/common/Toast";
 import { Modal } from "@/components/common/Modal";
-import { HelpIcon } from "@/components/common/HelpIcon";
 import { generateDesignId } from "@/domain/id/designId";
 import { processLogo } from "@/domain/image/processLogo";
 import { prepareEngraveLogoBlob } from "@/domain/image/prepareEngraveLogo";
@@ -606,7 +605,7 @@ export function SimPage() {
 
   if (errorMessage) {
     return (
-      <section className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-800">
+      <section className="rounded-lg border border-slate-300 bg-slate-50 p-6 text-sm font-medium text-slate-700">
         {errorMessage}
       </section>
     );
@@ -620,170 +619,213 @@ export function SimPage() {
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
-      <header className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3" />
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold text-slate-900">{template.name}</h1>
-          <HelpIcon guideUrl="/user-guide.html" title="使い方ガイドを見る" variant="button" />
+      <header className="rounded-lg border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex-1">
+            <div className="mb-2">
+              <h1 className="text-4xl font-bold text-slate-800 tracking-tight">{template.name}</h1>
+            </div>
+            {template.comment && template.comment.trim() ? (
+              <p className="text-sm text-slate-600 leading-relaxed">{template.comment.trim()}</p>
+            ) : (
+              <p className="text-sm text-slate-600 leading-relaxed">
+                お手元のロゴ画像をアップロードして、刻印の仕上がりイメージを確認・保存できるテンプレートです。
+              </p>
+            )}
+          </div>
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
-        <div className="order-2 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-1">
+      <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+        <div className="order-2 space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:order-1">
           <div className="space-y-4">
-            <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-white px-4 py-4 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white">
-                  ステップ1
-                </span>
-                <p className="text-sm font-semibold text-rose-700">ロゴをアップロード</p>
+            {/* ステップ1: ロゴアップロード */}
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-4 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-rose-500 text-sm font-bold text-white shadow-sm">
+                  1
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-rose-900">ロゴをアップロード</p>
+                  <p className="text-xs text-rose-700 mt-0.5">画像ファイルを選択してください</p>
+                </div>
               </div>
               <div className="mt-3">
                 <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
               </div>
             </div>
-            <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-white px-4 py-4 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-sky-500 px-3 py-1 text-xs font-semibold text-white">
-                  ステップ2
-                </span>
-                <p className="text-sm font-semibold text-sky-700">トリミングと透過</p>
+
+            {/* ステップ2: 画像を調整（トリミング・透過・回転） */}
+            <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-4 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sky-500 text-sm font-bold text-white shadow-sm">
+                  2
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-sky-900">画像を調整</p>
+                  <p className="text-xs text-sky-700 mt-0.5">トリミング・背景の透過・回転をまとめて設定します</p>
+                </div>
               </div>
               <button
                 type="button"
-                className="mt-3 w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm"
+                className="mt-3 w-full rounded-md border border-sky-300 bg-white px-4 py-2.5 text-sm font-semibold text-sky-700 shadow-sm transition-all hover:border-sky-400 hover:bg-sky-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!imageBitmap}
                 onClick={() => setCropOpen(true)}
               >
                 トリミングを開く
               </button>
-              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-xs">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs text-slate-500">色をクリックして透過</p>
+              <div className="mt-4 rounded-md border border-slate-200 bg-white p-3">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <p className="text-xs font-medium text-slate-700">背景を透過する</p>
                   <button
                     type="button"
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                    className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => setTransparentColor(null)}
                     disabled={!imageBitmap}
                   >
-                    透過をリセット
+                    リセット
                   </button>
                 </div>
-                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <p className="text-xs text-slate-500 mb-2">画像内の色をクリックすると、その色が透明になります</p>
+                <div className="rounded-md border border-slate-200 bg-slate-50 p-2">
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt="透過色の選択"
-                      className="max-h-40 w-full cursor-crosshair rounded-md object-contain"
+                      className="max-h-40 w-full cursor-crosshair rounded object-contain"
                       onClick={handlePickTransparent}
                     />
                   ) : (
-                    <p className="text-center text-xs text-slate-400">ロゴをアップロードしてください。</p>
+                    <div className="flex h-40 items-center justify-center">
+                      <p className="text-center text-xs text-slate-400">ロゴをアップロードしてください</p>
+                    </div>
                   )}
                 </div>
-                <div className="mt-3 flex items-center gap-2 text-xs text-slate-600">
-                  <span>透過色:</span>
+                <div className="mt-3 flex items-center gap-2 text-xs">
+                  <span className="font-medium text-slate-600">透過色:</span>
                   {transparentColor ? (
                     <>
                       <span
-                        className="h-5 w-5 rounded-full border border-slate-200"
+                        className="h-5 w-5 rounded border border-slate-300 shadow-sm"
                         style={{
                           backgroundColor: `rgb(${transparentColor.r}, ${transparentColor.g}, ${transparentColor.b})`
                         }}
                       />
-                      <span>RGB({transparentColor.r}, {transparentColor.g}, {transparentColor.b})</span>
+                      <span className="text-slate-600">RGB({transparentColor.r}, {transparentColor.g}, {transparentColor.b})</span>
                     </>
                   ) : (
                     <span className="text-slate-400">未設定</span>
                   )}
                 </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-white px-4 py-4 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-white">
-                  ステップ3
-                </span>
-                <p className="text-sm font-semibold text-amber-700">位置を調整して作成</p>
-              </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 shadow-sm"
-                  disabled={!processedLogoBlob || !placement}
-                  onClick={() => {
-                    if (!placement) return;
-                    const nextRotation = (((rotationDeg ?? 0) + 90) % 360) as 0 | 90 | 180 | 270;
-                    const centerX = placement.x + placement.w / 2;
-                    const centerY = placement.y + placement.h / 2;
-                    const swap = nextRotation === 90 || nextRotation === 270;
-                    const nextW = swap ? placement.h : placement.w;
-                    const nextH = swap ? placement.w : placement.h;
-                    const nextPlacement = {
-                      ...placement,
-                      x: centerX - nextW / 2,
-                      y: centerY - nextH / 2,
-                      w: nextW,
-                      h: nextH
-                    };
-                    setRotationDeg(nextRotation);
-                    handlePlacementChange(nextPlacement);
-                  }}
-                >
-                  90°回転
-                </button>
-                <span className="text-xs text-slate-500">現在: {rotationDeg}°</span>
+
+                {/* 位置と回転の調整（任意） */}
+                <div className="mt-4 border-t border-slate-200 pt-3">
+                  <p className="text-xs font-medium text-slate-700 mb-2">位置・回転の微調整（任意）</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-700 shadow-sm transition-all hover:border-amber-400 hover:bg-amber-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={!processedLogoBlob || !placement}
+                      onClick={() => {
+                        if (!placement) return;
+                        const nextRotation = (((rotationDeg ?? 0) + 90) % 360) as 0 | 90 | 180 | 270;
+                        const centerX = placement.x + placement.w / 2;
+                        const centerY = placement.y + placement.h / 2;
+                        const swap = nextRotation === 90 || nextRotation === 270;
+                        const nextW = swap ? placement.h : placement.w;
+                        const nextH = swap ? placement.w : placement.h;
+                        const nextPlacement = {
+                          ...placement,
+                          x: centerX - nextW / 2,
+                          y: centerY - nextH / 2,
+                          w: nextW,
+                          h: nextH
+                        };
+                        setRotationDeg(nextRotation);
+                        handlePlacementChange(nextPlacement);
+                      }}
+                    >
+                      90°回転
+                    </button>
+                    <span className="text-xs font-medium text-amber-700">現在: {rotationDeg}°</span>
+                    <p className="w-full text-[11px] text-slate-500">
+                      ※ロゴの向きが気になる場合のみ調整してください（省略しても構いません）
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-sky-200 bg-sky-100 px-4 py-4 text-center text-slate-900 shadow-sm">
-            <p className="text-sm font-semibold">デザインID作成（PDF保存）</p>
-            <p className="text-xs text-slate-600">
-              修正は新しいデザインIDで作り直し。旧デザインは参照用に残ります。
-            </p>
+          {/* ステップ3: デザインID発行（最後の工程） */}
+          <div className="space-y-3 rounded-lg border-2 border-emerald-300 bg-emerald-50 px-5 py-5 shadow-lg">
+            <div className="text-center mb-3">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-600 text-sm font-bold text-white shadow-md">
+                  3
+                </div>
+                <p className="text-base font-bold text-emerald-900">デザインIDを発行</p>
+              </div>
+              <p className="text-xs text-emerald-800 leading-relaxed font-medium">
+                最後のステップです。確認画面を表示して、問題なければデザインIDを作成します
+              </p>
+            </div>
             <button
               type="button"
-              className="w-full rounded-full bg-sky-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow"
+              className="w-full rounded-md border-2 border-emerald-500 bg-emerald-600 px-5 py-3.5 text-base font-bold text-white shadow-lg transition-all hover:bg-emerald-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 disabled:hover:scale-100"
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
-              {isIssuing ? "作成中..." : "PDF確認"}
+              {isIssuing ? "作成中..." : "✓ 確認画面を表示してデザインIDを発行"}
             </button>
+
+            {/* サイズチェック */}
             {sizeCheck && sizeCheck.isBelowMin && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-left text-xs text-amber-800">
-                <p className="font-semibold">サイズが小さめです</p>
-                <p>設定されたサイズが推奨の最小値を下回っています。仕上がりが見えにくくなる可能性があります。</p>
-                <p>必要に応じてサイズを大きくしてご確認ください。</p>
-                <p className="mt-1 text-[11px] text-amber-700">
-                  推奨最小: W {sizeCheck.minW}mm / H {sizeCheck.minH}mm
+              <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-left">
+                <p className="text-xs font-bold text-amber-900 mb-1">⚠️ サイズが小さめです</p>
+                <p className="text-xs text-amber-800 leading-relaxed mb-1">
+                  推奨の最小サイズより小さくなっています。仕上がりが見えにくくなる可能性があります。
+                </p>
+                <p className="text-[11px] font-medium text-amber-700">
+                  推奨最小: 幅 {sizeCheck.minW}mm × 高さ {sizeCheck.minH}mm
                 </p>
               </div>
             )}
             {sizeCheck && !sizeCheck.isBelowMin && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-left text-xs text-emerald-700">
-                サイズ: OK（W {sizeCheck.wMm.toFixed(1)}mm / H {sizeCheck.hMm.toFixed(1)}mm）
-              </div>
-            )}
-            {dpiCheck && dpiCheck.level !== "ok" && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-left text-xs text-rose-700">
-                <p className="font-semibold">ロゴ画像の解像度が低い可能性があります</p>
-                <p>仕上がりが粗く見える場合があります。必要に応じて高解像度のロゴをご用意ください。</p>
-                <p className="mt-1 text-[11px] text-rose-600">
-                  目安: {Math.round(dpiCheck.effectiveDpi)} dpi
+              <div className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-left">
+                <p className="text-xs font-semibold text-emerald-800">
+                  ✓ サイズ: OK（幅 {sizeCheck.wMm.toFixed(1)}mm × 高さ {sizeCheck.hMm.toFixed(1)}mm）
                 </p>
               </div>
             )}
-            <div className="rounded-xl border border-sky-300 bg-white px-4 py-3 text-left shadow-md">
-              <p className="text-xs font-semibold text-sky-800">デザインID</p>
+
+            {/* DPIチェック */}
+            {dpiCheck && dpiCheck.level !== "ok" && (
+              <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-left">
+                <p className="text-xs font-bold text-amber-900 mb-1">⚠️ 画像の解像度が低い可能性があります</p>
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  仕上がりが粗く見える場合があります。高解像度のロゴ画像をご用意ください。
+                </p>
+                <p className="text-[11px] font-medium text-amber-700 mt-1">
+                  現在の解像度: 約 {Math.round(dpiCheck.effectiveDpi)} dpi
+                </p>
+              </div>
+            )}
+
+            {/* デザインID表示 */}
+            <div className="rounded-md border-2 border-emerald-300 bg-emerald-50 px-4 py-4 shadow-md">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1 w-6 bg-emerald-400 rounded-full"></div>
+                <p className="text-xs font-bold text-emerald-900 uppercase tracking-wide">発行されたデザインID</p>
+              </div>
               {issuedDesignId ? (
-                <div className="mt-2 space-y-2">
-                  <div className="rounded-lg border border-sky-300 bg-sky-100 px-3 py-3 text-center text-lg font-semibold tracking-widest text-slate-900">
+                <div className="space-y-3">
+                  <div className="rounded-md border-2 border-emerald-400 bg-emerald-100 px-4 py-4 text-center text-lg font-bold tracking-wider text-slate-900 shadow-sm">
                     {issuedDesignId}
                   </div>
                   <button
                     type="button"
-                    className="w-full rounded-full border border-sky-300 bg-sky-200 px-3 py-2 text-xs font-semibold text-slate-900"
+                    className="w-full rounded-md border border-emerald-400 bg-emerald-200 px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-sm transition-all hover:border-emerald-500 hover:bg-emerald-300 hover:shadow"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(issuedDesignId);
@@ -794,51 +836,51 @@ export function SimPage() {
                       }
                     }}
                   >
-                    デザインIDをコピー
+                    📋 デザインIDをコピー
                   </button>
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-slate-400">作成後に表示されます</p>
+                <p className="text-sm text-emerald-700 text-center py-3 font-medium">デザインID発行後に表示されます</p>
               )}
             </div>
           </div>
         </div>
 
-        <div className="order-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:order-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">位置の確認</h2>
-              <p className="text-xs text-slate-500">
-                右側でロゴの位置と大きさを調整できます。デザインできる範囲内に収まるように調整してください。
-              </p>
+        <div className="order-1 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:order-2">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-bold text-slate-900">プレビュー</h2>
+              <div
+                className="flex flex-col items-end gap-1 text-xs font-medium text-slate-600"
+                data-testid="sim-status"
+                data-state={phase}
+              >
+                <span>用紙: {paperLabel}</span>
+                <span>
+                  状態:{" "}
+                  {phase === "READY_TO_ISSUE"
+                    ? "✓ 作成可能"
+                    : phase === "EMPTY"
+                      ? "ロゴ未選択"
+                      : phase === "UPLOADED"
+                        ? "読込済み"
+                        : phase === "EDITING"
+                          ? "調整中"
+                          : phase === "PLACEMENT"
+                            ? "位置調整中"
+                            : phase === "ISSUING"
+                              ? "作成中..."
+                              : phase === "ISSUED"
+                                ? "✓ 作成済み"
+                                : phase === "ERROR"
+                                  ? "エラー"
+                                  : phase}
+                </span>
+              </div>
             </div>
-            <div
-              className="flex flex-col items-end gap-1 text-xs font-semibold text-slate-500"
-              data-testid="sim-status"
-              data-state={phase}
-            >
-              <span>用紙: {paperLabel}</span>
-              <span>
-                状態:{" "}
-                {phase === "READY_TO_ISSUE"
-                  ? "作成可能"
-                  : phase === "EMPTY"
-                    ? "ロゴ未選択"
-                    : phase === "UPLOADED"
-                      ? "読込済み"
-                      : phase === "EDITING"
-                        ? "調整中"
-                        : phase === "PLACEMENT"
-                          ? "位置調整中"
-                          : phase === "ISSUING"
-                            ? "作成中"
-                            : phase === "ISSUED"
-                              ? "作成済み"
-                              : phase === "ERROR"
-                                ? "エラー"
-                                : phase}
-              </span>
-            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              ロゴの位置と大きさをドラッグして調整できます。枠内に収まるように配置してください。
+            </p>
           </div>
           <div className="mt-4">
             <StageCanvas
@@ -858,43 +900,46 @@ export function SimPage() {
               onPlacementChange={handlePlacementChange}
             />
             {!imageBitmap && (
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm font-semibold text-slate-700">
-                {template.comment?.trim() || "ロゴをアップロードすると位置を調整できます。"}
+              <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                {template.comment?.trim() || "左側からロゴをアップロードすると、ここで位置を調整できます。"}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <Modal title="確認PDF" open={previewOpen} onClose={resetPreview}>
+      <Modal title="確認画面" open={previewOpen} onClose={resetPreview}>
         <div className="space-y-4">
-          <div className="rounded-lg border border-slate-200 bg-slate-50">
+          <div className="rounded-md border border-slate-200 bg-slate-50">
             {previewPdfUrl ? (
-              <iframe title="確認PDF" src={previewPdfUrl} className="h-[70vh] w-full rounded-lg" />
+              <iframe title="確認PDF" src={previewPdfUrl} className="h-[70vh] w-full rounded-md" />
             ) : (
-              <div className="p-6 text-center text-sm text-slate-500">確認画面を作成中です。</div>
+              <div className="p-6 text-center text-sm font-medium text-slate-500">確認画面を作成中です...</div>
             )}
           </div>
-          <div className="flex flex-wrap justify-end gap-2">
-            <p className="mr-auto text-xs text-slate-500">
-              修正は新しいデザインIDで作り直し。旧デザインは参照用に残ります。
+          <div className="rounded-md border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-xs text-slate-600 leading-relaxed mb-3">
+              確認画面をご確認ください。問題なければ「デザインIDを作成」をクリックしてください。
+              修正が必要な場合は「戻る」をクリックして調整してください。
             </p>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600"
-              onClick={resetPreview}
-              disabled={isIssuing}
-            >
-              戻って再作成
-            </button>
-            <button
-              type="button"
-              className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900"
-              onClick={finalizeIssue}
-              disabled={isIssuing}
-            >
-              IDを作成する
-            </button>
+            <div className="flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={resetPreview}
+                disabled={isIssuing}
+              >
+                戻る
+              </button>
+              <button
+                type="button"
+                className="rounded-md border-2 border-emerald-500 bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-lg transition-all hover:bg-emerald-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 disabled:hover:scale-100"
+                onClick={finalizeIssue}
+                disabled={isIssuing}
+              >
+                {isIssuing ? "作成中..." : "✓ デザインIDを発行する"}
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

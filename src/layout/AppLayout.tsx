@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import type { CommonSettings } from "@/domain/types";
 import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
@@ -78,31 +78,35 @@ export function AppLayout() {
     location.pathname.startsWith("/sim/");
   
   // かわうそレザーのHPからアクセスする場合（/simulator/）は管理画面のリンクを非表示
+  // ただし、開発環境（localhost）では常に表示
   const basePath = import.meta.env.BASE_URL || "/";
-  const isSimulatorPath = basePath === "/simulator/";
+  const isProduction = import.meta.env.PROD;
+  const isSimulatorPath = basePath === "/simulator/" && isProduction;
   const navItems = isSimulatorPath
     ? allNavItems.filter((item) => !item.isAdmin)
     : allNavItems;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between">
-          <div className={`flex items-center gap-3 ${logoAlign}`}>
+      <header className="border-b-2 border-slate-200 bg-white shadow-lg">
+        <div className="mx-auto flex max-w-[95%] flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between">
+          <div className={`flex items-center gap-4 ${logoAlign}`}>
             {settings?.logoImage && (
-              <img src={settings.logoImage} alt="ロゴ" className={`${logoHeight} w-auto`} />
+              <div className="rounded-xl border-2 border-slate-200 bg-white p-2 shadow-md">
+                <img src={settings.logoImage} alt="ロゴ" className={`${logoHeight} w-auto`} />
+              </div>
             )}
             <div>
-              <Link to="/top" className="text-2xl font-semibold text-slate-900">
+              <Link to="/top" className="text-3xl font-bold text-slate-900 hover:text-slate-700 transition-colors">
                 {settings?.landingTitle?.trim() || "デザインシミュレーター"}
               </Link>
-              <p className={`text-slate-500 ${sizeClass(settings?.headerTextSize)} ${headerAlign}`}>
+              <p className={`text-slate-600 ${sizeClass(settings?.headerTextSize)} ${headerAlign} mt-1 font-medium`}>
                 {settings?.headerText ?? ""}
               </p>
             </div>
           </div>
           {!hideNav && (
-            <nav className="flex flex-wrap items-center gap-2 text-sm">
+            <nav className="flex flex-wrap items-center gap-3 text-sm">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -110,8 +114,10 @@ export function AppLayout() {
                   end={item.to === "/top"}
                   className={({ isActive }) =>
                     [
-                      "rounded-full px-3 py-1 transition border",
-                      isActive ? navToneClass[item.tone].active : navToneClass[item.tone].inactive
+                      "rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2",
+                      isActive 
+                        ? `${navToneClass[item.tone].active} scale-105 shadow-md` 
+                        : `${navToneClass[item.tone].inactive} hover:scale-105 hover:shadow-md`
                     ].join(" ")
                   }
                 >
@@ -122,7 +128,7 @@ export function AppLayout() {
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">
+              <main className="mx-auto max-w-[95%] px-4 py-8">
         <ErrorBoundary
           title="表示中にエラーが発生しました。"
           description="自動で再読み込みを試みます。"
@@ -132,12 +138,12 @@ export function AppLayout() {
           <Outlet />
         </ErrorBoundary>
       </main>
-      <footer className="border-t bg-white">
+      <footer className="border-t-2 border-slate-200 bg-white shadow-lg">
         <div
-          className={`mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs text-slate-500 ${footerItemsAlign}`}
+          className={`mx-auto flex max-w-[95%] flex-col gap-2 px-6 py-5 text-xs text-slate-600 ${footerItemsAlign}`}
         >
           {settings?.footerText && (
-            <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)}`}>{settings.footerText}</p>
+            <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)} font-semibold`}>{settings.footerText}</p>
           )}
         </div>
       </footer>

@@ -7,7 +7,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   
   // baseパスを環境変数から取得（process.envを優先、次に.envファイル、最後にデフォルト）
-  const basePath = process.env.VITE_BASE_PATH || env.VITE_BASE_PATH || "/simulator/";
+  // 開発環境では / を使用、本番環境では /simulator/ をデフォルトとする
+  const defaultBasePath = mode === "development" ? "/" : "/simulator/";
+  const basePath = process.env.VITE_BASE_PATH || env.VITE_BASE_PATH || defaultBasePath;
   
   // デバッグ用（本番環境では表示されない）
   if (process.env.NODE_ENV !== 'production') {
