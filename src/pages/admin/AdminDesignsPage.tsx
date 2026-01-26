@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Toast } from "@/components/common/Toast";
 import { HelpIcon } from "@/components/common/HelpIcon";
 import type { Design, TemplateSummary } from "@/domain/types";
@@ -331,8 +331,8 @@ export function AdminDesignsPage() {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">デザイン作成履歴</h1>
-          <HelpIcon guideUrl="/design_history.html" title="デザイン作成履歴の操作ガイド" />
+          <h1 className="text-2xl font-semibold text-slate-900">発行履歴</h1>
+          <HelpIcon guideUrl="/design_history.html" title="発行履歴の操作ガイド" />
         </div>
         <p className="text-sm text-slate-500">作成済みのデザインを一覧で確認できます。詳細は？アイコンからご確認ください。</p>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
