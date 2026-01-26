@@ -1,0 +1,42 @@
+以下のGitHubリポジトリをGitHub Pagesにデプロイする設定を完了してください。
+
+【リポジトリ情報】
+- URL: https://github.com/octdoors-byte/engraving-simulator
+- ブランチ: master
+- プロジェクト: Vite + React アプリケーション
+
+【現在の状態】
+- ✅ GitHubリポジトリは作成済み
+- ✅ `.github/workflows/deploy.yml` は作成済み
+- ✅ ローカルでコミット済み
+- ❌ GitHubへのプッシュが未完了（認証エラーのため）
+
+【必要な作業】
+
+1. GitHubへのプッシュ
+   以下のコマンドを実行してください：
+   ```
+   cd "C:\Users\owner\OneDrive\ドキュメント\ラクリプ専用フォルダ\【NEW】名入れ刻印シミュレーター"
+   git push -u origin master
+   ```
+   認証が必要な場合：
+   - Personal Access Tokenを生成して使用する
+   - またはSSH認証を設定する
+
+2. GitHub Pagesの有効化
+   - GitHubリポジトリの Settings → Pages に移動
+   - Source で GitHub Actions を選択
+   - 設定を保存
+
+3. デプロイの確認
+   - Actions タブでワークフローの実行状況を確認
+   - デプロイ完了後、Settings → Pages に表示されるURLでサイトが表示されることを確認
+
+【技術情報】
+- Node.js: 20以上23未満
+- ビルドコマンド: npm run build
+- Baseパス: /engraving-simulator/（自動設定）
+- 出力: dist ディレクトリ
+
+【参考】
+詳細は `CHATGPT_AGENT_SETUP.md` を参照してください。
