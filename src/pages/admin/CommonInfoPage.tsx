@@ -557,7 +557,6 @@ export function CommonInfoPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold text-slate-900">共通説明（お客様向け）</h2>
-          <HelpIcon guideUrl="/common_info.html" title="共通説明ページのガイド" />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
