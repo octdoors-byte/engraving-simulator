@@ -23,8 +23,24 @@ const FAQ_TEMPLATE = [
   "ブラウザに保存されます。別の端末では再度ログインしてください。"
 ].join("\n");
 
+const DEFAULT_COMMON_INFO = {
+  commonInfoTitle: "ご利用前のご案内",
+  commonInfoBody: "このデザインシミュレーターをご利用いただく前に、以下の内容をご確認ください。\n\n・推奨ブラウザは最新のEdge / Chrome / Firefox / Safariです\n・スマートフォンでもご利用いただけます\n・デザインはブラウザに保存されます\n・別の端末では再度ログインしてください",
+  commonInfoFaq: "Q. 推奨ブラウザは？\n最新の Edge / Chrome / Firefox / Safari でご利用ください。\n\nQ. スマホでも使えますか？\nスマートフォンでもご利用いただけます。PCと操作方法はほぼ同じです。\n\nQ. デザインは保存されますか？\nブラウザに保存されます。別の端末では再度ログインしてください。"
+};
+
 export function CommonInfoPage() {
-  const [settings, setSettings] = useState<CommonSettings>(() => loadCommonSettings() ?? {});
+  const loadedSettings = loadCommonSettings();
+  const [settings, setSettings] = useState<CommonSettings>(() => {
+    if (loadedSettings) {
+      return loadedSettings;
+    }
+    // 初回起動時は例となるデータを設定
+    return {
+      ...DEFAULT_COMMON_INFO,
+      commonInfoLayout: "imageTop" as const
+    };
+  });
   const [toast, setToast] = useState<ToastState>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
@@ -566,7 +582,7 @@ export function CommonInfoPage() {
               id="commonInfoTitle"
               type="text"
               className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-              value={settings.commonInfoTitle ?? ""}
+              value={settings.commonInfoTitle ?? DEFAULT_COMMON_INFO.commonInfoTitle}
               onChange={(event) => handleChange("commonInfoTitle", event.target.value, "commonInfo")}
               placeholder="ご利用前のご案内 など"
             />
@@ -592,7 +608,7 @@ export function CommonInfoPage() {
           <textarea
             id="commonInfoBody"
             className="h-32 w-full rounded border border-slate-200 px-3 py-2 text-sm"
-            value={settings.commonInfoBody ?? ""}
+            value={settings.commonInfoBody ?? DEFAULT_COMMON_INFO.commonInfoBody}
             onChange={(event) => handleChange("commonInfoBody", event.target.value, "commonInfo")}
             placeholder="お客様に読んでほしい説明を入力してください。"
           />
@@ -742,7 +758,7 @@ export function CommonInfoPage() {
           </div>
           <textarea
             className="h-40 w-full rounded border border-slate-200 px-3 py-2 font-mono text-xs leading-relaxed text-slate-800"
-            value={settings.commonInfoFaq ?? ""}
+            value={settings.commonInfoFaq ?? DEFAULT_COMMON_INFO.commonInfoFaq}
             onChange={(event) => handleChange("commonInfoFaq", event.target.value, "commonInfo")}
           />
           <div className="flex items-center justify-between gap-2">
