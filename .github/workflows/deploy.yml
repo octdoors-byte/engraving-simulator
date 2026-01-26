@@ -1,7 +1,11 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 手動デプロイのみ（指示があったときだけサイトにアップロード）
+  # masterブランチへのプッシュ時に自動デプロイ
+  push:
+    branches:
+      - master
+  # 手動デプロイも可能（指示があったときだけサイトにアップロード）
   workflow_dispatch:
 
 permissions:
