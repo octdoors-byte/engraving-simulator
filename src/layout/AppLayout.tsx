@@ -135,26 +135,56 @@ export function AppLayout() {
           </div>
           {!hideNav && (
             <nav className="flex flex-wrap items-center gap-3 text-sm">
-              {/* 管理画面ドロップダウン */}
+              {/* 発行履歴 */}
+              {navItems.map((item) => {
+                const isHighlighted = "isHighlighted" in item && item.isHighlighted;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === "/top"}
+                    className={({ isActive }) =>
+                      [
+                        "rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2",
+                        isHighlighted ? "text-base md:text-lg" : "",
+                        isActive 
+                          ? `${navToneClass[item.tone].active} scale-105 shadow-md ${isHighlighted ? "ring-4 ring-indigo-300 ring-offset-2" : ""}` 
+                          : `${navToneClass[item.tone].inactive} hover:scale-105 hover:shadow-md ${isHighlighted ? "ring-2 ring-indigo-200" : ""}`
+                      ].join(" ")
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+              {/* 管理画面ドロップダウン（一番右） */}
               {!isSimulatorPath && (
-                <div ref={adminMenuRef} className="relative">
+                <div ref={adminMenuRef} className="relative ml-auto">
                   <button
                     type="button"
                     onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                    className={`rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2 ${
+                    className={`rounded-xl p-3 font-bold shadow-sm transition-all duration-200 border-2 ${
                       adminMenuItems.some(item => location.pathname === item.to || 
                         (item.to === "/top" && location.pathname === "/"))
                         ? "bg-slate-700 text-white scale-105 shadow-md"
                         : "border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:scale-105 hover:shadow-md"
                     }`}
+                    title="管理画面"
+                    aria-label="管理画面"
                   >
-                    管理画面
-                    <span className="ml-2 inline-block transition-transform duration-200" style={{ transform: isAdminMenuOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
-                      ▼
-                    </span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-6 w-6" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                      style={{ transform: isAdminMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
                   </button>
                   {isAdminMenuOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-56 rounded-xl border-2 border-slate-200 bg-white shadow-lg z-50">
+                    <div className="absolute top-full right-0 mt-2 w-56 rounded-xl border-2 border-slate-200 bg-white shadow-lg z-50">
                       <div className="py-2">
                         {adminMenuItems.map((item) => {
                           const isActive = location.pathname === item.to || (item.to === "/top" && location.pathname === "/");
@@ -182,28 +212,6 @@ export function AppLayout() {
                   )}
                 </div>
               )}
-              {/* 発行履歴 */}
-              {navItems.map((item) => {
-                const isHighlighted = "isHighlighted" in item && item.isHighlighted;
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === "/top"}
-                    className={({ isActive }) =>
-                      [
-                        "rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2",
-                        isHighlighted ? "text-base md:text-lg" : "",
-                        isActive 
-                          ? `${navToneClass[item.tone].active} scale-105 shadow-md ${isHighlighted ? "ring-4 ring-indigo-300 ring-offset-2" : ""}` 
-                          : `${navToneClass[item.tone].inactive} hover:scale-105 hover:shadow-md ${isHighlighted ? "ring-2 ring-indigo-200" : ""}`
-                      ].join(" ")
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                );
-              })}
             </nav>
           )}
         </div>
