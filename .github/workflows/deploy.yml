@@ -113,7 +113,7 @@ jobs:
               }
             })();
             </script>
-SPAEOF
+            SPAEOF
             # </head>タグの直前にSPAハンドラーを挿入
             sed -i "/<\/head>/r /tmp/spa-handler.js" dist/index.html
             
@@ -142,7 +142,7 @@ SPAEOF
               }
             })();
             </script>
-EOF
+            EOF
             # </head>タグの直前にリダイレクトスクリプトを挿入
             sed -i "/<\/head>/r /tmp/redirect.js" dist/404.html
             
