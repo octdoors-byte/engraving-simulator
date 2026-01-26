@@ -176,20 +176,24 @@ jobs:
           echo "=========================================="
           echo "デプロイ検証"
           echo "=========================================="
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
           DEPLOY_URL="${{ steps.deployment.outputs.page_url }}"
           if [ -z "$DEPLOY_URL" ]; then
-            DEPLOY_URL="https://${{ github.repository_owner }}.github.io/${{ steps.repo.outputs.name }}/"
+            DEPLOY_URL="https://${{ github.repository_owner }}.github.io/$REPO_NAME/"
           fi
           echo "デプロイURL: $DEPLOY_URL"
           echo ""
           echo "サイトへのアクセスを確認中..."
-          if curl -f -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL" | grep -q "200\|301\|302"; then
-            echo "✅ サイトは正常にアクセス可能です"
+          HTTP_CODE=$(curl -f -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL" || echo "000")
+          if echo "$HTTP_CODE" | grep -qE "200|301|302"; then
+            echo "✅ サイトは正常にアクセス可能です (HTTP $HTTP_CODE)"
             echo "デプロイが正常に完了しました"
           else
-            echo "⚠️  サイトへのアクセス確認に失敗しました"
+            echo "⚠️  サイトへのアクセス確認に失敗しました (HTTP $HTTP_CODE)"
             echo "数分待ってから再度確認してください"
             echo "GitHub Pagesの反映には数分かかる場合があります"
+            echo ""
+            echo "確認URL: $DEPLOY_URL"
           fi
           echo ""
           echo "=========================================="
