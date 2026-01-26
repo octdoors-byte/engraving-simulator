@@ -86,8 +86,32 @@ jobs:
           # 404.htmlはindex.htmlのコピーで、存在しないルートにアクセスしたときに
           # GitHub Pagesが404.htmlを返し、React Routerが正しくルーティングを処理できる
           if [ -f "dist/index.html" ]; then
+            BASE_PATH="/${{ steps.repo.outputs.name }}/"
+            # index.htmlをコピー
             cp dist/index.html dist/404.html
-            echo "✅ Created dist/404.html for SPA routing"
+            # リダイレクトスクリプトを作成（baseパスを考慮）
+            REDIRECT_SCRIPT="<script>
+            (function() {
+              var basePath = '$BASE_PATH';
+              var l = window.location;
+              var pathname = l.pathname;
+              
+              // baseパス以降のパスを取得
+              if (pathname.startsWith(basePath)) {
+                var pathAfterBase = pathname.slice(basePath.length - 1);
+                // クエリパラメータ形式でリダイレクト
+                l.replace(
+                  l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+                  basePath + '?/' + pathAfterBase.replace(/&/g, '~and~') +
+                  (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+                  l.hash
+                );
+              }
+            })();
+            </script>"
+            # </head>タグの直前にスクリプトを挿入
+            sed -i "s|</head>|$REDIRECT_SCRIPT</head>|" dist/404.html
+            echo "✅ Created dist/404.html for SPA routing with base path: $BASE_PATH"
           else
             echo "❌ dist/index.html not found, cannot create 404.html"
             exit 1
