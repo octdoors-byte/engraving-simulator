@@ -634,14 +634,14 @@ export function SimPage() {
         <div className="order-2 space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:order-1">
           <div className="space-y-4">
             {/* ステップ1: ロゴアップロード */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-4 shadow-sm">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-4 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-600 text-sm font-bold text-white shadow-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-rose-500 text-sm font-bold text-white shadow-sm">
                   1
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">ロゴをアップロード</p>
-                  <p className="text-xs text-slate-600 mt-0.5">画像ファイルを選択してください</p>
+                  <p className="text-sm font-bold text-rose-900">ロゴをアップロード</p>
+                  <p className="text-xs text-rose-700 mt-0.5">画像ファイルを選択してください</p>
                 </div>
               </div>
               <div className="mt-3">
@@ -650,19 +650,19 @@ export function SimPage() {
             </div>
 
             {/* ステップ2: トリミングと透過 */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-4 shadow-sm">
+            <div className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-4 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-600 text-sm font-bold text-white shadow-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sky-500 text-sm font-bold text-white shadow-sm">
                   2
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">画像を調整</p>
-                  <p className="text-xs text-slate-600 mt-0.5">トリミングと背景の透過を設定</p>
+                  <p className="text-sm font-bold text-sky-900">画像を調整</p>
+                  <p className="text-xs text-sky-700 mt-0.5">トリミングと背景の透過を設定</p>
                 </div>
               </div>
               <button
                 type="button"
-                className="mt-3 w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-3 w-full rounded-md border border-sky-300 bg-white px-4 py-2.5 text-sm font-semibold text-sky-700 shadow-sm transition-all hover:border-sky-400 hover:bg-sky-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!imageBitmap}
                 onClick={() => setCropOpen(true)}
               >
@@ -715,20 +715,20 @@ export function SimPage() {
             </div>
 
             {/* ステップ3: 位置調整 */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-4 shadow-sm">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-4 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-600 text-sm font-bold text-white shadow-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-amber-500 text-sm font-bold text-white shadow-sm">
                   3
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">位置を調整</p>
-                  <p className="text-xs text-slate-600 mt-0.5">右側のプレビューで位置とサイズを調整</p>
+                  <p className="text-sm font-bold text-amber-900">位置を調整</p>
+                  <p className="text-xs text-amber-700 mt-0.5">右側のプレビューで位置とサイズを調整</p>
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-700 shadow-sm transition-all hover:border-amber-400 hover:bg-amber-50 hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!processedLogoBlob || !placement}
                   onClick={() => {
                     if (!placement) return;
@@ -751,13 +751,13 @@ export function SimPage() {
                 >
                   90°回転
                 </button>
-                <span className="text-xs font-medium text-slate-600">現在: {rotationDeg}°</span>
+                <span className="text-xs font-medium text-amber-700">現在: {rotationDeg}°</span>
               </div>
             </div>
           </div>
 
           {/* 作成ボタンと情報 */}
-          <div className="space-y-3 rounded-lg border border-slate-200 bg-white px-4 py-4 shadow-sm">
+          <div className="space-y-3 rounded-lg border border-sky-200 bg-sky-50 px-4 py-4 shadow-sm">
             <div className="text-center">
               <p className="text-base font-bold text-slate-900 mb-1">デザインを作成</p>
               <p className="text-xs text-slate-600 leading-relaxed">
@@ -766,7 +766,7 @@ export function SimPage() {
             </div>
             <button
               type="button"
-              className="w-full rounded-md border-2 border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-700"
+              className="w-full rounded-md border-2 border-sky-400 bg-sky-500 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-sky-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-sky-500"
               disabled={!processedLogoBlob || !placement || isIssuing || phase !== "READY_TO_ISSUE"}
               onClick={handleIssue}
             >
@@ -807,16 +807,16 @@ export function SimPage() {
             )}
 
             {/* デザインID表示 */}
-            <div className="rounded-md border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs font-bold text-slate-700 mb-2">デザインID</p>
+            <div className="rounded-md border border-sky-300 bg-white px-4 py-3 shadow-md">
+              <p className="text-xs font-bold text-sky-800 mb-2">デザインID</p>
               {issuedDesignId ? (
                 <div className="space-y-2">
-                  <div className="rounded-md border border-slate-300 bg-white px-3 py-3 text-center text-base font-bold tracking-wider text-slate-900 shadow-sm">
+                  <div className="rounded-md border border-sky-300 bg-sky-100 px-3 py-3 text-center text-base font-bold tracking-wider text-slate-900 shadow-sm">
                     {issuedDesignId}
                   </div>
                   <button
                     type="button"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
+                    className="w-full rounded-md border border-sky-300 bg-sky-200 px-3 py-2 text-xs font-semibold text-slate-900 shadow-sm transition-all hover:border-sky-400 hover:bg-sky-300 hover:shadow"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(issuedDesignId);
@@ -924,7 +924,7 @@ export function SimPage() {
               </button>
               <button
                 type="button"
-                className="rounded-md border-2 border-slate-600 bg-slate-700 px-4 py-2 text-sm font-bold text-white shadow-md transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-700"
+                className="rounded-md border-2 border-amber-400 bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-md transition-all hover:bg-amber-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
                 onClick={finalizeIssue}
                 disabled={isIssuing}
               >
