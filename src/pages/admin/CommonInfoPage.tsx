@@ -768,16 +768,6 @@ export function CommonInfoPage() {
             <span>お客様ページのプレビュー</span>
             <span className="text-xs text-slate-500">URL: https://localhost:5174/common?hideNav=1</span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <a
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700"
-              href={`${import.meta.env.BASE_URL || "/"}common?hideNav=1`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              新しいタブで開く
-            </a>
-          </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
