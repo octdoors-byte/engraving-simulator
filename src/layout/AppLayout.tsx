@@ -5,7 +5,7 @@ import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 const allNavItems = [
-  { to: "/admin/designs", label: "デザイン作成履歴", tone: "indigo" as const, isAdmin: true },
+  { to: "/admin/designs", label: "発行履歴", tone: "indigo" as const, isAdmin: true, isHighlighted: true },
   { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const, isAdmin: false },
   { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const, isAdmin: true },
   { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const, isAdmin: false },
@@ -116,23 +116,27 @@ export function AppLayout() {
           </div>
           {!hideNav && (
             <nav className="flex flex-wrap items-center gap-3 text-sm">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === "/top"}
-                  className={({ isActive }) =>
-                    [
-                      "rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2",
-                      isActive 
-                        ? `${navToneClass[item.tone].active} scale-105 shadow-md` 
-                        : `${navToneClass[item.tone].inactive} hover:scale-105 hover:shadow-md`
-                    ].join(" ")
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+              {navItems.map((item) => {
+                const isHighlighted = "isHighlighted" in item && item.isHighlighted;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === "/top"}
+                    className={({ isActive }) =>
+                      [
+                        "rounded-xl px-4 py-2.5 font-bold shadow-sm transition-all duration-200 border-2",
+                        isHighlighted ? "text-base md:text-lg" : "",
+                        isActive 
+                          ? `${navToneClass[item.tone].active} scale-105 shadow-md ${isHighlighted ? "ring-4 ring-indigo-300 ring-offset-2" : ""}` 
+                          : `${navToneClass[item.tone].inactive} hover:scale-105 hover:shadow-md ${isHighlighted ? "ring-2 ring-indigo-200" : ""}`
+                      ].join(" ")
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                );
+              })}
             </nav>
           )}
         </div>
