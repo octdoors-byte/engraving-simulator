@@ -521,13 +521,14 @@ export function SimLandingPage() {
                               : infoUrl;
                           return (
                             <td key={col.key} className="px-5" style={rowPaddingStyle}>
-                              <button
-                                type="button"
+                              <a
+                                href={infoFullUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
-                                onClick={() => copyToClipboard(infoFullUrl, "共通説明URL")}
                               >
                                 共通説明URL
-                              </button>
+                              </a>
                             </td>
                           );
                         }
@@ -543,15 +544,16 @@ export function SimLandingPage() {
                                     ? new URL(`${simPath}?cat=${encodeURIComponent(cat)}`, window.location.origin).toString()
                                     : `${simPath}?cat=${encodeURIComponent(cat)}`;
                                 return (
-                                  <button
+                                  <a
                                     key={cat}
-                                    type="button"
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
-                                    onClick={() => copyToClipboard(url, `公開URL(${label})`)}
-                                    title={`${label} のURLをコピー`}
+                                    title={`${label} のURLを開く`}
                                   >
                                     {label}
-                                  </button>
+                                  </a>
                                 );
                               })}
                             </div>

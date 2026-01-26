@@ -89,7 +89,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="border-b-2 border-slate-200 bg-white shadow-lg">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-[95%] flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between">
           <div className={`flex items-center gap-4 ${logoAlign}`}>
             {settings?.logoImage && (
               <div className="rounded-xl border-2 border-slate-200 bg-white p-2 shadow-md">
@@ -128,7 +128,7 @@ export function AppLayout() {
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">
+              <main className="mx-auto max-w-[95%] px-4 py-8">
         <ErrorBoundary
           title="表示中にエラーが発生しました。"
           description="自動で再読み込みを試みます。"
@@ -140,7 +140,7 @@ export function AppLayout() {
       </main>
       <footer className="border-t-2 border-slate-200 bg-white shadow-lg">
         <div
-          className={`mx-auto flex max-w-6xl flex-col gap-2 px-6 py-5 text-xs text-slate-600 ${footerItemsAlign}`}
+          className={`mx-auto flex max-w-[95%] flex-col gap-2 px-6 py-5 text-xs text-slate-600 ${footerItemsAlign}`}
         >
           {settings?.footerText && (
             <p className={`${footerAlign} ${sizeClass(settings?.footerTextSize)} font-semibold`}>{settings.footerText}</p>
