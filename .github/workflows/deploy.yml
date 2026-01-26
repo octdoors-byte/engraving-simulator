@@ -80,6 +80,19 @@ jobs:
             exit 1
           fi
 
+      - name: Create 404.html for SPA routing
+        run: |
+          # GitHub PagesでSPAのルーティングを有効にするため、404.htmlを作成
+          # 404.htmlはindex.htmlのコピーで、存在しないルートにアクセスしたときに
+          # GitHub Pagesが404.htmlを返し、React Routerが正しくルーティングを処理できる
+          if [ -f "dist/index.html" ]; then
+            cp dist/index.html dist/404.html
+            echo "✅ Created dist/404.html for SPA routing"
+          else
+            echo "❌ dist/index.html not found, cannot create 404.html"
+            exit 1
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
