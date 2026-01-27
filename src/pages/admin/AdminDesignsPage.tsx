@@ -90,6 +90,16 @@ async function createLogoFromOriginal(
   }
 }
 
+function isDownloaded(designId: string): boolean {
+  const key = `ksim:downloaded:${designId}`;
+  return localStorage.getItem(key) === "true";
+}
+
+function markAsDownloaded(designId: string): void {
+  const key = `ksim:downloaded:${designId}`;
+  localStorage.setItem(key, "true");
+}
+
 export function AdminDesignsPage() {
   const [designs, setDesigns] = useState<Design[]>([]);
   const [toast, setToast] = useState<{ message: string; tone?: "info" | "success" | "error" } | null>(null);
@@ -104,6 +114,7 @@ export function AdminDesignsPage() {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [previewImageName, setPreviewImageName] = useState<string | null>(null);
+  const [downloadedIds, setDownloadedIds] = useState<Set<string>>(new Set());
 
   const reload = useCallback(() => {
     const summaries = listDesigns();
@@ -115,9 +126,29 @@ export function AdminDesignsPage() {
     setTemplateOptions(listTemplates());
   }, []);
 
+  // ダウンロード済みのデザインIDを読み込む関数
+  const loadDownloadedIds = useCallback(() => {
+    const downloaded = new Set<string>();
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("ksim:downloaded:")) {
+        const designId = key.replace("ksim:downloaded:", "");
+        if (localStorage.getItem(key) === "true") {
+          downloaded.add(designId);
+        }
+      }
+    }
+    console.log("Loaded downloaded IDs:", Array.from(downloaded));
+    setDownloadedIds(downloaded);
+  }, []);
+
   useEffect(() => {
     reload();
   }, [reload]);
+
+  useEffect(() => {
+    loadDownloadedIds();
+  }, [loadDownloadedIds]);
 
   useEffect(() => {
     if (!toast) return;
@@ -446,13 +477,20 @@ export function AdminDesignsPage() {
                     </td>
                     <td className="px-6 py-4">{formatDate(design.createdAt)}</td>
                     <td className="px-6 py-4">
-                      <button
-                        type="button"
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
-                        onClick={() => handlePreview(design, "confirm")}
-                      >
-                        確認用PDF
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600"
+                          onClick={() => handlePreview(design, "confirm")}
+                        >
+                          確認用PDF
+                        </button>
+                        {downloadedIds.has(design.designId) ? (
+                          <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                            DL済
+                          </span>
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -492,6 +530,14 @@ export function AdminDesignsPage() {
                 onClick={() => {
                   if (!previewBlob || !previewInfo) return;
                   downloadBlob(previewBlob, `${previewInfo.designId}-confirm.pdf`);
+                  markAsDownloaded(previewInfo.designId);
+                  setDownloadedIds((prev) => {
+                    const next = new Set(prev);
+                    next.add(previewInfo.designId);
+                    console.log("Downloaded IDs updated:", Array.from(next));
+                    return next;
+                  });
+                  setToast({ message: "PDFをダウンロードしました。", tone: "success" });
                 }}
               >
                 ダウンロード

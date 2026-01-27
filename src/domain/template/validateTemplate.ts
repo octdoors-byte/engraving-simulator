@@ -35,7 +35,11 @@ export function validateTemplate(raw: unknown): { ok: boolean; errors: string[];
   if (template.logoMinHeightMm !== undefined && !isPositiveNumber(template.logoMinHeightMm)) {
     errors.push("logoMinHeightMm は 0 より大きい数値で指定してください。");
   }
-  if (!template.status || !["draft", "tested", "published", "archive"].includes(template.status)) {
+  // statusが設定されていない場合は"draft"をデフォルトとする
+  if (!template.status) {
+    template.status = "draft";
+  }
+  if (!["draft", "tested", "published", "archive"].includes(template.status)) {
     errors.push("status は draft/tested/published/archive のいずれかで指定してください。");
   }
   if (!template.updatedAt || typeof template.updatedAt !== "string") {

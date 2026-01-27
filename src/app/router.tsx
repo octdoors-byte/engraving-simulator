@@ -21,7 +21,7 @@ export const appRouter = createBrowserRouter(
     children: [
       {
         index: true,
-        element: <Navigate to="/top" replace />
+        element: <Navigate to="/admin/designs" replace />
       },
       {
         path: "top",

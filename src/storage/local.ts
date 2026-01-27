@@ -1,4 +1,4 @@
-﻿import type { CommonSettings, Design, DesignSummary, Template, TemplateSummary } from "../domain/types";
+import type { CommonSettings, Design, DesignSummary, Template, TemplateSummary } from "../domain/types";
 
 const STORAGE_PREFIX = "ksim:";
 const APP_VERSION = "1.1.0";
@@ -115,6 +115,16 @@ function normalizePlacementRules(template: Template): Template {
   };
 }
 
+function normalizeStatus(template: Template): Template {
+  if (template.status && ["draft", "tested", "published", "archive"].includes(template.status)) {
+    return template;
+  }
+  return {
+    ...template,
+    status: "draft"
+  };
+}
+
 export function ensureAppVersion(): string {
   localStorage.setItem(KEY_APP_VERSION, APP_VERSION);
   return APP_VERSION;
@@ -127,6 +137,10 @@ export function getAppVersion(): string | null {
 export function listTemplates(): TemplateSummary[] {
   const list = readJson<TemplateSummary[]>(INDEX_TEMPLATES) ?? [];
   return list.map((entry) => {
+    // statusが設定されていない場合は"draft"をデフォルトとする
+    if (!entry.status || !["draft", "tested", "published", "archive"].includes(entry.status)) {
+      entry.status = "draft";
+    }
     if (entry.categories && entry.categories.length > 0) return entry;
     const categories = entry.category ? [entry.category] : [];
     return { ...entry, categories };
@@ -136,11 +150,20 @@ export function listTemplates(): TemplateSummary[] {
 export function getTemplate(templateKey: string): Template | null {
   const template = readJson<Template>(`${STORAGE_PREFIX}template:${templateKey}`);
   if (!template) return null;
-  const normalized = normalizePlacementRules(normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template))));
+  const normalized = normalizeStatus(normalizePlacementRules(normalizePdfSettings(normalizeEngravingArea(normalizeBackground(template)))));
   // 後方互換: 単一カテゴリから複数カテゴリへ正規化
   if (!normalized.categories || normalized.categories.length === 0) {
     const categories = normalized.category ? [normalized.category] : [];
-    return { ...normalized, categories };
+    const result = { ...normalized, categories };
+    // statusが未設定で"draft"に設定された場合のみ保存
+    if (!template.status && result.status === "draft") {
+      saveTemplate(result);
+    }
+    return result;
+  }
+  // statusが未設定で"draft"に設定された場合のみ保存
+  if (!template.status && normalized.status === "draft") {
+    saveTemplate(normalized);
   }
   return normalized;
 }

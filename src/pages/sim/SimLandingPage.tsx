@@ -404,7 +404,8 @@ export function SimLandingPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-200 bg-white">
                     {sortedTemplates.map((row) => {
-                      const simPath = `/sim/${row.key}`;
+                      const basePath = import.meta.env.BASE_URL || "/";
+                      const simPath = `${basePath}sim/${row.key}`.replace(/\/+/g, "/");
                       const simUrl =
                         typeof window !== "undefined" ? new URL(simPath, window.location.origin).toString() : simPath;
                       return (
@@ -514,7 +515,8 @@ export function SimLandingPage() {
                             }
                         if (col.key === "info") {
                           const basePath = import.meta.env.BASE_URL || "/";
-                          const infoUrl = `${basePath}common?next=${encodeURIComponent(simPath)}&hideNav=1`;
+                          const fullSimPath = `${basePath}sim/${row.key}`.replace(/\/+/g, "/");
+                          const infoUrl = `${basePath}common?next=${encodeURIComponent(fullSimPath)}&hideNav=1`.replace(/\/+/g, "/");
                           const infoFullUrl =
                             typeof window !== "undefined"
                               ? new URL(infoUrl, window.location.origin).toString()
@@ -534,6 +536,8 @@ export function SimLandingPage() {
                         }
                         // 公開URL（カテゴリ別コピー対応）
                         const cats = row.categories.length > 0 ? row.categories : ["default"];
+                        const basePath = import.meta.env.BASE_URL || "/";
+                        const fullSimPath = `${basePath}sim/${row.key}`.replace(/\/+/g, "/");
                         return (
                           <td key={col.key} className="px-5" style={rowPaddingStyle}>
                             <div className="flex flex-wrap gap-2">
@@ -541,8 +545,8 @@ export function SimLandingPage() {
                                 const label = categoryTitleMap.get(cat) ?? cat;
                                 const url =
                                   typeof window !== "undefined"
-                                    ? new URL(`${simPath}?cat=${encodeURIComponent(cat)}`, window.location.origin).toString()
-                                    : `${simPath}?cat=${encodeURIComponent(cat)}`;
+                                    ? new URL(`${fullSimPath}?cat=${encodeURIComponent(cat)}`, window.location.origin).toString()
+                                    : `${fullSimPath}?cat=${encodeURIComponent(cat)}`;
                                 return (
                                   <a
                                     key={cat}

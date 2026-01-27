@@ -5,10 +5,10 @@ import { ensureAppVersion, loadCommonSettings } from "@/storage/local";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 const adminMenuItems = [
-  { to: "/admin/common", label: "基本設定", tone: "rose" as const },
-  { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const },
-  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const },
-  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const }
+  { to: "/admin/common", label: "基本設定", tone: "rose" as const, description: "サイトの基本設定、ロゴ、\nヘッダー・フッター、共通説明を管理" },
+  { to: "/categories", label: "カテゴリ一覧", tone: "sky" as const, description: "テンプレートのカテゴリを\n登録・編集・管理" },
+  { to: "/admin/templates", label: "テンプレート管理", tone: "amber" as const, description: "テンプレートの登録、編集、\n公開状態の管理" },
+  { to: "/top", label: "公開テンプレート一覧", tone: "emerald" as const, description: "公開中のテンプレート一覧を\n表示・確認" }
 ] as const;
 
 const allNavItems = [
@@ -166,7 +166,7 @@ export function AppLayout() {
                     className={`rounded-xl p-3 font-bold shadow-sm transition-all duration-200 border-2 ${
                       adminMenuItems.some(item => location.pathname === item.to || 
                         (item.to === "/top" && location.pathname === "/"))
-                        ? "bg-slate-700 text-white scale-105 shadow-md"
+                        ? "bg-white text-slate-700 scale-105 shadow-md border-slate-300"
                         : "border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:scale-105 hover:shadow-md"
                     }`}
                     title="管理画面"
@@ -174,13 +174,14 @@ export function AppLayout() {
                   >
                     <svg 
                       xmlns="http://www.w3.org/2000/svg" 
-                      className="h-6 w-6" 
+                      className="h-6 w-6 text-slate-400" 
                       fill="none" 
                       viewBox="0 0 24 24" 
                       stroke="currentColor"
-                      style={{ transform: isAdminMenuOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+                      style={{ transform: isAdminMenuOpen ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.3s" }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </button>
                   {isAdminMenuOpen && (
@@ -189,22 +190,30 @@ export function AppLayout() {
                         {adminMenuItems.map((item) => {
                           const isActive = location.pathname === item.to || (item.to === "/top" && location.pathname === "/");
                           return (
-                            <NavLink
-                              key={item.to}
-                              to={item.to}
-                              end={item.to === "/top"}
-                              onClick={() => setIsAdminMenuOpen(false)}
-                              className={({ isActive: navIsActive }) =>
-                                [
-                                  "block px-4 py-2.5 text-sm font-semibold transition-colors",
-                                  navIsActive || isActive
-                                    ? `${navToneClass[item.tone].active}`
-                                    : `${navToneClass[item.tone].inactive} hover:bg-slate-50`
-                                ].join(" ")
-                              }
-                            >
-                              {item.label}
-                            </NavLink>
+                            <div key={item.to} className="group relative">
+                              <NavLink
+                                to={item.to}
+                                end={item.to === "/top"}
+                                onClick={() => setIsAdminMenuOpen(false)}
+                                className={({ isActive: navIsActive }) =>
+                                  [
+                                    "block px-4 py-2.5 text-sm font-semibold transition-colors",
+                                    navIsActive || isActive
+                                      ? `${navToneClass[item.tone].active}`
+                                      : `${navToneClass[item.tone].inactive} hover:bg-slate-50`
+                                  ].join(" ")
+                                }
+                                title={item.description}
+                              >
+                                {item.label}
+                              </NavLink>
+                              {item.description && (
+                                <div className="absolute right-full mr-2 top-0 hidden group-hover:block z-[60] w-52 rounded-lg bg-sky-50 border-2 border-sky-200 text-slate-700 text-xs leading-relaxed px-3 py-2 shadow-lg pointer-events-none whitespace-pre-line">
+                                  <div className="absolute left-full top-3 w-0 h-0 border-t-4 border-t-transparent border-l-4 border-l-sky-200 border-b-4 border-b-transparent"></div>
+                                  {item.description}
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -238,3 +247,4 @@ export function AppLayout() {
     </div>
   );
 }
+

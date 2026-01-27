@@ -71,6 +71,13 @@ export function CommonInfoPage() {
     setHasBackup(!!backup);
   }, []);
 
+  // dirtySectionsが空でない場合、isDirtyをtrueに保つ
+  useEffect(() => {
+    if (dirtySections.size > 0 && !isDirty) {
+      setIsDirty(true);
+    }
+  }, [dirtySections, isDirty]);
+
   const handleChange = useCallback(<K extends keyof CommonSettings>(key: K, value: CommonSettings[K], section?: string) => {
     setSettings((prev) => {
       const next = { ...prev, [key]: value };
@@ -186,12 +193,13 @@ export function CommonInfoPage() {
     setDirtySections((prev) => {
       const next = new Set(prev);
       next.delete(section);
+      // 削除後のサイズが0になったら、isDirtyもfalseにする
+      if (next.size === 0) {
+        setIsDirty(false);
+      }
       return next;
     });
-    if (dirtySections.size === 1) {
-      setIsDirty(false);
-    }
-  }, [dirtySections]);
+  }, []);
 
   const handleBackup = useCallback(() => {
     const current = settingsRef.current;

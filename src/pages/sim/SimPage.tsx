@@ -910,9 +910,13 @@ export function SimPage() {
 
       <Modal title="確認画面" open={previewOpen} onClose={resetPreview}>
         <div className="space-y-4">
-          <div className="rounded-md border border-slate-200 bg-slate-50">
+          <div className="rounded-md border border-slate-200 bg-slate-50 overflow-hidden">
             {previewPdfUrl ? (
-              <iframe title="確認PDF" src={previewPdfUrl} className="h-[70vh] w-full rounded-md" />
+              <iframe 
+                title="確認PDF" 
+                src={`${previewPdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
+                className="h-[85vh] w-full rounded-md" 
+              />
             ) : (
               <div className="p-6 text-center text-sm font-medium text-slate-500">確認画面を作成中です...</div>
             )}
