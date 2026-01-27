@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Toast } from "@/components/common/Toast";
 import { HelpIcon } from "@/components/common/HelpIcon";
@@ -149,7 +149,24 @@ export function AdminTemplatesPage() {
 
   const reloadTemplates = useCallback(() => {
     const list = listTemplates();
-    list.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    // statusが設定されていないテンプレートは"draft"として扱う
+    list.forEach((summary) => {
+      if (!summary.status) {
+        const template = getTemplate(summary.templateKey);
+        if (template) {
+          template.status = "draft";
+          saveTemplate(template);
+        }
+      }
+    });
+    // 下書きを最初に表示
+    list.sort((a, b) => {
+      const aStatus = a.status || "draft";
+      const bStatus = b.status || "draft";
+      if (aStatus === "draft" && bStatus !== "draft") return -1;
+      if (aStatus !== "draft" && bStatus === "draft") return 1;
+      return b.updatedAt.localeCompare(a.updatedAt);
+    });
     setTemplates(list);
   }, []);
 
@@ -250,6 +267,7 @@ export function AdminTemplatesPage() {
         }
         let template: Template = {
           ...validation.template,
+          status: validation.template.status || "draft",
           logoSettings: validation.template.logoSettings ?? {
             monochrome: false
           }
@@ -811,7 +829,7 @@ const cancelEditing = useCallback(() => {
                           if (template.status === "draft") {
                             handleStatusChange(template.templateKey, "tested");
                           }
-                          window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844");
+                          window.open(`/sim/${template.templateKey}`, "_blank", "width=1280,height=720");
                         }}
                       >
                         テスト

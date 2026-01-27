@@ -98,6 +98,7 @@ export function SimPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
   const [phase, setPhase] = useState<SimPhase>("EMPTY");
+  const [guideStep, setGuideStep] = useState<1 | 2 | 3 | null>(null);
   const [imageBitmap, setImageBitmap] = useState<ImageBitmap | null>(null);
 
   // imageBitmapのクリーンアップ
@@ -645,10 +646,21 @@ export function SimPage() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-rose-500 text-sm font-bold text-white shadow-sm">
                   1
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-bold text-rose-900">ロゴをアップロード</p>
                   <p className="text-xs text-rose-700 mt-0.5">画像ファイルを選択してください</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setGuideStep(1)}
+                  className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-rose-300 bg-white text-rose-600 transition hover:border-rose-400 hover:bg-rose-50"
+                  title="ステップ1の使い方ガイド"
+                  aria-label="ステップ1の使い方ガイド"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
               </div>
               <div className="mt-3">
                 <Dropzone onFileAccepted={handleFileAccepted} onReject={handleReject} disabled={isIssuing} />
@@ -661,10 +673,21 @@ export function SimPage() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sky-500 text-sm font-bold text-white shadow-sm">
                   2
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-bold text-sky-900">画像を調整</p>
                   <p className="text-xs text-sky-700 mt-0.5">トリミング・背景の透過・回転をまとめて設定します</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setGuideStep(2)}
+                  className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-sky-300 bg-white text-sky-600 transition hover:border-sky-400 hover:bg-sky-50"
+                  title="ステップ2の使い方ガイド"
+                  aria-label="ステップ2の使い方ガイド"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
               </div>
               <button
                 type="button"
@@ -765,6 +788,17 @@ export function SimPage() {
                   3
                 </div>
                 <p className="text-base font-bold text-emerald-900">デザインIDを発行</p>
+                <button
+                  type="button"
+                  onClick={() => setGuideStep(3)}
+                  className="ml-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-emerald-400 bg-white text-emerald-600 transition hover:border-emerald-500 hover:bg-emerald-50"
+                  title="ステップ3の使い方ガイド"
+                  aria-label="ステップ3の使い方ガイド"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
               </div>
               <p className="text-xs text-emerald-800 leading-relaxed font-medium">
                 最後のステップです。確認画面を表示して、問題なければデザインIDを作成します
@@ -960,6 +994,134 @@ export function SimPage() {
         }}
       />
       <canvas ref={colorCanvasRef} className="hidden" />
+
+      {/* ステップガイドモーダル */}
+      <Modal title={guideStep === 1 ? "ステップ1: ロゴをアップロード" : guideStep === 2 ? "ステップ2: 画像を調整" : "ステップ3: デザインIDを発行"} open={guideStep !== null} onClose={() => setGuideStep(null)}>
+        {guideStep === 1 && (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 p-4">
+              <h3 className="mb-2 text-sm font-bold text-rose-900">このステップでできること</h3>
+              <p className="text-sm text-rose-800 leading-relaxed">
+                ロゴ画像をアップロードして、シミュレーターで使用する画像を準備します。
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">対応形式</h4>
+                <ul className="ml-4 list-disc space-y-1 text-sm text-slate-700">
+                  <li>PNG形式（推奨）</li>
+                  <li>JPEG形式</li>
+                  <li>WEBP形式</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">ファイルサイズ</h4>
+                <p className="text-sm text-slate-700">最大5MBまでアップロードできます</p>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">アップロード方法</h4>
+                <ul className="ml-4 list-disc space-y-1 text-sm text-slate-700">
+                  <li>「画像ファイルを選択」エリアをクリックしてファイルを選択</li>
+                  <li>または、画像ファイルをドラッグ&ドロップ</li>
+                </ul>
+              </div>
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-medium text-slate-700">💡 ヒント</p>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  背景が透明なPNG形式のロゴを使用すると、次のステップで透過処理が簡単になります。
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        {guideStep === 2 && (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-sky-200 bg-sky-50 p-4">
+              <h3 className="mb-2 text-sm font-bold text-sky-900">このステップでできること</h3>
+              <p className="text-sm text-sky-800 leading-relaxed">
+                ロゴ画像をトリミング、背景透過、回転の調整を行い、最終的な見た目を整えます。
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">1. トリミング</h4>
+                <p className="mb-2 text-sm text-slate-700">「トリミングを開く」ボタンをクリックして、画像の不要な部分を切り取ります。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>トリミング範囲をドラッグして調整</li>
+                  <li>適用ボタンで確定</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">2. 背景を透過する</h4>
+                <p className="mb-2 text-sm text-slate-700">画像内の特定の色を透明にできます。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>画像内の色をクリックすると、その色が透明になります</li>
+                  <li>「リセット」ボタンで透過を解除</li>
+                  <li>白背景のロゴを透過する際に便利です</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">3. 位置・回転の微調整（任意）</h4>
+                <p className="mb-2 text-sm text-slate-700">ロゴの向きを90度ずつ回転できます。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>「90°回転」ボタンで時計回りに回転</li>
+                  <li>0°、90°、180°、270°の4方向に対応</li>
+                  <li>向きが正しければ省略しても構いません</li>
+                </ul>
+              </div>
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-medium text-slate-700">💡 ヒント</p>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  背景透過は、画像内の単色部分をクリックすると効果的です。複雑な背景の場合は、事前に画像編集ソフトで処理することをおすすめします。
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        {guideStep === 3 && (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+              <h3 className="mb-2 text-sm font-bold text-emerald-900">このステップでできること</h3>
+              <p className="text-sm text-emerald-800 leading-relaxed">
+                確認画面でPDFプレビューを表示し、問題がなければデザインIDを発行します。
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">確認画面の表示</h4>
+                <p className="mb-2 text-sm text-slate-700">「確認画面を表示してデザインIDを発行」ボタンをクリックすると、PDFプレビューが表示されます。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>PDFで最終的な仕上がりを確認</li>
+                  <li>問題があれば「戻る」ボタンで前のステップに戻れます</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">デザインIDの発行</h4>
+                <p className="mb-2 text-sm text-slate-700">確認画面で問題がなければ、「✓ デザインIDを発行する」ボタンをクリックします。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>発行後、デザインIDが表示されます</li>
+                  <li>デザインIDは発行履歴に保存されます</li>
+                  <li>確認用PDFと刻印用PDFをダウンロードできます</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-1 text-sm font-semibold text-slate-900">ダウンロード</h4>
+                <p className="mb-2 text-sm text-slate-700">発行後、以下のPDFをダウンロードできます。</p>
+                <ul className="ml-4 list-disc space-y-1 text-xs text-slate-600">
+                  <li>確認用PDF：お客様への確認用</li>
+                  <li>刻印用PDF：実際の刻印作業で使用</li>
+                </ul>
+              </div>
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-medium text-slate-700">💡 ヒント</p>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  デザインIDは一度発行すると変更できません。発行前に必ずPDFプレビューで確認してください。
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </section>
   );
 }
