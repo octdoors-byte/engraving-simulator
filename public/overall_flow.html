@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/guide-style.css" />
+    <title>全体の操作ガイド | 名入れ刻印シミュレーター</title>
+  </head>
+  <body>
+    <header class="nav-header">
+      <nav class="nav-inner" aria-label="ガイドナビゲーション">
+        <a class="nav-item" href="/user-guide.html">使い方ガイド</a>
+        <a class="nav-item" href="/public_templates.html">公開テンプレート一覧</a>
+        <a class="nav-item" href="/categories_guide.html">カテゴリ</a>
+        <a class="nav-item" href="/template_management.html">テンプレート管理</a>
+        <a class="nav-item" href="/design_history.html">デザイン履歴</a>
+        <a class="nav-item" href="/basic_settings.html">基本設定</a>
+        <a class="nav-item active" href="/overall_flow.html">全体の操作</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <p class="pill">🔰 まずはここから</p>
+        <h1>管理する人の準備 → お客様の発行 → 発行履歴の確認まで</h1>
+        <p>
+          「最初に何をするのか」「お店側とお客様の役割はどこが違うのか」を、できるだけシンプルにまとめたガイドです。
+        </p>
+        <p class="note">
+          ※ このページは「管理する人（社内の担当者）」向けです。お客様が実際に見るのは、公開URLから開くシミュレーター画面とPDFだけです。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>1. だれが何を見るか</h2>
+        <div class="icon-grid two">
+          <div class="icon-tile">
+            <div class="icon">🛠️</div>
+            <div class="icon-title">管理する人（お店側・社内）</div>
+            <div class="icon-desc">
+              ロゴやお店の名前などの基本設定をする／お客様が使うテンプレートを登録して調整する／公開用のURLを作ってお客様に渡す／発行された内容を履歴画面で確認・整理（検索・削除・バックアップ）します。
+            </div>
+          </div>
+          <div class="icon-tile">
+            <div class="icon">👤</div>
+            <div class="icon-title">お客様（利用者）</div>
+            <div class="icon-desc">
+              お店から渡された公開URLだけを開き、画面の案内にそってロゴなどを入れてPDFを発行します。公開テンプレート一覧などの管理画面は、お客様からは見えません。
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          ※ データはサーバーではなく、使っているブラウザの中（localStorage / IndexedDB）に残ります。パソコンやブラウザが変わると、別の履歴として扱われます。
+        </p>
+      </section>
+
+      <section class="card beginner">
+        <h2>2. 管理する人の流れ</h2>
+        <ol class="steps">
+          <li>
+            <strong>基本設定をする（最初に必ず）</strong>
+            <p><a href="/basic_settings.html">基本設定</a>（/admin/common）で、ロゴ・ページの見出し・共通説明・カテゴリの色など、「お店全体の見た目」に関わる部分を決めます。</p>
+          </li>
+          <li>
+            <strong>テンプレートを登録して試す</strong>
+            <p><a href="/template_management.html">テンプレート管理</a>（/admin/templates）で、背景画像と設定ファイル（JSON）を登録し、プレビューでロゴの位置や見え方を確認します。</p>
+          </li>
+          <li>
+            <strong>公開してURLをお客様に渡す</strong>
+            <p>ステータスを「下書き（draft）→ テスト済み（tested）→ 公開（published）」の順に切り替え、公開されたテンプレートのURLをコピーしてお客様に共有します。</p>
+          </li>
+          <li>
+            <strong>発行された内容を確認・整理する</strong>
+            <p><a href="/design_history.html">デザイン履歴</a>（/admin/designs）で、必要な発行履歴を検索したり、いらないものを削除したり、必要に応じてバックアップや復元を行います。</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>3. お客様の流れ（見るのは公開URLだけ）</h2>
+        <ol class="steps">
+          <li>
+            <strong>URLを開く</strong>
+            <p>お店から送られてきた公開URLを、そのままブラウザで開きます。</p>
+          </li>
+          <li>
+            <strong>ロゴなどを入れて仕上がりを確認する</strong>
+            <p>ロゴ画像をアップロードし、位置や大きさを調整して、見た目をチェックします。</p>
+          </li>
+          <li>
+            <strong>PDFを発行して保存する</strong>
+            <p>画面のボタンからPDFを発行し、出来上がったPDFをダウンロードして保存します（必要なら印刷や共有もここから行います）。</p>
+          </li>
+        </ol>
+        <p class="note">
+          例）管理者がメールやチャットで「●●証書用シミュレーターはこちらです」という公開URLを送信し、お客様はそのURLだけを開いて操作します。管理画面（/admin〜 や /top など）はお客様からは見えません。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>関連ガイド</h2>
+        <ul>
+          <li><a href="/basic_settings.html">基本設定ガイド</a></li>
+          <li><a href="/template_management.html">テンプレート管理ガイド</a></li>
+          <li><a href="/public_templates.html">公開テンプレート一覧ガイド（社内確認用）</a></li>
+          <li><a href="/design_history.html">デザイン履歴ガイド</a></li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

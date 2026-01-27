@@ -15,6 +15,7 @@ import { clampPlacement } from "@/domain/placement/clampPlacement";
 import type { DesignPlacement, DesignLogoSettings, Template } from "@/domain/types";
 import { getTemplate, listDesigns, loadTemplateBgFallback, saveDesign } from "@/storage/local";
 import { AssetType, deleteAssets, getAssetById, saveAsset } from "@/storage/idb";
+import { getWpKsimConfig, uploadConfirmPdfToWp } from "@/remote/wpKsimApi";
 
 type SimPhase =
   | "EMPTY"
@@ -477,6 +478,25 @@ export function SimPage() {
           engraveAssetId: `asset:pdfEngrave:${pendingDesignId}`
         }
       });
+
+      // Optional: upload confirm PDF to WordPress so admins can access it across devices/users.
+      // If not configured, the app keeps working with local-only storage.
+      if (getWpKsimConfig()) {
+        try {
+          await uploadConfirmPdfToWp({
+            designId: pendingDesignId,
+            templateKey: template.templateKey,
+            createdAt: pendingCreatedAt,
+            pdfBlob: previewPdfBlob
+          });
+        } catch (error) {
+          console.error("[issue] wp upload failed", error);
+          setToast({
+            message: "確認用PDFのサーバー保存に失敗しました（この端末内の履歴/保存は完了しています）。",
+            tone: "error"
+          });
+        }
+      }
       console.log("[issue] step: download confirm pdf");
       try {
         downloadBlob(previewPdfBlob, `${pendingDesignId}-confirm.pdf`);

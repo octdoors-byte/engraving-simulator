@@ -360,6 +360,34 @@ export function AdminDesignsPage() {
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
 
+      {/* 全体の操作ガイドカード */}
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold tracking-wide text-emerald-700 uppercase">
+              全体の操作ガイド
+            </p>
+            <h2 className="mt-1 text-lg font-bold text-emerald-900">
+              お店の設定から発行履歴までの「ひと回りの流れ」
+            </h2>
+            <p className="mt-2 text-sm text-emerald-800">
+              🔰 「何から始めればいいか」をやさしくまとめたガイドです。{" "}
+              基本設定 → カテゴリ → テンプレート作成 → お客様用のページ → デザイン発行履歴という順番で、一周の流れを確認できます。
+            </p>
+          </div>
+          <div className="mt-3 flex shrink-0 items-center md:mt-0">
+            <a
+              href="/overall_flow.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-full border-2 border-emerald-400 bg-white px-5 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-500 hover:bg-emerald-50 hover:shadow-md"
+            >
+              全体の操作ガイドを開く
+            </a>
+          </div>
+        </div>
+      </div>
+
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-semibold text-slate-900">発行履歴</h1>
