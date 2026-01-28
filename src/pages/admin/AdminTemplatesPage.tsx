@@ -1,7 +1,8 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Toast } from "@/components/common/Toast";
 import { HelpIcon } from "@/components/common/HelpIcon";
+import { Modal } from "@/components/common/Modal";
 import type { CommonSettings, Template, TemplateStatus, TemplateSummary } from "@/domain/types";
 import { validateTemplate } from "@/domain/template/validateTemplate";
 import {
@@ -121,6 +122,13 @@ export function AdminTemplatesPage() {
   const [previewImageName, setPreviewImageName] = useState<string | null>(null);
   const [pendingJsonFile, setPendingJsonFile] = useState<File | null>(null);
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [testingTemplateKey, setTestingTemplateKey] = useState<string | null>(null);
+  const [testChecklist, setTestChecklist] = useState<Record<string, boolean>>({
+    sizeMatch: false,
+    designIdIssued: false,
+    logoDisplay: false,
+    pdfGenerated: false
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
@@ -808,10 +816,13 @@ const cancelEditing = useCallback(() => {
                         className="rounded-full border border-slate-200 px-3 py-1 text-slate-600"
                         disabled={template.status === "archive"}
                         onClick={() => {
-                          if (template.status === "draft") {
-                            handleStatusChange(template.templateKey, "tested");
-                          }
-                          window.open(`/sim/${template.templateKey}`, "_blank", "width=390,height=844");
+                          setTestingTemplateKey(template.templateKey);
+                          setTestChecklist({
+                            sizeMatch: false,
+                            designIdIssued: false,
+                            logoDisplay: false,
+                            pdfGenerated: false
+                          });
                         }}
                       >
                         テスト
@@ -884,6 +895,140 @@ const cancelEditing = useCallback(() => {
             </div>
           </div>
         </div>
+      )}
+      {testingTemplateKey && (
+        <Modal
+          title={`テンプレートテスト: ${getTemplate(testingTemplateKey)?.name || testingTemplateKey}`}
+          open={testingTemplateKey !== null}
+          onClose={() => {
+            setTestingTemplateKey(null);
+            setTestChecklist({
+              sizeMatch: false,
+              designIdIssued: false,
+              logoDisplay: false,
+              pdfGenerated: false
+            });
+          }}
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+              テスト画面を開いて、以下を確認してください。チェックを入れて完了したら「テスト完了」を押してください。
+            </p>
+            <div className="flex justify-center pb-2">
+              <button
+                type="button"
+                onClick={() => {
+                  window.open(`/sim/${testingTemplateKey}`, "_blank", "width=1280,height=720");
+                }}
+                className="rounded-full border-2 border-emerald-400 bg-emerald-50 px-6 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
+              >
+                テスト画面を開く（PC表示）
+              </button>
+            </div>
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={testChecklist.sizeMatch}
+                  onChange={(e) =>
+                    setTestChecklist((prev) => ({ ...prev, sizeMatch: e.target.checked }))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-slate-700">
+                  作成したサイズと同じか（キャンバスサイズ・刻印範囲が正しく表示されているか）
+                </span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={testChecklist.designIdIssued}
+                  onChange={(e) =>
+                    setTestChecklist((prev) => ({ ...prev, designIdIssued: e.target.checked }))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-slate-700">
+                  デザインIDが発行されるか（ステップ3でデザインIDが正常に発行されるか）
+                </span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={testChecklist.logoDisplay}
+                  onChange={(e) =>
+                    setTestChecklist((prev) => ({ ...prev, logoDisplay: e.target.checked }))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-slate-700">
+                  ロゴの配置が正しく表示されるか（位置・大きさ・回転が意図通りか）
+                </span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={testChecklist.pdfGenerated}
+                  onChange={(e) =>
+                    setTestChecklist((prev) => ({ ...prev, pdfGenerated: e.target.checked }))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-slate-700">
+                  PDFが正常に生成されるか（確認用PDFがダウンロードできるか）
+                </span>
+              </label>
+            </div>
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => {
+                  setTestingTemplateKey(null);
+                  setTestChecklist({
+                    sizeMatch: false,
+                    designIdIssued: false,
+                    logoDisplay: false,
+                    pdfGenerated: false
+                  });
+                }}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const allChecked = Object.values(testChecklist).every((v) => v);
+                  if (allChecked) {
+                    if (getTemplate(testingTemplateKey)?.status === "draft") {
+                      handleStatusChange(testingTemplateKey, "tested");
+                    }
+                    setToast({
+                      message: "テストが完了しました。",
+                      tone: "success"
+                    });
+                  } else {
+                    setToast({
+                      message: "すべての項目にチェックを入れてください。",
+                      tone: "info"
+                    });
+                    return;
+                  }
+                  setTestingTemplateKey(null);
+                  setTestChecklist({
+                    sizeMatch: false,
+                    designIdIssued: false,
+                    logoDisplay: false,
+                    pdfGenerated: false
+                  });
+                }}
+                className="rounded-full border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
+              >
+                テスト完了
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
     </section>
   );

@@ -4,7 +4,7 @@ import { HelpIcon } from "@/components/common/HelpIcon";
 import type { Design, TemplateSummary } from "@/domain/types";
 import { generateConfirmPdf } from "@/domain/pdf/generateConfirmPdf";
 import { processLogo } from "@/domain/image/processLogo";
-import { deleteDesign, getDesign, getTemplate, listDesigns, listTemplates, loadTemplateBgFallback } from "@/storage/local";
+import { deleteDesign, getDesign, getTemplate, listDesigns, listTemplates, loadTemplateBgFallback, saveDesign } from "@/storage/local";
 import { deleteAssets, getAssetById, saveAsset } from "@/storage/idb";
 
 function formatDate(isoString: string): string {
@@ -115,6 +115,8 @@ export function AdminDesignsPage() {
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [previewImageName, setPreviewImageName] = useState<string | null>(null);
   const [downloadedIds, setDownloadedIds] = useState<Set<string>>(new Set());
+  const [editingMemoId, setEditingMemoId] = useState<string | null>(null);
+  const [editingMemoValue, setEditingMemoValue] = useState("");
 
   const reload = useCallback(() => {
     const summaries = listDesigns();
@@ -356,6 +358,30 @@ export function AdminDesignsPage() {
     });
   }, [designs]);
 
+  const handleStartEditMemo = useCallback((design: Design) => {
+    setEditingMemoId(design.designId);
+    setEditingMemoValue(design.memo || "");
+  }, []);
+
+  const handleSaveMemo = useCallback(
+    (designId: string) => {
+      const design = getDesign(designId);
+      if (!design) return;
+      const updatedDesign = { ...design, memo: editingMemoValue || undefined };
+      saveDesign(updatedDesign);
+      setEditingMemoId(null);
+      setEditingMemoValue("");
+      reload();
+      setToast({ message: "備考を保存しました。", tone: "success" });
+    },
+    [editingMemoValue, reload]
+  );
+
+  const handleCancelEditMemo = useCallback(() => {
+    setEditingMemoId(null);
+    setEditingMemoValue("");
+  }, []);
+
   return (
     <section className="space-y-6">
       {toast && <Toast message={toast.message} tone={toast.tone} />}
@@ -371,8 +397,7 @@ export function AdminDesignsPage() {
               お店の設定から発行履歴までの「ひと回りの流れ」
             </h2>
             <p className="mt-2 text-sm text-emerald-800">
-              🔰 「何から始めればいいか」をやさしくまとめたガイドです。{" "}
-              基本設定 → カテゴリ → テンプレート作成 → お客様用のページ → デザイン発行履歴という順番で、一周の流れを確認できます。
+              🔰 基本設定から発行履歴までの流れをまとめています。
             </p>
           </div>
           <div className="mt-3 flex shrink-0 items-center md:mt-0">
@@ -452,12 +477,13 @@ export function AdminDesignsPage() {
                 <th className="px-6 py-3 text-left">テンプレートID</th>
                 <th className="px-6 py-3 text-left">作成日</th>
                 <th className="px-6 py-3 text-left">PDF</th>
+                <th className="px-6 py-3 text-left">備考/メモ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {filteredDesigns.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={6}>
+                  <td className="px-6 py-6 text-sm text-slate-500" colSpan={7}>
                     デザイン作成履歴がありません。
                   </td>
                 </tr>
@@ -519,6 +545,49 @@ export function AdminDesignsPage() {
                           </span>
                         ) : null}
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {editingMemoId === design.designId ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={editingMemoValue}
+                            onChange={(e) => setEditingMemoValue(e.target.value)}
+                            className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs"
+                            placeholder="備考を入力"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleSaveMemo(design.designId);
+                              } else if (e.key === "Escape") {
+                                handleCancelEditMemo();
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveMemo(design.designId)}
+                            className="rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-100"
+                          >
+                            保存
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCancelEditMemo}
+                            className="rounded border border-slate-300 bg-slate-50 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
+                          >
+                            取消
+                          </button>
+                        </div>
+                      ) : (
+                        <div
+                          className="cursor-pointer rounded border border-transparent px-2 py-1 text-xs text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                          onClick={() => handleStartEditMemo(design)}
+                          title="クリックして編集"
+                        >
+                          {design.memo || <span className="text-slate-400">クリックして追加</span>}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

@@ -55,6 +55,77 @@ export function CategoryLandingPage() {
     return map;
   }, [settings?.commonInfoCategories]);
 
+  const categoryColorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    settings?.commonInfoCategories?.forEach((c) => {
+      if (c.id && c.color) {
+        map.set(c.id, c.color);
+      }
+    });
+    return map;
+  }, [settings?.commonInfoCategories]);
+
+  const getCategoryColorStyles = (color: string | undefined) => {
+    if (!color) {
+      return {
+        bg: "#f1f5f9",
+        border: "#cbd5e1",
+        text: "#0f172a",
+        accent: "#64748b"
+      };
+    }
+
+    // 16進数カラーコードの場合、直接使用
+    if (color.startsWith("#")) {
+      // 16進数からRGBに変換して、背景色（薄く）とテキスト色（濃く）を生成
+      let hex = color.replace("#", "");
+      // 3桁の場合は6桁に変換
+      if (hex.length === 3) {
+        hex = hex.split("").map((c) => c + c).join("");
+      }
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+
+      // 背景色（薄く、透明度を上げる）
+      const bgR = Math.min(255, Math.round(r + (255 - r) * 0.9));
+      const bgG = Math.min(255, Math.round(g + (255 - g) * 0.9));
+      const bgB = Math.min(255, Math.round(b + (255 - b) * 0.9));
+      const bg = `rgb(${bgR}, ${bgG}, ${bgB})`;
+
+      // ボーダー色（少し薄く）
+      const borderR = Math.min(255, Math.round(r + (255 - r) * 0.6));
+      const borderG = Math.min(255, Math.round(g + (255 - g) * 0.6));
+      const borderB = Math.min(255, Math.round(b + (255 - b) * 0.6));
+      const border = `rgb(${borderR}, ${borderG}, ${borderB})`;
+
+      // テキスト色（濃く、元の色を少し暗く）
+      const textR = Math.max(0, Math.round(r * 0.4));
+      const textG = Math.max(0, Math.round(g * 0.4));
+      const textB = Math.max(0, Math.round(b * 0.4));
+      const text = `rgb(${textR}, ${textG}, ${textB})`;
+
+      // アクセント色（中間）
+      const accentR = Math.max(0, Math.round(r * 0.6));
+      const accentG = Math.max(0, Math.round(g * 0.6));
+      const accentB = Math.max(0, Math.round(b * 0.6));
+      const accent = `rgb(${accentR}, ${accentG}, ${accentB})`;
+
+      return { bg, border, text, accent };
+    }
+
+    // 色名の場合（後方互換性のため）
+    const colorMap: Record<string, { bg: string; border: string; text: string; accent: string }> = {
+      emerald: { bg: "#ecfdf5", border: "#a7f3d0", text: "#065f46", accent: "#047857" },
+      blue: { bg: "#eff6ff", border: "#bfdbfe", text: "#1e40af", accent: "#1d4ed8" },
+      rose: { bg: "#fff1f2", border: "#fecdd3", text: "#881337", accent: "#9f1239" },
+      amber: { bg: "#fffbeb", border: "#fde68a", text: "#78350f", accent: "#92400e" },
+      purple: { bg: "#faf5ff", border: "#e9d5ff", text: "#581c87", accent: "#6b21a8" },
+      black: { bg: "#f1f5f9", border: "#cbd5e1", text: "#0f172a", accent: "#334155" }
+    };
+    return colorMap[color] || colorMap.black;
+  };
+
   const orderedCategories = useMemo(() => {
     const masterOrder = settings?.commonInfoCategories?.map((c) => c.id).filter(Boolean) ?? [];
     const others = Array.from(categorized.keys()).filter(
@@ -101,12 +172,22 @@ export function CategoryLandingPage() {
         orderedCategories.map((categoryId) => {
           const rows = categorized.get(categoryId) ?? [];
           const label = categoryTitleMap.get(categoryId) ?? categoryId;
+          const categoryColor = categoryColorMap.get(categoryId);
+          const colors = getCategoryColorStyles(categoryColor);
+
           return (
             <div key={categoryId} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-md">
-              <div className="flex items-center justify-between border-b border-slate-200 bg-slate-100/80 backdrop-blur-sm px-6 py-4">
+              <div
+                className="flex items-center justify-between border-b backdrop-blur-sm px-6 py-4"
+                style={{
+                  backgroundColor: colors.bg,
+                  borderBottomColor: colors.border
+                }}
+              >
                 <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-1">カテゴリ</p>
-                  <h2 className="text-xl font-bold text-slate-900">{label}</h2>
+                  <h2 className="text-xl font-bold" style={{ color: colors.text }}>
+                    {label}
+                  </h2>
                 </div>
                 <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3.5 py-1.5 shadow-sm">
                   <span className="text-sm font-bold text-slate-800">{rows.length}</span>

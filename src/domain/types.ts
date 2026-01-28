@@ -83,6 +83,7 @@ export interface Design {
   logo: DesignLogoSettings;
   placement: DesignPlacement;
   pdf: DesignPdfAssets;
+  memo?: string;
 }
 
 export interface DesignSummary {
