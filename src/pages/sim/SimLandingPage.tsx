@@ -234,7 +234,7 @@ export function SimLandingPage() {
           </div>
           <p className="text-xs text-slate-500 ml-10">公開中のテンプレートだけ利用できます</p>
         </div>
-        <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
+        <div className="grid gap-8">
           <div className="space-y-4">
             {/* Controls Section - Refined Business Design */}
             <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-5 backdrop-blur-sm">
@@ -531,21 +531,6 @@ export function SimLandingPage() {
             )}
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-2">
-              <div className="flex items-center gap-2">
-                <div className="h-0.5 w-6 bg-emerald-300 rounded-full"></div>
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">カテゴリ別表示</h3>
-              </div>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              公開テンプレート一覧では検索・カテゴリ絞り込みは行いません。カテゴリごとに見たい場合は{" "}
-              <Link to="/categories" className="font-semibold text-emerald-700 hover:text-emerald-800 underline">
-                カテゴリ一覧
-              </Link>
-              を確認してください。
-            </p>
-          </div>
         </div>
       </div>
     </section>
