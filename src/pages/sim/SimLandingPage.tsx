@@ -3,7 +3,7 @@ import type { Template, TemplateSummary } from "@/domain/types";
 import { useMemo } from "react";
 import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 import { HelpIcon } from "@/components/common/HelpIcon";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 type ColumnKey = "name" | "category" | "comment" | "paper" | "templateKey" | "info" | "url";
 
@@ -66,8 +66,6 @@ export function SimLandingPage() {
   const [rowPaddingPx, setRowPaddingPx] = useState(4);
   const [tableFontSizePx, setTableFontSizePx] = useState(16);
   const [draggingKey, setDraggingKey] = useState<ColumnKey | null>(null);
-  const [searchText, setSearchText] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [columnWidths, setColumnWidths] = useState<Record<ColumnKey, number | undefined>>({
     name: 220,
     category: 160,
@@ -86,22 +84,7 @@ export function SimLandingPage() {
   const commentInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
 
-  const normalizedSearch = searchText.trim().toLowerCase();
-
-  const filteredTemplates = templates.filter((row) => {
-    const matchesSearch =
-      !normalizedSearch ||
-      row.name.toLowerCase().includes(normalizedSearch) ||
-      row.key.toLowerCase().includes(normalizedSearch) ||
-      (row.comment ?? "").toLowerCase().includes(normalizedSearch);
-    const matchesCategory =
-      selectedCategories.size === 0 ||
-      (row.categories.length > 0 && row.categories.some((cat) => selectedCategories.has(cat))) ||
-      (row.categories.length === 0 && selectedCategories.has("未分類"));
-    return matchesSearch && matchesCategory;
-  });
-
-  const sortedTemplates = [...filteredTemplates].sort((a, b) => {
+  const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
       return a.updatedAt.localeCompare(b.updatedAt);
     }
@@ -110,15 +93,6 @@ export function SimLandingPage() {
     }
     return b.updatedAt.localeCompare(a.updatedAt);
   });
-
-  const categoryCountMap = templates.reduce<Record<string, number>>((acc, row) => {
-    const cats = row.categories.length > 0 ? row.categories : ["未分類"];
-    cats.forEach((cat) => {
-      acc[cat] = (acc[cat] ?? 0) + 1;
-    });
-    return acc;
-  }, {});
-  const categoryList = Object.entries(categoryCountMap).sort((a, b) => a[0].localeCompare(b[0]));
 
   const categoryTitleMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -332,22 +306,17 @@ export function SimLandingPage() {
               </div>
             </div>
 
-            {/* Search Section - Refined Business Design */}
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="テンプレート名・ID・備考を検索"
-                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                  />
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="text-sm font-semibold text-slate-900">
+                  公開中テンプレート: {templates.length} 件
                 </div>
-                <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-slate-50 px-4 py-2.5 shadow-sm">
-                  <span className="text-sm font-bold text-slate-800">{filteredTemplates.length}</span>
-                  <span className="text-xs text-slate-500">/</span>
-                  <span className="text-sm font-semibold text-slate-600">全 {templates.length} 件</span>
+                <div className="text-xs text-slate-600">
+                  カテゴリごとに見たい場合は{" "}
+                  <Link to="/categories" className="font-semibold text-emerald-700 hover:text-emerald-800 underline">
+                    カテゴリ一覧
+                  </Link>
+                  を確認してください。
                 </div>
               </div>
             </div>
@@ -573,69 +542,20 @@ export function SimLandingPage() {
             )}
           </div>
 
-          {/* Category Filter Section - Refined Business Design */}
           <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="h-0.5 w-6 bg-slate-300 rounded-full"></div>
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">検索・カテゴリ</h3>
+            <div className="mb-2">
+              <div className="flex items-center gap-2">
+                <div className="h-0.5 w-6 bg-emerald-300 rounded-full"></div>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">カテゴリ別表示</h3>
               </div>
-              <p className="text-xs text-slate-500 ml-8">カテゴリで絞り込み</p>
             </div>
-            <div className="space-y-2.5">
-              {categoryList.length === 0 ? (
-                <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-center">
-                  <p className="text-xs font-medium text-slate-500">カテゴリがありません</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {categoryList.map(([category, count]) => {
-                    const key = category;
-                    const checked = selectedCategories.has(key);
-                    const label = categoryTitleMap.get(key) ?? key;
-                    return (
-                      <label key={key} className={`flex items-center justify-between rounded-md border px-3.5 py-2.5 text-xs font-semibold shadow-sm transition-all cursor-pointer ${
-                        checked
-                          ? "border-slate-400 bg-slate-100 text-slate-900 shadow"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow"
-                      }`}>
-                        <span className="flex items-center gap-2.5">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 rounded border border-slate-300 text-slate-600 focus:ring-2 focus:ring-slate-200"
-                            checked={checked}
-                            onChange={() => {
-                              setSelectedCategories((prev) => {
-                                const next = new Set(prev);
-                                if (checked) {
-                                  next.delete(key);
-                                } else {
-                                  next.add(key);
-                                }
-                                return next;
-                              });
-                            }}
-                          />
-                          <span>{label}</span>
-                        </span>
-                        <span className={`rounded-md px-2.5 py-1 text-xs font-bold shadow-sm ${
-                          checked ? "bg-slate-200 text-slate-800" : "bg-slate-100 text-slate-600"
-                        }`}>{count}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-              {selectedCategories.size > 0 && (
-                <button
-                  type="button"
-                  className="w-full rounded-md border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
-                  onClick={() => setSelectedCategories(new Set())}
-                >
-                  カテゴリ選択をクリア
-                </button>
-              )}
-            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              公開テンプレート一覧では検索・カテゴリ絞り込みは行いません。カテゴリごとに見たい場合は{" "}
+              <Link to="/categories" className="font-semibold text-emerald-700 hover:text-emerald-800 underline">
+                カテゴリ一覧
+              </Link>
+              を確認してください。
+            </p>
           </div>
         </div>
       </div>
