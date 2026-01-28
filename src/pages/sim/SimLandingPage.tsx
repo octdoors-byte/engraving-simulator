@@ -3,7 +3,7 @@ import type { Template, TemplateSummary } from "@/domain/types";
 import { useMemo } from "react";
 import { getTemplate, listTemplates, loadCommonSettings, saveTemplate } from "@/storage/local";
 import { HelpIcon } from "@/components/common/HelpIcon";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 type ColumnKey = "name" | "category" | "comment" | "paper" | "templateKey" | "info" | "url";
 
@@ -82,7 +82,6 @@ export function SimLandingPage() {
   const [editingComment, setEditingComment] = useState("");
   const nameInputRef = useRef<HTMLInputElement>(null);
   const commentInputRef = useRef<HTMLInputElement>(null);
-  const location = useLocation();
 
   const sortedTemplates = [...templates].sort((a, b) => {
     if (sortKey === "updatedAtAsc") {
@@ -143,16 +142,6 @@ export function SimLandingPage() {
   useEffect(() => {
     refreshTemplates();
   }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const cats = params.getAll("cat").filter(Boolean);
-    if (cats.length === 0) {
-      setSelectedCategories(new Set());
-      return;
-    }
-    setSelectedCategories(new Set(cats));
-  }, [location.search]);
 
   useEffect(() => {
     if (!editingKey) return;
@@ -503,32 +492,32 @@ export function SimLandingPage() {
                             </td>
                           );
                         }
-                        // 公開URL（カテゴリ別コピー対応）
-                        const cats = row.categories.length > 0 ? row.categories : ["default"];
                         const basePath = import.meta.env.BASE_URL || "/";
                         const fullSimPath = `${basePath}sim/${row.key}`.replace(/\/+/g, "/");
+                        const url =
+                          typeof window !== "undefined"
+                            ? new URL(fullSimPath, window.location.origin).toString()
+                            : fullSimPath;
                         return (
                           <td key={col.key} className="px-5" style={rowPaddingStyle}>
-                            <div className="flex flex-wrap gap-2">
-                              {cats.map((cat) => {
-                                const label = categoryTitleMap.get(cat) ?? cat;
-                                const url =
-                                  typeof window !== "undefined"
-                                    ? new URL(`${fullSimPath}?cat=${encodeURIComponent(cat)}`, window.location.origin).toString()
-                                    : `${fullSimPath}?cat=${encodeURIComponent(cat)}`;
-                                return (
-                                  <a
-                                    key={cat}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
-                                    title={`${label} のURLを開く`}
-                                  >
-                                    {label}
-                                  </a>
-                                );
-                              })}
+                            <div className="flex flex-wrap items-center gap-2">
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
+                                title="公開URLを開く"
+                              >
+                                開く
+                              </a>
+                              <button
+                                type="button"
+                                className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-50 hover:shadow"
+                                onClick={() => copyToClipboard(url, "公開URL")}
+                                title="公開URLをコピー"
+                              >
+                                コピー
+                              </button>
                             </div>
                           </td>
                         );
