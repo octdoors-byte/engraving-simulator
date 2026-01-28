@@ -591,8 +591,8 @@ export function SimPage() {
     if (!Number.isFinite(dpi) || dpi <= 0) return null;
     const wMm = (placement.w * 25.4) / dpi;
     const hMm = (placement.h * 25.4) / dpi;
-    const minW = template.logoMinWidthMm ?? 5;
-    const minH = template.logoMinHeightMm ?? 5;
+    const minW = template.logoMinWidthMm ?? 3;
+    const minH = template.logoMinHeightMm ?? 3;
     const isBelowMin = wMm < minW || hMm < minH;
     return {
       wMm,

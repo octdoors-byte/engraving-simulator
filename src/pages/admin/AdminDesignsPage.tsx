@@ -543,7 +543,7 @@ export function AdminDesignsPage() {
               </button>
             </div>
             <div className="h-[70vh] bg-slate-50">
-              <object data={previewUrl} type="application/pdf" className="h-full w-full">
+              <object key={previewUrl} data={`${previewUrl}#page=1&zoom=page-fit`} type="application/pdf" className="h-full w-full">
                 <p className="p-4 text-sm text-slate-500">PDFを表示できません。</p>
               </object>
             </div>

@@ -1,4 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import type { PDFPage } from "pdf-lib";
 import type { Template, DesignPlacement } from "../types";
 import { rotateImage90 } from "@/domain/image/rotateImage90";
 
@@ -29,6 +30,48 @@ async function rotateLogoByDegrees(blob: Blob, rotation: number): Promise<Blob> 
     next = await rotateImage90(next);
   }
   return next;
+}
+
+function drawCornerMarks(
+  page: PDFPage,
+  rect: { x: number; y: number; width: number; height: number },
+  style: { color: ReturnType<typeof rgb>; thickness: number; cornerLength: number }
+) {
+  // 線は中心が座標に乗るため、内側に寄せると「刻印範囲が狭く見える」。
+  // ここでは刻印範囲が狭くならないよう、コーナー線は外側に張り出す（内側のエッジは rect に一致）。
+  const { color, thickness, cornerLength } = style;
+  const x0 = rect.x;
+  const y0 = rect.y;
+  const x1 = rect.x + rect.width;
+  const y1 = rect.y + rect.height;
+  const len = Math.max(1, Math.min(cornerLength, rect.width / 2, rect.height / 2));
+  const half = Math.max(0, thickness / 2);
+
+  // Bottom-left
+  page.drawLine({ start: { x: x0, y: y0 - half }, end: { x: x0 + len, y: y0 - half }, color, thickness });
+  page.drawLine({ start: { x: x0 - half, y: y0 }, end: { x: x0 - half, y: y0 + len }, color, thickness });
+
+  // Bottom-right
+  page.drawLine({ start: { x: x1, y: y0 - half }, end: { x: x1 - len, y: y0 - half }, color, thickness });
+  page.drawLine({ start: { x: x1 + half, y: y0 }, end: { x: x1 + half, y: y0 + len }, color, thickness });
+
+  // Top-left
+  page.drawLine({ start: { x: x0, y: y1 + half }, end: { x: x0 + len, y: y1 + half }, color, thickness });
+  page.drawLine({ start: { x: x0 - half, y: y1 }, end: { x: x0 - half, y: y1 - len }, color, thickness });
+
+  // Top-right
+  page.drawLine({
+    start: { x: x1, y: y1 + half },
+    end: { x: x1 - len, y: y1 + half },
+    color,
+    thickness
+  });
+  page.drawLine({
+    start: { x: x1 + half, y: y1 },
+    end: { x: x1 + half, y: y1 - len },
+    color,
+    thickness
+  });
 }
 
 export async function generateConfirmPdf(
@@ -82,14 +125,12 @@ export async function generateConfirmPdf(
     }
 
     const engravingArea = template.engravingArea;
-    page.drawRectangle({
+    const engravingRect = {
       x: offsetX + engravingArea.x * scale,
       y: offsetY + (canvasHeight - (engravingArea.y + engravingArea.h)) * scale,
       width: engravingArea.w * scale,
-      height: engravingArea.h * scale,
-      borderColor: rgb(0.1, 0.4, 0.9),
-      borderWidth: 1
-    });
+      height: engravingArea.h * scale
+    };
 
     if (logoBlob) {
       const rotation = placement.rotationDeg ?? 0;
@@ -104,6 +145,13 @@ export async function generateConfirmPdf(
         });
       }
     }
+
+    // 画像が線の上に“乗って見える”のを防ぐため、コーナーマークは最後に描画して常に最前面にします。
+    drawCornerMarks(page, engravingRect, {
+      color: rgb(0.1, 0.4, 0.9),
+      thickness: 1,
+      cornerLength: Math.min(14, Math.min(engravingRect.width, engravingRect.height) * 0.25)
+    });
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const margin = 24;
